@@ -19,9 +19,10 @@ class DataSet:
 
         # for a mnist model.
         if self.data_set is 'mnist':
-        
+            num_classes = 10
             (x_train, y_train), (x_test, y_test) = mnist.load_data()
-            if trainOrTest = "training": 
+            img_rows, img_cols = 28, 28
+            if trainOrTest == "training": 
                 x = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
                 y = keras.utils.np_utils.to_categorical(y_train, num_classes)
             else: 
@@ -33,10 +34,10 @@ class DataSet:
 
         # for a cifar10 model.
         elif self.data_set is 'cifar10':
-
+            num_classes = 10
             (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-            
-            if trainOrTest = "training": 
+            img_rows, img_cols, img_chls = 32, 32, 3
+            if trainOrTest == "training": 
                 x = x_train.reshape(x_train.shape[0], img_rows, img_cols, img_chls)
                 y = keras.utils.np_utils.to_categorical(y_train, num_classes)
             else: 

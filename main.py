@@ -1,5 +1,6 @@
 from __future__ import print_function
 from neural_network import *
+from data_set import *
 
 
 MNIST = NeuralNetwork('mnist')
@@ -8,6 +9,11 @@ MNIST = NeuralNetwork('mnist')
 MNIST.load_network()
 print('Dataset is', MNIST.data_set)
 MNIST.model.summary()
+
+dataset = DataSet('mnist','testing')
+image = dataset.getInput(0)
+label = MNIST.predict_classes(np.expand_dims(image, axis=0))
+print(label)
 
 
 CIFAR10 = NeuralNetwork('cifar10')
