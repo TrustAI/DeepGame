@@ -20,6 +20,14 @@ class NeuralNetwork:
     def __init__(self, data_set):
         self.data_set = data_set
         self.model = Sequential()
+        
+    def predict(self,input):
+        import numpy as np
+        newInput2 = np.expand_dims(input, axis=0)
+        predictValue = self.model.predict(newInput2)
+        newClass = np.argmax(np.ravel(predictValue))
+        confident = np.amax(np.ravel(predictValue))
+        return (newClass,confident)   
 
     # To train a neural network.
     def train_network(self):

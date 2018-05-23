@@ -2,25 +2,19 @@ from __future__ import print_function
 from neural_network import *
 from data_set import *
 
+dataSetName = 'mnist'
+#dataSetName = 'cifar10'
 
-MNIST = NeuralNetwork('mnist')
-# MNIST.train_network()
-# MNIST.save_network()
-MNIST.load_network()
-print('Dataset is', MNIST.data_set)
-MNIST.model.summary()
 
-dataset = DataSet('mnist','testing')
-image = dataset.getInput(0)
-label = MNIST.predict_classes(np.expand_dims(image, axis=0))
+NN = NeuralNetwork(dataSetName)
+# NN.train_network()
+# NN.save_network()
+NN.load_network()
+print('Dataset is', NN.data_set)
+NN.model.summary()
+
+dataset = DataSet(dataSetName,'testing')
+image = dataset.getInput(1)
+label = NN.predict(image)
 print(label)
-
-
-CIFAR10 = NeuralNetwork('cifar10')
-# CIFAR10.train_network()
-# CIFAR10.save_network()
-CIFAR10.load_network()
-print('Dataset is', CIFAR10.data_set)
-CIFAR10.model.summary()
-
 
