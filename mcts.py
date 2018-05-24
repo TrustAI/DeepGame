@@ -40,9 +40,6 @@ class mcts:
         (self.originalClass,self.originalConfident) = self.model.predict(self.image)
         
         self.moves = game_moves(self.data_set, self.model, self.image, self.tau)
-        
-        self.collectImages = 1 
-        self.collectedImages = []
 
         self.cost = {}
         self.numberOfVisited = {}
@@ -79,9 +76,7 @@ class mcts:
         # number of adversarial exmaples
         self.numAdv = 0
         #self.analyseAdv = analyseAdv(activations)
-        
-        # useless points
-        self.usefulPixels = {}
+
                 
         # temporary variables for sampling 
         self.atomicManipulationPath = []
@@ -92,20 +87,9 @@ class mcts:
         self.accDims = [] 
         self.d =0
         
-            
-    def visualizationMCTS(self):
-        for k in range(len(self.image)): 
-            activations1 = copy.deepcopy(self.image)
-            # use a random node to replace the feature node
-            emptyNode = np.zeros_like(self.image[0])
-            activations1[k] = emptyNode
-            output = np.squeeze(self.model.predict(np.expand_dims(activations1,axis=0)))
-            path0="%s_pic/%s_autoencoder_%s.png"%(data_set,self.image_index,k)
-            self.model.saveInput(output, path0)
         
     def initialiseMoves(self): 
         # initialise actions according to the type of manipulations
-        self.moves.initialisation()
         actions = self.moves.moves
         self.keypoints[0] = 0
         i = 1 
@@ -113,15 +97,12 @@ class mcts:
             self.keypoints[i] = k 
             i += 1
             
-        #print("actions=%s"%(actions.keys()))
         for i in range(len(actions)): 
             ast = {}
             for j in range(len(actions[i])):
                 ast[j] = actions[i][j]
             self.actions[i] = ast
         nprint("%s actions have been initialised. "%(len(self.actions)))
-        # initialise decision tree
-        #self.decisionTree = decisionTree(self.model, self.actions, self.image, "decision")
         
     def initialiseLeafNode(self,index,parentIndex,newatomicManipulation,newnumberAtomicManipulation):
         nprint("initialising a leaf node %s from the node %s"%(index,parentIndex))
@@ -237,52 +218,7 @@ class mcts:
             nprint("backPropagating ends on node %s"%(index))
         
             
-    def analysePixels(self):
-        #self.usefulPixels = self.decisionTree.collectUsefulPixels()
-        usefulPixels = [] 
-        for index in self.usefulPixels: 
-            usefulPixels.append(self.actions[index])
-        #print("%s useful pixels = %s"%(len(self.usefulPixels),self.usefulPixels))
-        values = self.usefulPixels.values()
-        images = []
-        for v in values: 
-            pixels = [ dim for key, value in self.usefulPixels.items() for dim in self.actions[key][0].keys() if value >= v ]
-            ndim = self.image.ndim
-            usefulimage = copy.deepcopy(self.image)
-            span = {}
-            numSpan = {}
-            for p in pixels: 
-                span[p] = 1
-                numSpan[p] = 1
-            #usefulimage = applyManipulation(usefulimage,span,numSpan)
-            #'''
-            if ndim == 2: 
-                for x in range(len(usefulimage)): 
-                    for y in range(len(usefulimage[0])): 
-                        if (x,y) not in pixels: 
-                            usefulimage[x][y] = 0
-            elif ndim == 3:
-                for x in range(len(usefulimage)): 
-                    for y in range(len(usefulimage[0])): 
-                        for z in range(len(usefulimage[0][0])):
-                            if (x,y,z) not in pixels: 
-                                usefulimage[x][y][z] = 0
-            #'''
-            images.append((v,usefulimage))
-        return images
-        
-    def addUsefulPixels(self,dims):
-        for dim in dims: 
-            if dim in self.usefulPixels.keys(): 
-                self.usefulPixels[dim] += 1
-            else: 
-                self.usefulPixels[dim] = 1
-                
-    def getUsefulPixels(self,accDims,d): 
-        import operator
-        sorted_accDims = sorted(self.accDims, key=operator.itemgetter(1), reverse=True)
-        needed_accDims = sorted_accDims[:d-1]
-        self.addUsefulPixels([x for (x,y) in needed_accDims])
+
             
     # start random sampling and return the Euclidean value as the value
     def sampling(self,index,availableActions):
@@ -354,8 +290,7 @@ class mcts:
             
             #self.decisionTree.addOnePath(dist,self.atomicManipulationPath,self.numberAtomicManipulationPath)
             self.numAdv += 1
-            #self.analyseAdv.addAdv(activations1)
-            self.getUsefulPixels(self.accDims,self.d)
+
                 
             if self.bestCase[0] < dist: 
                 self.numConverge += 1

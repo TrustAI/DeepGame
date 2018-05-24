@@ -30,9 +30,6 @@ class game_moves:
         self.model = model
         self.image = image 
         self.tau = tau
-
-
-    def initialisation(self):
     
         imageEnlargeProportion = 1
         image1 = copy.deepcopy(self.image)
@@ -41,7 +38,8 @@ class game_moves:
         else: 
             image1 = image1.astype(np.uint8)
     
-        if max(image1.shape) < 100 and K.backend() == 'tensorflow': 
+        if max(image1.shape) < 100: 
+            # for small images, sift works by enlarging the images
             image1 = cv2.resize(image1, (0,0), fx=imageEnlargeProportion, fy=imageEnlargeProportion)
             kps = self.SIFT_Filtered_twoPlayer(image1)
             for i in range(len(kps)): 
@@ -69,38 +67,42 @@ class game_moves:
         
         numOfmanipulations = 0 
         for k, blocks in partitions.items(): 
-            allRegions = []
+            allAtomicManipulations = []
 
             for i in range(len(blocks)) :
-                nexttau = {}
-                nextNumtau = {}    
-                ls = [] 
                 x = blocks[i][0]
                 y = blocks[i][1]
+                
+                # + tau
+                atomicManipulation = {}   
                 if image0[x][y] == 0 and len(image1.shape) == 2:  
-                    ls.append((x,y))
+                    atomicManipulation[(x,y)] = self.tau
                 elif image0[x][y] == 0: 
-                    ls.append((x,y,0))
-                    ls.append((x,y,1))
-                    ls.append((x,y,2))
+                    atomicManipulation[(x,y,0)] = self.tau
+                    atomicManipulation[(x,y,1)] = self.tau
+                    atomicManipulation[(x,y,2)] = self.tau
+                allAtomicManipulations.append(atomicManipulation)
+                
+                # - tau
+                atomicManipulation = {}   
+                if image0[x][y] == 0 and len(image1.shape) == 2:  
+                    atomicManipulation[(x,y)] = -1 * self.tau
+                elif image0[x][y] == 0: 
+                    atomicManipulation[(x,y,0)] = -1 * self.tau
+                    atomicManipulation[(x,y,1)] = -1 * self.tau
+                    atomicManipulation[(x,y,2)] = -1 * self.tau
+                allAtomicManipulations.append(atomicManipulation)
+                
                 image0[x][y] = 1
-            
-                if len(ls) > 0: 
-                    for j in ls: 
-                        nexttau[j] = self.tau
-                        nextNumtau[j] = 1           
-                    oneRegion = (nexttau,nextNumtau,1)
-                    for j in ls: 
-                        nexttau[j] = self.tau
-                        nextNumtau[j] = -1           
-                    oneRegion = (nexttau,nextNumtau,1)
-                    allRegions.append(oneRegion)
 
-            actions[s] = allRegions
+            actions[s] = allAtomicManipulations
             kp2.append(kps[s-1])
+            
             s += 1
-            print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."%(len(allRegions), int(kps[k-1].pt[0]/imageEnlargeProportion), int(kps[k-1].pt[1]/imageEnlargeProportion),kps[k-1].response))
-            numOfmanipulations += len(allRegions)
+            print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."%(len(allAtomicManipulations), int(kps[k-1].pt[0]/imageEnlargeProportion), int(kps[k-1].pt[1]/imageEnlargeProportion),kps[k-1].response))
+            numOfmanipulations += len(allAtomicManipulations)
+            
+        # index-0 keeps the keypoints, actual actions start from 1
         actions[0] = kp2
         print("the number of all manipulations initialised: %s\n"%(numOfmanipulations))
         self.moves = actions

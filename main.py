@@ -27,8 +27,6 @@ print(label,confident)
 
 tau = 1
 mcts = mcts(dataSetName, NN, image_index, image, "cooperator", tau, eta)
-mcts.initialiseMoves()
-
 
 
 start_time_all = time.time()
