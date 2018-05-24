@@ -41,7 +41,12 @@ def l0Distance(image1,image2):
     
 def mergeTwoDicts(x,y):
     z = x.copy()
-    z.update(y)
+    for k,v in y.items(): 
+        if k in z.keys(): 
+            z[k] += y[k]
+        else: 
+            z[k] = y[k]
+    #z.update(y)
     return z
     
 def nprint(str): 

@@ -26,8 +26,9 @@ image = dataset.getInput(image_index)
 print(label,confident)
 
 tau = 1
+# choose between "cooperator" and "competitor"
 mcts = mcts(dataSetName, NN, image_index, image, "cooperator", tau, eta)
-
+mcts.initialiseMoves()
 
 start_time_all = time.time()
 runningTime_all = 0
@@ -61,7 +62,7 @@ while mcts.terminalNode(mcts.rootIndex) == False and mcts.terminatedByEta(mcts.r
     # pick the current best move to take  
     mcts.makeOneMove(bestChild)
                 
-    image1 = mcts.applyManipulationToGetImage(mcts.atomicManipulation[mcts.rootIndex],mcts.numberAtomicManipulation[mcts.rootIndex])
+    image1 = mcts.applyManipulationToGetImage(mcts.manipulation[mcts.rootIndex])
     diffs = mcts.diffImage(mcts.rootIndex)
     path0="%s/%s_temp_%s.png"%(directory_pic_string,startIndexOfImage,len(diffs))
     dataBasics.save(-1,image1,path0)

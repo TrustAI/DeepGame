@@ -51,12 +51,10 @@ class mcts:
         # current root node
         self.rootIndex = 0
                 
-        self.atomicManipulation = {}
-        self.numberAtomicManipulation = {}
+        self.manipulation = {}
         # initialise root node
-        self.atomicManipulation[-1] = {}
-        self.numberAtomicManipulation[-1] = {}
-        self.initialiseLeafNode(0,-1,[],[])
+        self.manipulation[-1] = {}
+        self.initialiseLeafNode(0,-1,{})
         
         # record all the keypoints: index -> kp
         self.keypoints = {}
@@ -75,19 +73,15 @@ class mcts:
         
         # number of adversarial exmaples
         self.numAdv = 0
-        #self.analyseAdv = analyseAdv(activations)
-
                 
         # temporary variables for sampling 
         self.atomicManipulationPath = []
-        self.numberAtomicManipulationPath = [] 
         self.depth = 0
         self.availableActionIDs = []
         self.usedActionIDs = [] 
         self.accDims = [] 
         self.d =0
-        
-        
+
     def initialiseMoves(self): 
         # initialise actions according to the type of manipulations
         actions = self.moves.moves
@@ -104,16 +98,15 @@ class mcts:
             self.actions[i] = ast
         nprint("%s actions have been initialised. "%(len(self.actions)))
         
-    def initialiseLeafNode(self,index,parentIndex,newatomicManipulation,newnumberAtomicManipulation):
+    def initialiseLeafNode(self,index,parentIndex,newAtomicManipulation):
         nprint("initialising a leaf node %s from the node %s"%(index,parentIndex))
-        self.atomicManipulation[index] = mergeTwoDicts(self.atomicManipulation[parentIndex],newatomicManipulation)
-        self.numberAtomicManipulation[index] = mergeTwoDicts(self.numberAtomicManipulation[parentIndex],newnumberAtomicManipulation)
+        self.manipulation[index] = mergeTwoDicts(self.manipulation[parentIndex],newAtomicManipulation)
         self.cost[index] = 0
         self.parent[index] = parentIndex 
         self.children[index] = []
         self.fullyExpanded[index] = False
         self.numberOfVisited[index] = 0    
-        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulation[index],self.numberAtomicManipulation[index])
+        activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
 
 
     def destructor(self): 
@@ -121,8 +114,8 @@ class mcts:
         self.image = 0
         self.model = 0
         self.model = 0
-        self.atomicManipulation = {}
-        self.numberAtomicManipulation = {}
+        self.manipulatedDimensions = {}
+        self.manipulation = {}
         self.cost = {}
         self.parent = {}
         self.children = {}
@@ -144,8 +137,7 @@ class mcts:
         if self.fullyExpanded[index] == True: 
             for childIndex in self.children[index]: 
                 if childIndex not in indicesToAvoid: self.removeChildren(childIndex,[])
-        self.atomicManipulation.pop(index,None)
-        self.numberAtomicManipulation.pop(index,None)
+        self.manipulation.pop(index,None)
         self.cost.pop(index,None) 
         self.parent.pop(index,None) 
         self.keypoint.pop(index,None) 
@@ -162,12 +154,13 @@ class mcts:
         
     def treeTraversal(self,index):
         if self.fullyExpanded[index] == True: 
-            nprint("tree traversal on node %s"%(index))
+            print("tree traversal on node %s with childrens %s"%(index, self.children[index]))
             allValues = {}
             for childIndex in self.children[index]: 
+                # UCB values
                 allValues[childIndex] = (self.cost[childIndex] / float(self.numberOfVisited[childIndex])) + explorationRate * math.sqrt(math.log(self.numberOfVisited[index]) / float(self.numberOfVisited[childIndex]))
-            #nextIndex = max(allValues.iteritems(), key=operator.itemgetter(1))[0]
-            if self.player_mode == "adversary" and self.keypoint[index] == 0 : 
+
+            if self.player_mode == "competitor" and self.keypoint[index] == 0 : 
                 allValues2 = {}
                 for k,v in allValues.items(): 
                      allValues2[k] = 1 / float(allValues[k])
@@ -180,8 +173,9 @@ class mcts:
             elif self.keypoint[index] != 0 : 
                 self.usedActionsID[self.keypoint[index]] = [self.indexToActionID[index]]
             return self.treeTraversal(nextIndex)
+            
         else: 
-            nprint("tree traversal terminated on node %s"%(index))
+            print("tree traversal terminated on node %s"%(index))
             availableActions = copy.deepcopy(self.actions)
             for k in self.usedActionsID.keys(): 
                 for i in self.usedActionsID[k]: 
@@ -191,18 +185,18 @@ class mcts:
     def initialiseExplorationNode(self,index,availableActions):
         nprint("expanding %s"%(index))
         if self.keypoint[index] != 0: 
-            for (actionId, (span,numSpan,_)) in availableActions[self.keypoint[index]].items() : #initialisePixelSets(self.model,self.image,list(set(self.atomicManipulation[index].keys() + self.usefulPixels))): 
+            for (actionId, am) in availableActions[self.keypoint[index]].items() : #initialisePixelSets(self.model,self.image,list(set(self.manipulatedDimensions[index].keys() + self.usefulPixels))): 
                 self.indexToNow += 1
                 self.keypoint[self.indexToNow] = 0 
                 self.indexToActionID[self.indexToNow] = actionId
-                self.initialiseLeafNode(self.indexToNow,index,span,numSpan)
+                self.initialiseLeafNode(self.indexToNow,index,am)
                 self.children[index].append(self.indexToNow)
         else: 
-            for kp in self.keypoints.keys() : #initialisePixelSets(self.model,self.image,list(set(self.atomicManipulation[index].keys() + self.usefulPixels))): 
+            for kp in self.keypoints.keys() : #initialisePixelSets(self.model,self.image,list(set(self.manipulatedDimensions[index].keys() + self.usefulPixels))): 
                 self.indexToNow += 1
                 self.keypoint[self.indexToNow] = kp
                 self.indexToActionID[self.indexToNow] = 0
-                self.initialiseLeafNode(self.indexToNow,index,{},{})
+                self.initialiseLeafNode(self.indexToNow,index,{})
                 self.children[index].append(self.indexToNow) 
         self.fullyExpanded[index] = True
         self.usedActionsID = {}
@@ -229,8 +223,7 @@ class mcts:
         sampleValues = []
         i = 0
         for i in range(MCTS_multi_samples): 
-            self.atomicManipulationPath = self.atomicManipulation[index]
-            self.numberAtomicManipulationPath = self.numberAtomicManipulation[index] 
+            self.atomicManipulationPath = self.manipulation[index]
             self.depth = 0
             self.availableActionIDs = {}
             for k in self.keypoints.keys(): 
@@ -252,7 +245,7 @@ class mcts:
         #    print(len(self.availableActionIDs[j]))
         #print("oooooooo")
         
-        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulationPath,self.numberAtomicManipulationPath)
+        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulationPath)
         (newClass,newConfident) = self.model.predict(activations1)
         (distMethod,distVal) = self.eta
         if distMethod == "euclidean": 
@@ -272,29 +265,16 @@ class mcts:
             termValue = 0.0
             termByDist = dist > distVal
 
-        #if termByDist == False and newConfident < 0.5 and self.depth <= 3: 
-        #    termByDist = True
-        
-
-
         if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
-            # and newClass == self.model.next_index(self.originalClass,self.originalClass): 
             nprint("sampling a path ends in a terminal node with self.depth %s... "%self.depth)
             
-            #print("L1 distance: %s"%(l1Distance(self.image,activations1)))
-            #print(self.image.shape)
-            #print(activations1.shape)
-            #print("L1 distance with KL: %s"%(withKL(l1Distance(self.image,activations1),self.image,activations1)))
+            self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath,newClass)
             
-            (self.atomicManipulationPath,self.numberAtomicManipulationPath) = self.scrutinizePath(self.atomicManipulationPath,self.numberAtomicManipulationPath,newClass)
-            
-            #self.decisionTree.addOnePath(dist,self.atomicManipulationPath,self.numberAtomicManipulationPath)
             self.numAdv += 1
 
-                
             if self.bestCase[0] < dist: 
                 self.numConverge += 1
-                self.bestCase = (dist,self.atomicManipulationPath,self.numberAtomicManipulationPath)
+                self.bestCase = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
 
@@ -307,64 +287,55 @@ class mcts:
             return (self.depth == 0, termValue)
         else: 
             #print("continue sampling node ... ")
-            #allChildren = initialisePixelSets(self.model,self.image,self.atomicManipulationPath.keys())
             randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k]))) #random.randint(0, len(allChildren)-1)
             if k == 0: 
-                span = {}
-                numSpan = {}
+                nextAtomicManipulation = {}
             else: 
-                (span,numSpan,_) = self.actions[k][randomActionIndex]
+                nextAtomicManipulation = self.actions[k][randomActionIndex]
                 self.availableActionIDs[k].remove(randomActionIndex)
                 self.usedActionIDs[k].append(randomActionIndex)
-            newSpanPath = self.mergeSpan(self.atomicManipulationPath,span)
-            newNumSpanPath = self.mergeNumSpan(self.numberAtomicManipulationPath,numSpan)
-            activations2 = self.moves.applyManipulation(self.image,newSpanPath,newNumSpanPath)
+            newManipulationPath = mergeTwoDicts(self.atomicManipulationPath,nextAtomicManipulation)
+            activations2 = self.moves.applyManipulation(self.image,newManipulationPath)
             (newClass2,newConfident2) = self.model.predict(activations2)
             confGap2 = newConfident - newConfident2
             if newClass2 == newClass: 
                 self.accDims.append((randomActionIndex,confGap2))
             else: self.accDims.append((randomActionIndex,1.0))
 
-            self.atomicManipulationPath = newSpanPath
-            self.numberAtomicManipulationPath = newNumSpanPath
+            self.atomicManipulationPath = newManipulationPath
             self.depth = self.depth+1
-            self.accDims = self.accDims
-            self.d = self.d
             if k == 0: 
                 return self.sampleNext(randomActionIndex)
             else: 
                 return self.sampleNext(0)
             
-    def scrutinizePath(self,spanPath,numSpanPath,changedClass): 
-        lastSpanPath = copy.deepcopy(spanPath)
+    def scrutinizePath(self, manipulations, changedClass): 
+        flag = False
         for i in self.actions.keys(): 
             if i != 0: 
-                for key, (span,numSpan,_) in self.actions[i].items(): 
-                    if set(span.keys()).issubset(set(spanPath.keys())): 
-                        tempSpanPath = copy.deepcopy(spanPath)
-                        tempNumSpanPath = copy.deepcopy(numSpanPath)
-                        for k in span.keys(): 
-                            tempSpanPath.pop(k)
-                            tempNumSpanPath.pop(k) 
-                        activations1 = self.moves.applyManipulation(self.image,tempSpanPath,tempNumSpanPath)
+                for key, am in self.actions[i].items(): 
+                    if set(am.keys()).issubset(set(manipulations.keys())): 
+                        tempManipulations = copy.deepcopy(manipulations)
+                        for k in am.keys(): 
+                            tempManipulations[k] -= am[k]
+                        activations1 = self.moves.applyManipulation(self.image,tempManipulations)
                         (newClass,newConfident) = self.model.predict(activations1)
-                        #if changedClass == newClass: 
-                        if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
-                            for k in span.keys(): 
-                                spanPath.pop(k)
-                                numSpanPath.pop(k)
-        if len(lastSpanPath.keys()) != len(spanPath.keys()): 
-            return self.scrutinizePath(spanPath,numSpanPath,changedClass)
+                        if newClass == self.originalClass:
+                            for k in am.keys(): 
+                                manipulations[k] -= am[k]
+                            flag = True
+        if flag == True: 
+            return self.scrutinizePath(manipulations,changedClass)
         else: 
-            return (spanPath,numSpanPath)
+            return manipulations
             
     def terminalNode(self,index): 
-        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulation[index],self.numberAtomicManipulation[index])
+        activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         (newClass,_) = self.model.predict(activations1)
         return newClass != self.originalClass 
         
     def terminatedByEta(self,index): 
-        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulation[index],self.numberAtomicManipulation[index])
+        activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         (distMethod,distVal) = self.eta
         if distMethod == "euclidean": 
             dist = l2Distance(activations1,self.image) 
@@ -377,38 +348,28 @@ class mcts:
         nprint("terminated by controlled search: distance = %s"%(dist))
         return dist > distVal 
         
-    def applyManipulationToGetImage(self,atomicManipulation,numberAtomicManipulation):
-        activations1 = self.moves.applyManipulation(self.image,atomicManipulation,numberAtomicManipulation)
+    def applyManipulationToGetImage(self,manipulation):
+        activations1 = self.moves.applyManipulation(self.image,manipulation)
         return activations1
         
     def euclideanDist(self,index): 
-        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulation[index],self.numberAtomicManipulation[index])
+        activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         return l2Distance(self.image,activations1)
         
     def l1Dist(self,index): 
-        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulation[index],self.numberAtomicManipulation[index])
+        activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         return l1Distance(self.image,activations1)
         
     def l0Dist(self,index): 
-        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulation[index],self.numberAtomicManipulation[index])
+        activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         return l0Distance(self.image,activations1)
         
     def diffImage(self,index): 
-        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulation[index],self.numberAtomicManipulation[index])
+        activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         return diffImage(self.image,activations1)
         
     def diffPercent(self,index): 
-        activations1 = self.moves.applyManipulation(self.image,self.atomicManipulation[index],self.numberAtomicManipulation[index])
+        activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         return diffPercent(self.image,activations1)
-
-    def mergeSpan(self,atomicManipulationPath,span): 
-        return mergeTwoDicts(atomicManipulationPath, span)
-        
-    def mergeNumSpan(self,numberAtomicManipulationPath,numSpan):
-        return mergeTwoDicts(numberAtomicManipulationPath, numSpan)
-        
-    def showDecisionTree(self):
-        self.decisionTree.show()
-        self.decisionTree.outputTree()
     
         

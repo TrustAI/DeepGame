@@ -107,21 +107,21 @@ class game_moves:
         print("the number of all manipulations initialised: %s\n"%(numOfmanipulations))
         self.moves = actions
         
-    def applyManipulation(self,image,atomicManipulation,numberAtomicManipulation):
+    def applyManipulation(self,image,manipulation):
 
         # apply a specific manipulation to have a manipulated input
         image1 = copy.deepcopy(image)
         maxVal = np.max(image1)
         minVal = np.min(image1)
-        for elt in atomicManipulation.keys(): 
+        for elt in manipulation.keys(): 
             if len(elt) == 2: 
                 (fst,snd) = elt 
-                image1[fst][snd] += numberAtomicManipulation[elt] * atomicManipulation[elt]
+                image1[fst][snd] += manipulation[elt] 
                 if image1[fst][snd] < minVal: image1[fst][snd] = minVal
                 elif image1[fst][snd] > maxVal: image1[fst][snd] = maxVal
             elif len(elt) == 3: 
                 (fst,snd,thd) = elt 
-                image1[fst][snd][thd] += numberAtomicManipulation[elt] * atomicManipulation[elt]
+                image1[fst][snd][thd] += manipulation[elt]
                 if image1[fst][snd][thd] < minVal: image1[fst][snd][thd] = minVal
                 elif image1[fst][snd][thd] > maxVal: image1[fst][snd][thd] = maxVal
         return image1
