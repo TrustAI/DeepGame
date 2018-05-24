@@ -56,7 +56,7 @@ while mcts.terminalNode(mcts.rootIndex) == False and mcts.terminatedByEta(mcts.r
         for node in newNodes: 
             (childTerminated, value) = mcts.sampling(node,availableActions)
             mcts.backPropagation(node,value)
-        printDict(mcts.cost)
+        #printDict(mcts.cost)
             
     print("best possible one is %s"%(str(mcts.bestCase)))
     bestChild = mcts.bestChild(mcts.rootIndex)
