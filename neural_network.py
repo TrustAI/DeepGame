@@ -13,6 +13,8 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from keras.preprocessing.image import ImageDataGenerator
 
+from basics import assure_path_exists
+
 
 # Define a Neural Network class.
 class NeuralNetwork:
@@ -20,6 +22,7 @@ class NeuralNetwork:
     def __init__(self, data_set):
         self.data_set = data_set
         self.model = Sequential()
+        assure_path_exists("%s_pic/"%(self.data_set))
         
     def predict(self,input):
         import numpy as np
@@ -184,3 +187,12 @@ class NeuralNetwork:
         else:
             print("Unsupported dataset.")
 
+
+    def saveInput(self,image,filename):
+        
+            import cv2
+            import copy
+
+            image_cv = copy.deepcopy(image)
+
+            cv2.imwrite(filename, image_cv * 255.0,  [cv2.IMWRITE_PNG_COMPRESSION, 9])
