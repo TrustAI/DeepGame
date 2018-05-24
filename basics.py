@@ -52,3 +52,7 @@ def mergeTwoDicts(x,y):
 def nprint(str): 
     return 0
 
+def printDict(dict):
+    for k,v in dict.items():
+        print("%s : %s"%(k,v))
+    print("\n")

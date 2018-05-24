@@ -9,7 +9,7 @@ dataSetName = 'mnist'
 
 image_index = 3
 
-eta = ("L1",100)
+eta = ("L1",40)
 MCTS_all_maximal_time = 300 
 MCTS_level_maximal_time = 60
 
@@ -23,7 +23,7 @@ NN.model.summary()
 dataset = DataSet(dataSetName,'testing')
 image = dataset.getInput(image_index)
 (label,confident) = NN.predict(image)
-print(label,confident)
+print("Working on input with index %s, whose class is %s and the confidence is %s."%(image_index,label,confident))
 
 tau = 1
 # choose between "cooperator" and "competitor"
@@ -56,6 +56,7 @@ while mcts.terminalNode(mcts.rootIndex) == False and mcts.terminatedByEta(mcts.r
         for node in newNodes: 
             (childTerminated, value) = mcts.sampling(node,availableActions)
             mcts.backPropagation(node,value)
+        printDict(mcts.cost)
             
     print("best possible one is %s"%(str(mcts.bestCase)))
     bestChild = mcts.bestChild(mcts.rootIndex)

@@ -154,7 +154,7 @@ class mcts:
         
     def treeTraversal(self,index):
         if self.fullyExpanded[index] == True: 
-            print("tree traversal on node %s with childrens %s"%(index, self.children[index]))
+            nprint("tree traversal on node %s with childrens %s"%(index, self.children[index]))
             allValues = {}
             for childIndex in self.children[index]: 
                 # UCB values
@@ -175,7 +175,7 @@ class mcts:
             return self.treeTraversal(nextIndex)
             
         else: 
-            print("tree traversal terminated on node %s"%(index))
+            nprint("tree traversal terminated on node %s"%(index))
             availableActions = copy.deepcopy(self.actions)
             for k in self.usedActionsID.keys(): 
                 for i in self.usedActionsID[k]: 
@@ -185,14 +185,14 @@ class mcts:
     def initialiseExplorationNode(self,index,availableActions):
         nprint("expanding %s"%(index))
         if self.keypoint[index] != 0: 
-            for (actionId, am) in availableActions[self.keypoint[index]].items() : #initialisePixelSets(self.model,self.image,list(set(self.manipulatedDimensions[index].keys() + self.usefulPixels))): 
+            for (actionId, am) in availableActions[self.keypoint[index]].items() : 
                 self.indexToNow += 1
                 self.keypoint[self.indexToNow] = 0 
                 self.indexToActionID[self.indexToNow] = actionId
                 self.initialiseLeafNode(self.indexToNow,index,am)
                 self.children[index].append(self.indexToNow)
         else: 
-            for kp in self.keypoints.keys() : #initialisePixelSets(self.model,self.image,list(set(self.manipulatedDimensions[index].keys() + self.usefulPixels))): 
+            for kp in self.keypoints.keys() : 
                 self.indexToNow += 1
                 self.keypoint[self.indexToNow] = kp
                 self.indexToActionID[self.indexToNow] = 0
@@ -210,15 +210,11 @@ class mcts:
             self.backPropagation(self.parent[index],value)
         else: 
             nprint("backPropagating ends on node %s"%(index))
-        
-            
-
-            
+                    
     # start random sampling and return the Euclidean value as the value
     def sampling(self,index,availableActions):
         nprint("start sampling node %s"%(index))
         availableActions2 = copy.deepcopy(availableActions)
-        #print(availableActions,self.keypoint[index],self.indexToActionID[index])
         availableActions2[self.keypoint[index]].pop(self.indexToActionID[index], None)
         sampleValues = []
         i = 0
@@ -235,15 +231,10 @@ class mcts:
             self.d = 2
             (childTerminated, val) = self.sampleNext(self.keypoint[index])
             sampleValues.append(val)
-            #if childTerminated == True: break
             i += 1
         return (childTerminated, max(sampleValues))
     
     def sampleNext(self,k): 
-        #print("k=%s"%k)
-        #for j in self.keypoints: 
-        #    print(len(self.availableActionIDs[j]))
-        #print("oooooooo")
         
         activations1 = self.moves.applyManipulation(self.image,self.atomicManipulationPath)
         (newClass,newConfident) = self.model.predict(activations1)
@@ -268,10 +259,8 @@ class mcts:
         if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
             nprint("sampling a path ends in a terminal node with self.depth %s... "%self.depth)
             
-            self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath,newClass)
-            
+            self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath)
             self.numAdv += 1
-
             if self.bestCase[0] < dist: 
                 self.numConverge += 1
                 self.bestCase = (dist,self.atomicManipulationPath)
@@ -309,23 +298,20 @@ class mcts:
             else: 
                 return self.sampleNext(0)
             
-    def scrutinizePath(self, manipulations, changedClass): 
+    def scrutinizePath(self, manipulations): 
         flag = False
-        for i in self.actions.keys(): 
-            if i != 0: 
-                for key, am in self.actions[i].items(): 
-                    if set(am.keys()).issubset(set(manipulations.keys())): 
-                        tempManipulations = copy.deepcopy(manipulations)
-                        for k in am.keys(): 
-                            tempManipulations[k] -= am[k]
-                        activations1 = self.moves.applyManipulation(self.image,tempManipulations)
-                        (newClass,newConfident) = self.model.predict(activations1)
-                        if newClass == self.originalClass:
-                            for k in am.keys(): 
-                                manipulations[k] -= am[k]
-                            flag = True
+        tempManipulations = copy.deepcopy(manipulations)
+        for k, v in manipulations.items(): 
+            tempManipulations[k] = 0
+            activations1 = self.moves.applyManipulation(self.image,tempManipulations)
+            (newClass,newConfident) = self.model.predict(activations1)
+            if newClass != self.originalClass:
+                manipulations.pop(k)
+                flag = True
+                break
+            
         if flag == True: 
-            return self.scrutinizePath(manipulations,changedClass)
+            return self.scrutinizePath(manipulations)
         else: 
             return manipulations
             

@@ -45,7 +45,6 @@ class game_moves:
             for i in range(len(kps)): 
                 oldpt = (kps[i].pt[0], kps[i].pt[1])
                 kps[i].pt = (int(oldpt[0]/imageEnlargeProportion),int(oldpt[1]/imageEnlargeProportion))
-                print(kps[i].pt)
         else: 
             kps = self.SIFT_Filtered_twoPlayer(image1)
 
@@ -84,14 +83,14 @@ class game_moves:
                 allAtomicManipulations.append(atomicManipulation)
                 
                 # - tau
-                atomicManipulation = {}   
-                if image0[x][y] == 0 and len(image1.shape) == 2:  
-                    atomicManipulation[(x,y)] = -1 * self.tau
-                elif image0[x][y] == 0: 
-                    atomicManipulation[(x,y,0)] = -1 * self.tau
-                    atomicManipulation[(x,y,1)] = -1 * self.tau
-                    atomicManipulation[(x,y,2)] = -1 * self.tau
-                allAtomicManipulations.append(atomicManipulation)
+                #atomicManipulation = {}   
+                #if image0[x][y] == 0 and len(image1.shape) == 2:  
+                #    atomicManipulation[(x,y)] = -1 * self.tau
+                #elif image0[x][y] == 0: 
+                #    atomicManipulation[(x,y,0)] = -1 * self.tau
+                #    atomicManipulation[(x,y,1)] = -1 * self.tau
+                #    atomicManipulation[(x,y,2)] = -1 * self.tau
+                #allAtomicManipulations.append(atomicManipulation)
                 
                 image0[x][y] = 1
 
