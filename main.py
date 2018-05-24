@@ -7,7 +7,7 @@ dataSetName = 'mnist'
 #dataSetName = 'cifar10'
 
 
-image_index = 1
+image_index = 3
 
 eta = ("L1",100)
 MCTS_all_maximal_time = 300 

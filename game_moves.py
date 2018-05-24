@@ -43,16 +43,18 @@ class game_moves:
     
         if max(image1.shape) < 100 and K.backend() == 'tensorflow': 
             image1 = cv2.resize(image1, (0,0), fx=imageEnlargeProportion, fy=imageEnlargeProportion)
-            kp = self.SIFT_Filtered_twoPlayer(image1)
+            kps = self.SIFT_Filtered_twoPlayer(image1)
+            for i in range(len(kps)): 
+                oldpt = (kps[i].pt[0], kps[i].pt[1])
+                kps[i].pt = (int(oldpt[0]/imageEnlargeProportion),int(oldpt[1]/imageEnlargeProportion))
+                print(kps[i].pt)
         else: 
-            #kp, des = SIFT_Filtered(image1)
-            kp = self.SIFT_Filtered_twoPlayer(image1)
+            kps = self.SIFT_Filtered_twoPlayer(image1)
 
-                  
-        print("%s keypoints are found. "%(len(kp)))
+        print("%s keypoints are found. "%(len(kps)))
     
         actions = {}
-        actions[0] = kp
+        actions[0] = kps
         s = 1
         kp2 = []
         
@@ -61,23 +63,20 @@ class game_moves:
         else: 
             image0 = np.zeros(image1.shape[:2])
 
-        numOfmanipulations = 0 
-        points_all = self.getPoints_twoPlayer(image1, kp)
+        # to compute a partition of the pixels, for an image classification task 
+        partitions = self.getPartition(image1, kps)
         print("The pixels are partitioned with respect to keypoints. ")
-        for k, points in points_all.items(): 
+        
+        numOfmanipulations = 0 
+        for k, blocks in partitions.items(): 
             allRegions = []
-            for i in range(len(points)):
-        #     print kp[i].pt
-                points[i] = (points[i][0]/imageEnlargeProportion, points[i][1]/imageEnlargeProportion)
-            points = list(set(points))
-            num = len(points)
-            i = 0
-            while i < num :
+
+            for i in range(len(blocks)) :
                 nexttau = {}
                 nextNumtau = {}    
                 ls = [] 
-                x = int(points[i][0])
-                y = int(points[i][1])
+                x = blocks[i][0]
+                y = blocks[i][1]
                 if image0[x][y] == 0 and len(image1.shape) == 2:  
                     ls.append((x,y))
                 elif image0[x][y] == 0: 
@@ -89,36 +88,38 @@ class game_moves:
                 if len(ls) > 0: 
                     for j in ls: 
                         nexttau[j] = self.tau
-                        nextNumtau[j] = 1 / self.tau            
+                        nextNumtau[j] = 1           
+                    oneRegion = (nexttau,nextNumtau,1)
+                    for j in ls: 
+                        nexttau[j] = self.tau
+                        nextNumtau[j] = -1           
                     oneRegion = (nexttau,nextNumtau,1)
                     allRegions.append(oneRegion)
-                i += 1
+
             actions[s] = allRegions
-            kp2.append(kp[s-1])
+            kp2.append(kps[s-1])
             s += 1
-            print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."%(len(allRegions), int(kp[k-1].pt[0]/imageEnlargeProportion), int(kp[k-1].pt[1]/imageEnlargeProportion),kp[k-1].response))
+            print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."%(len(allRegions), int(kps[k-1].pt[0]/imageEnlargeProportion), int(kps[k-1].pt[1]/imageEnlargeProportion),kps[k-1].response))
             numOfmanipulations += len(allRegions)
         actions[0] = kp2
         print("the number of all manipulations initialised: %s\n"%(numOfmanipulations))
         self.moves = actions
         
-    def applyManipulation(self,image,span,numSpan):
+    def applyManipulation(self,image,atomicManipulation,numberAtomicManipulation):
 
-        # toggle manipulation
+        # apply a specific manipulation to have a manipulated input
         image1 = copy.deepcopy(image)
         maxVal = np.max(image1)
         minVal = np.min(image1)
-        for elt in span.keys(): 
+        for elt in atomicManipulation.keys(): 
             if len(elt) == 2: 
                 (fst,snd) = elt 
-                if maxVal - image[fst][snd] < image[fst][snd] : image1[fst][snd] -= numSpan[elt] * span[elt]
-                else: image1[fst][snd] += numSpan[elt] * span[elt]
+                image1[fst][snd] += numberAtomicManipulation[elt] * atomicManipulation[elt]
                 if image1[fst][snd] < minVal: image1[fst][snd] = minVal
                 elif image1[fst][snd] > maxVal: image1[fst][snd] = maxVal
             elif len(elt) == 3: 
                 (fst,snd,thd) = elt 
-                if maxVal - image[fst][snd][thd] < image[fst][snd][thd] : image1[fst][snd][thd] -= numSpan[elt] * span[elt]
-                else: image1[fst][snd][thd] += numSpan[elt] * span[elt]
+                image1[fst][snd][thd] += numberAtomicManipulation[elt] * atomicManipulation[elt]
                 if image1[fst][snd][thd] < minVal: image1[fst][snd][thd] = minVal
                 elif image1[fst][snd][thd] > maxVal: image1[fst][snd][thd] = maxVal
         return image1
@@ -129,11 +130,12 @@ class game_moves:
         kp, des = sift.detectAndCompute(image,None)
         return  kp
     
-    def getPoints_twoPlayer(self,image, kps): 
+    def getPartition(self,image, kps): 
+        # get partition by keypoints
         import operator
         import random
-        maxNumOfPointPerKeyPoint = 100
-        points = {}
+        maxNumOfPixelsPerKeyPoint = 1000
+        blocks = {}
         if self.data_set != "imageNet": 
             for x in range(max(image.shape)): 
                 for y in range(max(image.shape)): 
@@ -142,32 +144,30 @@ class game_moves:
                     for i in range(1, len(kps)+1): 
                         k = kps[i-1]
                         dist2 = np.linalg.norm(np.array([x,y]) - np.array([k.pt[0],k.pt[1]]))
-                   #print("aaa(%s,%s)"%(k.pt[0],k.pt[1]))
                         ps2 = norm.pdf(dist2, loc=0.0, scale=k.size)
                         if ps2 > ps: 
                             ps = ps2
                             maxk = i
-                #maxk = max(ps.iteritems(), key=operator.itemgetter(1))[0]
-                    if maxk in points.keys(): 
-                        points[maxk].append((x,y))
-                    else: points[maxk] = [(x,y)]
-            if maxNumOfPointPerKeyPoint > 0: 
-                for mk in points.keys():
-                    beginingNum = len(points[mk])
-                    for i in range(beginingNum - maxNumOfPointPerKeyPoint): 
-                        points[mk].remove(random.choice(points[mk]))
-            return points
+                    if maxk in blocks.keys(): 
+                        blocks[maxk].append((x,y))
+                    else: blocks[maxk] = [(x,y)]
+            if maxNumOfPixelsPerKeyPoint > 0: 
+                for mk in blocks.keys():
+                    beginingNum = len(blocks[mk])
+                    for i in range(beginingNum - maxNumOfPixelsPerKeyPoint): 
+                        blocks[mk].remove(random.choice(blocks[mk]))
+            return blocks
         else: 
             kps = kps[:200]
             eachNum = max(image.shape) ** 2 / len(kps)
             maxk = 1
-            points[maxk] = []
+            blocks[maxk] = []
             for x in range(max(image.shape)): 
                 for y in range(max(image.shape)): 
-                    if len(points[maxk]) <= eachNum: 
-                        points[maxk].append((x,y))
+                    if len(blocks[maxk]) <= eachNum: 
+                        blocks[maxk].append((x,y))
                     else: 
                         maxk += 1
-                        points[maxk] = [(x,y)]   
-            return points             
+                        blocks[maxk] = [(x,y)]   
+            return blocks             
     
