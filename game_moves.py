@@ -64,6 +64,7 @@ class game_moves:
         partitions = self.getPartition(image1, kps)
         print("The pixels are partitioned with respect to keypoints. ")
         
+        # construct moves according to the obtained the partitions 
         numOfmanipulations = 0 
         for k, blocks in partitions.items(): 
             allAtomicManipulations = []

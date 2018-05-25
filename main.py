@@ -3,12 +3,13 @@ from neural_network import *
 from data_set import *
 from mcts import *
 
-dataSetName = 'mnist'
-#dataSetName = 'cifar10'
+#dataSetName = 'mnist'
+dataSetName = 'cifar10'
 
 
 image_index = 3
 
+gameType = "cooperator"  # "competitor"
 eta = ("L1",40)
 MCTS_all_maximal_time = 300 
 MCTS_level_maximal_time = 60
@@ -27,7 +28,7 @@ print("Working on input with index %s, whose class is %s and the confidence is %
 
 tau = 1
 # choose between "cooperator" and "competitor"
-mcts = mcts(dataSetName, NN, image_index, image, "cooperator", tau, eta)
+mcts = mcts(dataSetName, NN, image_index, image, gameType, tau, eta)
 mcts.initialiseMoves()
 
 start_time_all = time.time()
@@ -35,12 +36,12 @@ runningTime_all = 0
 numberOfMoves = 0
 while mcts.terminalNode(mcts.rootIndex) == False and mcts.terminatedByEta(mcts.rootIndex) == False and runningTime_all <= MCTS_all_maximal_time: 
     print("the number of moves we have made up to now: %s"%(numberOfMoves))
-    eudist = mcts.euclideanDist(mcts.rootIndex)
+    eudist = mcts.l2Dist(mcts.rootIndex)
     l1dist = mcts.l1Dist(mcts.rootIndex)
     l0dist = mcts.l0Dist(mcts.rootIndex)
     percent = mcts.diffPercent(mcts.rootIndex)
     diffs = mcts.diffImage(mcts.rootIndex)
-    print("euclidean distance %s"%(eudist))
+    print("L2 distance %s"%(eudist))
     print("L1 distance %s"%(l1dist))
     print("L0 distance %s"%(l0dist))
     print("manipulated percentage distance %s"%(percent))

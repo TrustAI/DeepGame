@@ -20,8 +20,8 @@ from basics import *
 from game_moves import *
 
 
-MCTS_multi_samples = 3
-effectiveConfidenceWhenChanging = 0.8
+MCTS_multi_samples = 1
+effectiveConfidenceWhenChanging = 0.0
 explorationRate = math.sqrt(2)        
 
 
@@ -79,8 +79,6 @@ class mcts:
         self.depth = 0
         self.availableActionIDs = []
         self.usedActionIDs = [] 
-        self.accDims = [] 
-        self.d =0
 
     def initialiseMoves(self): 
         # initialise actions according to the type of manipulations
@@ -106,7 +104,7 @@ class mcts:
         self.children[index] = []
         self.fullyExpanded[index] = False
         self.numberOfVisited[index] = 0    
-        activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
+        #activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
 
 
     def destructor(self): 
@@ -227,8 +225,6 @@ class mcts:
             self.usedActionIDs = {}
             for k in self.keypoints.keys(): 
                 self.usedActionIDs[k] = []             
-            self.accDims = [] 
-            self.d = 2
             (childTerminated, val) = self.sampleNext(self.keypoint[index])
             sampleValues.append(val)
             i += 1
@@ -239,7 +235,7 @@ class mcts:
         activations1 = self.moves.applyManipulation(self.image,self.atomicManipulationPath)
         (newClass,newConfident) = self.model.predict(activations1)
         (distMethod,distVal) = self.eta
-        if distMethod == "euclidean": 
+        if distMethod == "L2": 
             dist = l2Distance(activations1,self.image) 
             termValue = 0.0
             termByDist = dist > distVal
@@ -256,24 +252,26 @@ class mcts:
             termValue = 0.0
             termByDist = dist > distVal
 
+        # need not only class change, but also high confidence adversary examples
         if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
             nprint("sampling a path ends in a terminal node with self.depth %s... "%self.depth)
-            
             self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath)
             self.numAdv += 1
-            if self.bestCase[0] < dist: 
+            if self.bestCase[0] > dist: 
                 self.numConverge += 1
                 self.bestCase = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
-
             return (self.depth == 0, dist)
+            
         elif termByDist == True: 
             nprint("sampling a path ends by controlled search with self.depth %s ... "%self.depth)
             return (self.depth == 0, termValue)
+            
         elif list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])) == []: 
             nprint("sampling a path ends with self.depth %s because no more actions can be taken ... "%self.depth)
             return (self.depth == 0, termValue)
+            
         else: 
             #print("continue sampling node ... ")
             randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k]))) #random.randint(0, len(allChildren)-1)
@@ -286,10 +284,6 @@ class mcts:
             newManipulationPath = mergeTwoDicts(self.atomicManipulationPath,nextAtomicManipulation)
             activations2 = self.moves.applyManipulation(self.image,newManipulationPath)
             (newClass2,newConfident2) = self.model.predict(activations2)
-            confGap2 = newConfident - newConfident2
-            if newClass2 == newClass: 
-                self.accDims.append((randomActionIndex,confGap2))
-            else: self.accDims.append((randomActionIndex,1.0))
 
             self.atomicManipulationPath = newManipulationPath
             self.depth = self.depth+1
@@ -323,7 +317,7 @@ class mcts:
     def terminatedByEta(self,index): 
         activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         (distMethod,distVal) = self.eta
-        if distMethod == "euclidean": 
+        if distMethod == "L2": 
             dist = l2Distance(activations1,self.image) 
         elif distMethod == "L1": 
             dist = l1Distance(activations1,self.image) 
@@ -338,7 +332,7 @@ class mcts:
         activations1 = self.moves.applyManipulation(self.image,manipulation)
         return activations1
         
-    def euclideanDist(self,index): 
+    def l2Dist(self,index): 
         activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         return l2Distance(self.image,activations1)
         
