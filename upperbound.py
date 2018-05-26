@@ -78,6 +78,8 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
         runningTime_all = time.time() - start_time_all  
         
     (_,bestManipulation) = mctsInstance.bestCase
+    if gameType == 'competitive':
+        print("max features are %s"%mctsInstance.bestFeatures())
     image1 = mctsInstance.applyManipulationToGetImage(bestManipulation)
     (newClass,newConfident) = NN.predict(image1)
     newClassStr = NN.LABELS(int(newClass))

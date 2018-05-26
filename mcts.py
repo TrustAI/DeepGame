@@ -78,6 +78,7 @@ class mcts:
         self.depth = 0
         self.availableActionIDs = []
         self.usedActionIDs = [] 
+        
 
     def initialiseMoves(self): 
         # initialise actions according to the type of manipulations
@@ -353,4 +354,18 @@ class mcts:
         activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         return diffPercent(self.image,activations1)
     
+    def bestFeatures(self):
+        bestManipulation = self.bestCase[1] 
+        maxdims = []
+        for i in range(1,len(self.actions)):
+            md = []
+            flag = False 
+            for k, v in bestManipulation.items(): 
+                for m in self.actions[i]: 
+                    md.append(m.keys())
+                    if k in m.keys(): 
+                        flag = True
+            if flag == True: 
+                maxdims += md 
+        return maxdims
         

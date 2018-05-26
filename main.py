@@ -21,7 +21,7 @@ if len(sys.argv) == 8:
         print("please specify as the 2nd argumemnt the bound: ub or lb ")
         exit
     
-    if sys.argv[3] == 'cooperative' or sys.argv[2] == 'competitive': 
+    if sys.argv[3] == 'cooperative' or sys.argv[3] == 'competitive': 
         gameType =  sys.argv[3] 
     else: 
         print("please specify as the 3nd argumemnt the game mode: cooperative or competitive ")
