@@ -5,6 +5,8 @@ from mcts import *
 
 def upperbound(dataSetName,bound,gameType,image_index,eta):
 
+    start_time = time.time()
+
     MCTS_all_maximal_time = 300 
     MCTS_level_maximal_time = 60
 
