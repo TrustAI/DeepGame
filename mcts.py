@@ -263,6 +263,8 @@ class mcts:
                 self.bestCase = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
+                if gameType == 'competitive':
+                    print("max features are %s"%self.bestFeatures())
             return (self.depth == 0, dist)
             
         elif dist > distVal: 
@@ -361,9 +363,9 @@ class mcts:
             md = []
             flag = False 
             for k, v in bestManipulation.items(): 
-                for m in self.actions[i]: 
-                    md.append(m.keys())
-                    if k in m.keys(): 
+                for k1, v1 in self.actions[i]: 
+                    md.append(v1.keys())
+                    if k in v1.keys(): 
                         flag = True
             if flag == True: 
                 maxdims += md 
