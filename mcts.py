@@ -25,7 +25,6 @@ effectiveConfidenceWhenChanging = 0.0
 explorationRate = math.sqrt(2)        
 
 
-
 class mcts:
 
     def __init__(self, data_set, model, image_index, image, player_mode, tau, eta):
