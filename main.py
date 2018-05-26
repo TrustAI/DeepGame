@@ -65,7 +65,7 @@ while mcts.terminalNode(mcts.rootIndex) == False and mcts.terminatedByEta(mcts.r
                 
     image1 = mcts.applyManipulationToGetImage(mcts.manipulation[mcts.rootIndex])
     diffs = mcts.diffImage(mcts.rootIndex)
-    path0="%s/%s_temp_%s.png"%(directory_pic_string,startIndexOfImage,len(diffs))
+    path0="%s_pic/%s_temp_%s.png"%(dataSetName,startIndexOfImage,len(diffs))
     dataBasics.save(-1,image1,path0)
     (newClass,newConfident) = NN.predictWithImage(model,image1)
     print("confidence: %s"%(newConfident))
@@ -75,7 +75,7 @@ while mcts.terminalNode(mcts.rootIndex) == False and mcts.terminatedByEta(mcts.r
     # store the current best
     (_,bestatomicManipulation,bestnumberAtomicManipulation) = mcts.bestCase
     image1 = mcts.applyManipulationToGetImage(bestatomicManipulation,bestnumberAtomicManipulation)
-    path0="%s/%s_currentBemcts.png"%(directory_pic_string,startIndexOfImage)
+    path0="%s_pic/%s_currentBest.png"%(dataSetName,startIndexOfImage)
     dataBasics.save(-1,image1,path0)
                 
     numberOfMoves += 1
