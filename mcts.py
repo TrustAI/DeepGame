@@ -249,7 +249,7 @@ class mcts:
 
         # need not only class change, but also high confidence adversary examples
         if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
-            print("sampling a path ends in a terminal node with depth %s... "%self.depth)
+            nprint("sampling a path ends in a terminal node with depth %s... "%self.depth)
             self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath)
             self.numAdv += 1
             nprint("current best %s, considered to be replaced by %s"%(self.bestCase[0],dist))
@@ -262,11 +262,11 @@ class mcts:
             return (self.depth == 0, dist)
             
         elif dist > distVal: 
-            print("sampling a path ends by eta with depth %s ... "%self.depth)
+            nprint("sampling a path ends by eta with depth %s ... "%self.depth)
             return (self.depth == 0, distVal)
             
         elif list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])) == []: 
-            print("sampling a path ends with depth %s because no more actions can be taken ... "%self.depth)
+            nprint("sampling a path ends with depth %s because no more actions can be taken ... "%self.depth)
             return (self.depth == 0, dist)
             
         else: 
