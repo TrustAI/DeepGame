@@ -231,7 +231,7 @@ class mcts:
             (childTerminated, val) = self.sampleNext(self.keypoint[index])
             sampleValues.append(val)
             i += 1
-        return (childTerminated, max(sampleValues))
+        return (childTerminated, min(sampleValues))
     
     def sampleNext(self,k): 
         
