@@ -182,9 +182,9 @@ class mcts:
         else: 
             nprint("tree traversal terminated on node %s"%(index))
             availableActions = copy.deepcopy(self.actions)
-            for k in self.usedActionsID.keys(): 
-                for i in self.usedActionsID[k]: 
-                    availableActions[k].pop(i, None)
+            #for k in self.usedActionsID.keys(): 
+            #    for i in self.usedActionsID[k]: 
+            #        availableActions[k].pop(i, None)
             return (index,availableActions)
         
     def initialiseExplorationNode(self,index,availableActions):
@@ -220,7 +220,7 @@ class mcts:
     def sampling(self,index,availableActions):
         nprint("start sampling node %s"%(index))
         availableActions2 = copy.deepcopy(availableActions)
-        availableActions2[self.keypoint[index]].pop(self.indexToActionID[index], None)
+        #availableActions2[self.keypoint[index]].pop(self.indexToActionID[index], None)
         sampleValues = []
         i = 0
         for i in range(MCTS_multi_samples): 
@@ -275,13 +275,14 @@ class mcts:
             
         else: 
             #print("continue sampling node ... ")
-            randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k]))) #random.randint(0, len(allChildren)-1)
+            #randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k]))) 
+            randomActionIndex = random.choice(self.availableActionIDs[k]) 
             if k == 0: 
                 nextAtomicManipulation = {}
             else: 
                 nextAtomicManipulation = self.actions[k][randomActionIndex]
-                self.availableActionIDs[k].remove(randomActionIndex)
-                self.usedActionIDs[k].append(randomActionIndex)
+                #self.availableActionIDs[k].remove(randomActionIndex)
+                #self.usedActionIDs[k].append(randomActionIndex)
             newManipulationPath = mergeTwoDicts(self.atomicManipulationPath,nextAtomicManipulation)
             activations2 = self.moves.applyManipulation(self.image,newManipulationPath)
             (newClass2,newConfident2) = self.model.predict(activations2)

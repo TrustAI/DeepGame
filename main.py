@@ -7,7 +7,7 @@ from upperbound import upperbound
 
 #the first way of defining paramters
 
-if len(sys.argv) == 7: 
+if len(sys.argv) == 8: 
 
     if sys.argv[1] == 'mnist' or sys.argv[1] == 'cifar10': 
         dataSetName = sys.argv[1]
@@ -39,12 +39,19 @@ if len(sys.argv) == 7:
         print("please specify as the 5th argument the distancemeasure: L1 or L2 ")
         exit
     
-    if isinstance(int(sys.argv[6]),int) or isinstance(int(sys.argv[6]),float): 
+    if isinstance(float(sys.argv[6]),float): 
         distance = float(sys.argv[6])
     else: 
         print("please specify as the 6th argument the distance: [int/float] ")
         exit
     eta = (distanceMeasure,distance)
+    
+    if isinstance(float(sys.argv[7]),float): 
+        tau = float(sys.argv[7])
+    else: 
+        print("please specify as the 7th argument the tau: [int/float] ")
+        exit
+
 
 elif len(sys.argv) == 1: 
 # the second way of defining parameters
@@ -53,11 +60,12 @@ elif len(sys.argv) == 1:
     gameType = 'cooperative'
     image_index = 3
     eta = ("L1",40)
+    tau = 0.5
     
 # calling algorithms 
 
 if bound ==  'ub': 
-    upperbound(dataSetName,bound,gameType,image_index,eta)
+    upperbound(dataSetName,bound,tau,gameType,image_index,eta)
 else: 
     print("lower bound algorithm is developing...")
     exit

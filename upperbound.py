@@ -3,7 +3,7 @@ from neural_network import *
 from data_set import *
 from mcts import *
 
-def upperbound(dataSetName,bound,gameType,image_index,eta):
+def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
 
     start_time = time.time()
 
