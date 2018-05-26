@@ -79,7 +79,7 @@ def upperbound(dataSetName,bound,gameType,image_index,eta):
     (newClass,newConfident) = NN.predict(image1)
     newClassStr = NN.LABELS(int(newClass))
                 
-    if newClass != originalClass:   
+    if newClass != label:   
         path0="%s_pic/%s_%s_modified_into_%s_with_confidence_%s.png"%(dataSetName,image_index, origClassStr,newClassStr,newConfident)
         NN.saveInput(image1,path0)
         path0="%s_pic/%s_diff.png"%(dataSetName,image_index)
