@@ -73,25 +73,37 @@ class game_moves:
                 x = blocks[i][0]
                 y = blocks[i][1]
                 
-                # + tau
-                atomicManipulation = {}   
+                # + tau 
                 if image0[x][y] == 0 and len(image1.shape) == 2:  
+                    atomicManipulation = {}  
                     atomicManipulation[(x,y)] = self.tau
+                    allAtomicManipulations.append(atomicManipulation)
                 elif image0[x][y] == 0: 
+                    atomicManipulation = {}
                     atomicManipulation[(x,y,0)] = self.tau
+                    allAtomicManipulations.append(atomicManipulation)
+                    atomicManipulation = {}
                     atomicManipulation[(x,y,1)] = self.tau
+                    allAtomicManipulations.append(atomicManipulation)
+                    atomicManipulation = {}
                     atomicManipulation[(x,y,2)] = self.tau
-                allAtomicManipulations.append(atomicManipulation)
+                    allAtomicManipulations.append(atomicManipulation)
                 
-                # - tau
-                atomicManipulation = {}   
+                # - tau   
                 if image0[x][y] == 0 and len(image1.shape) == 2:  
+                    atomicManipulation = {}
                     atomicManipulation[(x,y)] = -1 * self.tau
+                    allAtomicManipulations.append(atomicManipulation)
                 elif image0[x][y] == 0: 
+                    atomicManipulation = {}
                     atomicManipulation[(x,y,0)] = -1 * self.tau
+                    allAtomicManipulations.append(atomicManipulation)
+                    atomicManipulation = {}
                     atomicManipulation[(x,y,1)] = -1 * self.tau
+                    allAtomicManipulations.append(atomicManipulation)
+                    atomicManipulation = {}
                     atomicManipulation[(x,y,2)] = -1 * self.tau
-                allAtomicManipulations.append(atomicManipulation)
+                    allAtomicManipulations.append(atomicManipulation)
                 
                 image0[x][y] = 1
 
