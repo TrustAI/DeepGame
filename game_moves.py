@@ -148,7 +148,7 @@ class game_moves:
         # get partition by keypoints
         import operator
         import random
-        maxNumOfPixelsPerKeyPoint = 2^100
+        maxNumOfPixelsPerKeyPoint = 1000000
         blocks = {}
         if self.data_set != "imageNet": 
             for x in range(max(image.shape)): 
