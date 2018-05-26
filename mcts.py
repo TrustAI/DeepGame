@@ -363,7 +363,7 @@ class mcts:
             md = []
             flag = False 
             for k, v in bestManipulation.items(): 
-                for k1, v1 in self.actions[i]: 
+                for k1, v1 in self.actions[i].items(): 
                     md.append(v1.keys())
                     if k in v1.keys(): 
                         flag = True
