@@ -214,7 +214,7 @@ class mcts:
                     
     # start random sampling and return the Euclidean value as the value
     def sampling(self,index,availableActions):
-        print("start sampling node %s"%(index))
+        nprint("start sampling node %s"%(index))
         availableActions2 = copy.deepcopy(availableActions)
         availableActions2[self.keypoint[index]].pop(self.indexToActionID[index], None)
         sampleValues = []
