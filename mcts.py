@@ -68,7 +68,7 @@ class mcts:
         self.indexToActionID = {}
 
         # best case
-        self.bestCase = (0,{},{})
+        self.bestCase = (2^20,{},{})
         self.numConverge = 0 
         
         # number of adversarial exmaples
@@ -257,7 +257,9 @@ class mcts:
             nprint("sampling a path ends in a terminal node with self.depth %s... "%self.depth)
             self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath)
             self.numAdv += 1
+            nprint("current best %s, considered to be replaced by %s"%(self.bestCase[0],dist))
             if self.bestCase[0] > dist: 
+                nprint("update best case from %s to %s"%(self.bestCase[0], dist))
                 self.numConverge += 1
                 self.bestCase = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
