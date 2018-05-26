@@ -83,7 +83,7 @@ class game_moves:
                     atomicManipulation[(x,y,2)] = self.tau
                 allAtomicManipulations.append(atomicManipulation)
                 
-                 - tau
+                # - tau
                 atomicManipulation = {}   
                 if image0[x][y] == 0 and len(image1.shape) == 2:  
                     atomicManipulation[(x,y)] = -1 * self.tau
