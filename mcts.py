@@ -364,10 +364,10 @@ class mcts:
             flag = False 
             for k, v in bestManipulation.items(): 
                 for k1, v1 in self.actions[i].items(): 
-                    md.append(v1.keys())
+                    md.append(list(v1.keys()))
                     if k in v1.keys(): 
                         flag = True
             if flag == True: 
                 maxdims += md 
-        return list(maxdims)
+        return maxdims
         
