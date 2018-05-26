@@ -369,5 +369,5 @@ class mcts:
                         flag = True
             if flag == True: 
                 maxdims += md 
-        return maxdims
+        return list(maxdims)
         
