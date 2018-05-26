@@ -61,4 +61,8 @@ if bound ==  'ub':
 else: 
     print("lower bound algorithm is developing...")
     exit
+    
+from keras import backend as K
+
+K.clear_session()
 
