@@ -27,12 +27,12 @@ explorationRate = math.sqrt(2)
 
 class mcts:
 
-    def __init__(self, data_set, model, image_index, image, player_mode, tau, eta):
+    def __init__(self, data_set, model, image_index, image, gameType, tau, eta):
         self.data_set = data_set
         self.image_index = image_index
         self.image = image
         self.model = model
-        self.player_mode = player_mode
+        self.gameType = gameType
         self.tau = tau
         self.eta = eta
         
@@ -152,7 +152,7 @@ class mcts:
         for childIndex in self.children[index]: 
             allValues[childIndex] = self.cost[childIndex] / float(self.numberOfVisited[childIndex])
         nprint("finding best children from %s"%(allValues))
-        if self.player_mode == "competitive" and self.keypoint[index] == 0: 
+        if self.gameType == "competitive" and self.keypoint[index] == 0: 
             return max(allValues.items(), key=operator.itemgetter(1))[0]
         else: 
             return min(allValues.items(), key=operator.itemgetter(1))[0]
@@ -165,7 +165,7 @@ class mcts:
                 # UCB values
                 allValues[childIndex] = (self.cost[childIndex] / float(self.numberOfVisited[childIndex])) + explorationRate * math.sqrt(math.log(self.numberOfVisited[index]) / float(self.numberOfVisited[childIndex]))
 
-            if self.player_mode == "competitive" and self.keypoint[index] == 0 :
+            if self.gameType == "competitive" and self.keypoint[index] == 0 :
                 nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues.values()) for x in allValues.values()])[0] 
             else: 
                 allValues2 = {}
