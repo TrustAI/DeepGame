@@ -68,8 +68,51 @@ def upperbound(dataSetName,bound,gameType,image_index,eta):
         # store the current best
         (_,bestManipulation) = mctsInstance.bestCase
         image1 = mctsInstance.applyManipulationToGetImage(bestManipulation)
-        path0="%s_pic/%s_currentBest.png"%(dataSetName,image_index)
+        path0="%s_pic/%s_currentBemctsInstance.png"%(dataSetName,image_index)
         NN.saveInput(image1,path0)
                 
         numberOfMoves += 1
         runningTime_all = time.time() - start_time_all  
+        
+    (_,bestManipulation) = mctsInstance.bestCase
+    image1 = mctsInstance.applyManipulationToGetImage(bestManipulation)
+    (newClass,newConfident) = NN.predict(image1)
+    newClassStr = NN.LABELS(int(newClass))
+                
+    if newClass != originalClass:   
+        path0="%s_pic/%s_%s_modified_into_%s_with_confidence_%s.png"%(dataSetName,image_index, origClassStr,newClassStr,newConfident)
+        NN.saveInput(image1,path0)
+        path0="%s_pic/%s_diff.png"%(dataSetName,image_index)
+        NN.saveInput(np.subtract(image,image1),path0)
+        print("\nfound an adversary image within prespecified bounded computational resource. The following is its information: ")
+        print("difference between images: %s"%(diffImage(image,image1)))
+
+        #mctsInstance.showDecisionTree()
+        #pixelImages = mctsInstance.analysePixels()
+        #advImages = mctsInstance.analyseAdv.analyse()
+        #for (v,pixelImage) in pixelImages: 
+        #    path0="%s/%s_useful_%s.png"%(dataSetName,image_index,v)
+        #    NN.saveInput(-1,pixelImage,path0)
+            
+        #for i in range(len(advImages)): 
+        #    (advnum,advimg) = advImages[i]
+        #    (advClass,advConfident) = NN.predictWithImage(model,advimg)
+        #    advClassStr = dataBasics.LABELS(int(advClass))
+        #    path0="%s/%s_adv_%s_%s_%s.png"%(dataSetName,image_index,i,advnum,advClassStr)
+        #    NN.saveInput(-1,advimg,path0)
+        
+        print("number of adversarial examples found: %s"%(mctsInstance.numAdv))
+    
+        l2dist = l2Distance(mctsInstance.image,image1)
+        l1dist = l1Distance(mctsInstance.image,image1)
+        l0dist = l0Distance(mctsInstance.image,image1)
+        percent = diffPercent(mctsInstance.image,image1)
+        print("L2 distance %s"%(l2dist))
+        print("L1 distance %s"%(l1dist))
+        print("L0 distance %s"%(l0dist))
+        print("manipulated percentage distance %s"%(percent))
+        print("class is changed into %s with confidence %s\n"%(newClassStr, newConfident))
+    else: 
+        print("\nfailed to find an adversary image within prespecified bounded computational resource. ")
+                                
+    runningTime = time.time() - start_time   

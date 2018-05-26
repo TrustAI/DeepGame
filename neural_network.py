@@ -195,4 +195,15 @@ class NeuralNetwork:
 
             image_cv = copy.deepcopy(image)
 
-            cv2.imwrite(filename, image_cv * 255.0,  [cv2.IMWRITE_PNG_COMPRESSION, 9])
+            cv2.imwrite(filename, image_cv * 255.0,  [cv2.IMWRITE_PNG_COMPRESSION, 9])\
+            
+    def LABELS(self,index):
+        if self.data_set == 'mnist':
+            labels = ['0', '1', '2', '3', '4', '5', '6',
+                  '7', '8', '9']
+        elif self.data_set == 'cifar10':
+            labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog',
+                  'horse', 'ship', 'truck']
+        else:
+            print("LABELS: Unsupported dataset.")
+        return labels[index]

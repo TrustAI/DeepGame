@@ -127,7 +127,11 @@ class mcts:
     # move one step forward
     # it means that we need to remove children other than the new root
     def makeOneMove(self,newRootIndex): 
-        print("making a move into the new root %s, whose value is %s and visited number is %s"%(newRootIndex,self.cost[newRootIndex],self.numberOfVisited[newRootIndex]))
+        if self.keypoint[newRootIndex] != 0: 
+            player = "the first player"
+        else: 
+            player = "the second player"
+        print("%s making a move into the new root %s, whose value is %s and visited number is %s"%(player, newRootIndex,self.cost[newRootIndex],self.numberOfVisited[newRootIndex]))
         self.removeChildren(self.rootIndex,[newRootIndex])
         self.rootIndex = newRootIndex
     
@@ -267,7 +271,7 @@ class mcts:
             
         elif list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])) == []: 
             nprint("sampling a path ends with depth %s because no more actions can be taken ... "%self.depth)
-            return (self.depth == 0, dist)
+            return (self.depth == 0, distVal)
             
         else: 
             #print("continue sampling node ... ")
