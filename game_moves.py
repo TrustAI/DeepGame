@@ -97,11 +97,11 @@ class game_moves:
                 elif image0[x][y] == 0: 
                     atomicManipulation = {}
                     atomicManipulation[(x,y,0)] = -1 * self.tau
-                    allAtomicManipulations.append(atomicManipulation)
-                    atomicManipulation = {}
+                    #allAtomicManipulations.append(atomicManipulation)
+                    #atomicManipulation = {}
                     atomicManipulation[(x,y,1)] = -1 * self.tau
-                    allAtomicManipulations.append(atomicManipulation)
-                    atomicManipulation = {}
+                    #allAtomicManipulations.append(atomicManipulation)
+                    #atomicManipulation = {}
                     atomicManipulation[(x,y,2)] = -1 * self.tau
                     allAtomicManipulations.append(atomicManipulation)
                 
