@@ -68,7 +68,7 @@ class mcts:
         self.indexToActionID = {}
 
         # best case
-        self.bestCase = (2^20,{},{})
+        self.bestCase = (2^20,{})
         self.numConverge = 0 
         
         # number of adversarial exmaples
@@ -148,7 +148,10 @@ class mcts:
         for childIndex in self.children[index]: 
             allValues[childIndex] = self.cost[childIndex] / float(self.numberOfVisited[childIndex])
         nprint("finding best children from %s"%(allValues))
-        return max(allValues.items(), key=operator.itemgetter(1))[0]
+        if self.player_mode == "competitive" and self.keypoint[index] == 0: 
+            return max(allValues.items(), key=operator.itemgetter(1))[0]
+        else: 
+            return min(allValues.items(), key=operator.itemgetter(1))[0]
         
     def treeTraversal(self,index):
         if self.fullyExpanded[index] == True: 
@@ -158,13 +161,13 @@ class mcts:
                 # UCB values
                 allValues[childIndex] = (self.cost[childIndex] / float(self.numberOfVisited[childIndex])) + explorationRate * math.sqrt(math.log(self.numberOfVisited[index]) / float(self.numberOfVisited[childIndex]))
 
-            if self.player_mode == "competitive " and self.keypoint[index] == 0 : 
+            if self.player_mode == "competitive" and self.keypoint[index] == 0 :
+                nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues.values()) for x in allValues.values()])[0] 
+            else: 
                 allValues2 = {}
                 for k,v in allValues.items(): 
                      allValues2[k] = 1 / float(allValues[k])
                 nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues2.values()) for x in allValues2.values()])[0]
-            else: 
-                nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues.values()) for x in allValues.values()])[0]
 
             if self.keypoint[index] in self.usedActionsID.keys() and self.keypoint[index] != 0 : 
                 self.usedActionsID[self.keypoint[index]].append(self.indexToActionID[index])
@@ -211,7 +214,7 @@ class mcts:
                     
     # start random sampling and return the Euclidean value as the value
     def sampling(self,index,availableActions):
-        nprint("start sampling node %s"%(index))
+        print("start sampling node %s"%(index))
         availableActions2 = copy.deepcopy(availableActions)
         availableActions2[self.keypoint[index]].pop(self.indexToActionID[index], None)
         sampleValues = []
@@ -237,42 +240,34 @@ class mcts:
         (distMethod,distVal) = self.eta
         if distMethod == "L2": 
             dist = l2Distance(activations1,self.image) 
-            termValue = 0.0
-            termByDist = dist > distVal
         elif distMethod == "L1": 
             dist = l1Distance(activations1,self.image) 
-            termValue = 0.0
-            termByDist = dist > distVal
         elif distMethod == "Percentage": 
             dist = diffPercent(activations1,self.image)
-            termValue = 0.0
-            termByDist = dist > distVal
         elif distMethod == "NumDiffs": 
             dist =  diffPercent(activations1,self.image) * self.image.size
-            termValue = 0.0
-            termByDist = dist > distVal
 
         # need not only class change, but also high confidence adversary examples
         if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
-            nprint("sampling a path ends in a terminal node with self.depth %s... "%self.depth)
+            print("sampling a path ends in a terminal node with depth %s... "%self.depth)
             self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath)
             self.numAdv += 1
             nprint("current best %s, considered to be replaced by %s"%(self.bestCase[0],dist))
             if self.bestCase[0] > dist: 
-                nprint("update best case from %s to %s"%(self.bestCase[0], dist))
+                print("update best case from %s to %s"%(self.bestCase[0], dist))
                 self.numConverge += 1
                 self.bestCase = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
             return (self.depth == 0, dist)
             
-        elif termByDist == True: 
-            nprint("sampling a path ends by controlled search with self.depth %s ... "%self.depth)
-            return (self.depth == 0, termValue)
+        elif dist > distVal: 
+            print("sampling a path ends by eta with depth %s ... "%self.depth)
+            return (self.depth == 0, distVal)
             
         elif list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])) == []: 
-            nprint("sampling a path ends with self.depth %s because no more actions can be taken ... "%self.depth)
-            return (self.depth == 0, termValue)
+            print("sampling a path ends with depth %s because no more actions can be taken ... "%self.depth)
+            return (self.depth == 0, dist)
             
         else: 
             #print("continue sampling node ... ")
