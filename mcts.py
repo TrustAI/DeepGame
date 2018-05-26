@@ -263,7 +263,7 @@ class mcts:
                 self.bestCase = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
-                if gameType == 'competitive':
+                if self.gameType == 'competitive':
                     print("max features are %s"%self.bestFeatures())
             return (self.depth == 0, dist)
             
