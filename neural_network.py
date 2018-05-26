@@ -35,7 +35,7 @@ class NeuralNetwork:
     # To train a neural network.
     def train_network(self):
         # Train an mnist model.
-        if self.data_set is 'mnist':
+        if self.data_set == 'mnist':
             batch_size = 128
             num_classes = 10
             epochs = 50
@@ -85,7 +85,7 @@ class NeuralNetwork:
             self.model = model
 
         # Train a cifar10 model.
-        elif self.data_set is 'cifar10':
+        elif self.data_set == 'cifar10':
             batch_size = 128
             num_classes = 10
             epochs = 50
@@ -159,33 +159,33 @@ class NeuralNetwork:
             self.model = model
 
         else:
-            print("Unsupported dataset. Try 'mnist' or 'cifar10'.")
+            print("Unsupported dataset %s. Try 'mnist' or 'cifar10'."%data_set)
 
     # To save the neural network to disk.
     def save_network(self):
-        if self.data_set is 'mnist':
+        if self.data_set == 'mnist':
             self.model.save('models/mnist.h5')
             print("Neural network saved to disk.")
 
-        elif self.data_set is 'cifar10':
+        elif self.data_set == 'cifar10':
             self.model.save('models/cifar10.h5')
             print("Neural network saved to disk.")
 
         else:
-            print("Unsupported dataset.")
+            print("save_network: Unsupported dataset.")
 
     # To load a neural network from disk.
     def load_network(self):
-        if self.data_set is 'mnist':
+        if self.data_set == 'mnist':
             self.model = load_model('models/mnist.h5')
             print("Neural network loaded from disk.")
 
-        elif self.data_set is 'cifar10':
+        elif self.data_set == 'cifar10':
             self.model = load_model('models/cifar10.h5')
             print("Neural network loaded from disk.")
 
         else:
-            print("Unsupported dataset.")
+            print("load_network: Unsupported dataset.")
 
 
     def saveInput(self,image,filename):

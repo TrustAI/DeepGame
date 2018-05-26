@@ -18,7 +18,7 @@ class DataSet:
         self.data_set = data_set
 
         # for a mnist model.
-        if self.data_set is 'mnist':
+        if self.data_set == 'mnist':
             num_classes = 10
             (x_train, y_train), (x_test, y_test) = mnist.load_data()
             img_rows, img_cols = 28, 28
@@ -33,7 +33,7 @@ class DataSet:
             x /= 255
 
         # for a cifar10 model.
-        elif self.data_set is 'cifar10':
+        elif self.data_set == 'cifar10':
             num_classes = 10
             (x_train, y_train), (x_test, y_test) = cifar10.load_data()
             img_rows, img_cols, img_chls = 32, 32, 3
@@ -48,7 +48,7 @@ class DataSet:
             x /= 255
         
         else:
-            print("Unsupported dataset. Try 'mnist' or 'cifar10'.")
+            print("Unsupported dataset %s. Try 'mnist' or 'cifar10'."%data_set)
             exit()
             
         self.x = x

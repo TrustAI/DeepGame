@@ -1,82 +1,64 @@
 from __future__ import print_function
 from neural_network import *
 from data_set import *
-from mcts import *
+import sys 
 
-#dataSetName = 'mnist'
-dataSetName = 'cifar10'
+from upperbound import upperbound
 
+#the first way of defining paramters
 
-image_index = 3
+if len(sys.argv) == 7: 
 
-gameType = "cooperator"  # "competitor"
-eta = ("L1",40)
-MCTS_all_maximal_time = 300 
-MCTS_level_maximal_time = 60
+    if sys.argv[1] == 'mnist' or sys.argv[1] == 'cifar10': 
+        dataSetName = sys.argv[1]
+    else: 
+        print("please specify as the 1st argumemnt the dataset: mnist or cifar10 ")
+        exit
 
-NN = NeuralNetwork(dataSetName)
-# NN.train_network()
-# NN.save_network()
-NN.load_network()
-print('Dataset is', NN.data_set)
-NN.model.summary()
+    if sys.argv[2] == 'ub' or sys.argv[2] == 'lb': 
+        bound =  sys.argv[2] 
+    else: 
+        print("please specify as the 2nd argumemnt the bound: ub or lb ")
+        exit
+    
+    if sys.argv[3] == 'cooperative' or sys.argv[2] == 'competitive': 
+        gameType =  sys.argv[3] 
+    else: 
+        print("please specify as the 3nd argumemnt the game mode: cooperative or competitive ")
+        exit
+    
+    if isinstance(int(sys.argv[4]),int): 
+        image_index =  int(sys.argv[4])
+    else: 
+        print("please specify as the 4th argument the index of the image: [int] ")
+        exit
+    
+    if sys.argv[5] == 'L1' or sys.argv[5] == 'L2': 
+        distanceMeasure = sys.argv[5]
+    else: 
+        print("please specify as the 5th argument the distancemeasure: L1 or L2 ")
+        exit
+    
+    if isinstance(int(sys.argv[6]),int) or isinstance(int(sys.argv[6]),float): 
+        distance = float(sys.argv[6])
+    else: 
+        print("please specify as the 6th argument the distance: [int/float] ")
+        exit
+    eta = (distanceMeasure,distance)
 
-dataset = DataSet(dataSetName,'testing')
-image = dataset.getInput(image_index)
-(label,confident) = NN.predict(image)
-print("Working on input with index %s, whose class is %s and the confidence is %s."%(image_index,label,confident))
+elif len(sys.argv) == 1: 
+# the second way of defining parameters
+    dataSetName = 'cifar10'
+    bound =  'ub'
+    gameType = 'cooperative'
+    image_index = 3
+    eta = ("L1",40)
+    
+# calling algorithms 
 
-tau = 1
-# choose between "cooperator" and "competitor"
-mcts = mcts(dataSetName, NN, image_index, image, gameType, tau, eta)
-mcts.initialiseMoves()
+if bound ==  'ub': 
+    upperbound(dataSetName,bound,gameType,image_index,eta)
+else: 
+    print("lower bound algorithm is developing...")
+    exit
 
-start_time_all = time.time()
-runningTime_all = 0
-numberOfMoves = 0
-while mcts.terminalNode(mcts.rootIndex) == False and mcts.terminatedByEta(mcts.rootIndex) == False and runningTime_all <= MCTS_all_maximal_time: 
-    print("the number of moves we have made up to now: %s"%(numberOfMoves))
-    eudist = mcts.l2Dist(mcts.rootIndex)
-    l1dist = mcts.l1Dist(mcts.rootIndex)
-    l0dist = mcts.l0Dist(mcts.rootIndex)
-    percent = mcts.diffPercent(mcts.rootIndex)
-    diffs = mcts.diffImage(mcts.rootIndex)
-    print("L2 distance %s"%(eudist))
-    print("L1 distance %s"%(l1dist))
-    print("L0 distance %s"%(l0dist))
-    print("manipulated percentage distance %s"%(percent))
-    print("manipulated dimensions %s"%(diffs))
-
-    start_time_level = time.time()
-    runningTime_level = 0
-    childTerminated = False
-    while runningTime_level <= MCTS_level_maximal_time: 
-        # Here are three steps for MCTS
-        (leafNode,availableActions) = mcts.treeTraversal(mcts.rootIndex)
-        newNodes = mcts.initialiseExplorationNode(leafNode,availableActions)
-        for node in newNodes: 
-            (childTerminated, value) = mcts.sampling(node,availableActions)
-            mcts.backPropagation(node,value)
-        runningTime_level = time.time() - start_time_level   
-        print("best possible one is %s"%(str(mcts.bestCase)))
-    bestChild = mcts.bestChild(mcts.rootIndex)
-    # pick the current best move to take  
-    mcts.makeOneMove(bestChild)
-                
-    image1 = mcts.applyManipulationToGetImage(mcts.manipulation[mcts.rootIndex])
-    diffs = mcts.diffImage(mcts.rootIndex)
-    path0="%s_pic/%s_temp_%s.png"%(dataSetName,startIndexOfImage,len(diffs))
-    dataBasics.save(-1,image1,path0)
-    (newClass,newConfident) = NN.predictWithImage(model,image1)
-    print("confidence: %s"%(newConfident))
-                
-    if childTerminated == True: break
-                
-    # store the current best
-    (_,bestatomicManipulation,bestnumberAtomicManipulation) = mcts.bestCase
-    image1 = mcts.applyManipulationToGetImage(bestatomicManipulation,bestnumberAtomicManipulation)
-    path0="%s_pic/%s_currentBest.png"%(dataSetName,startIndexOfImage)
-    dataBasics.save(-1,image1,path0)
-                
-    numberOfMoves += 1
-    runningTime_all = time.time() - start_time_all  

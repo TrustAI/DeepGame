@@ -158,7 +158,7 @@ class mcts:
                 # UCB values
                 allValues[childIndex] = (self.cost[childIndex] / float(self.numberOfVisited[childIndex])) + explorationRate * math.sqrt(math.log(self.numberOfVisited[index]) / float(self.numberOfVisited[childIndex]))
 
-            if self.player_mode == "competitor" and self.keypoint[index] == 0 : 
+            if self.player_mode == "competitive " and self.keypoint[index] == 0 : 
                 allValues2 = {}
                 for k,v in allValues.items(): 
                      allValues2[k] = 1 / float(allValues[k])
