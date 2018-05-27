@@ -2,7 +2,6 @@
 
 """
 A data structure for organising search
-
 author: Xiaowei Huang
 """
 
@@ -71,11 +70,15 @@ class mcts:
         # number of adversarial exmaples
         self.numAdv = 0
 
-        # temporary variables for sampling 
+        # temporary variables for sampling
         self.atomicManipulationPath = []
         self.depth = 0
         self.availableActionIDs = []
         self.usedActionIDs = []
+
+        # used in competitive games,
+        # for the remembering of chosen feature by player I
+        self.competitiveFeature = {}
 
     def initialiseMoves(self):
         # initialise actions according to the type of manipulations
@@ -128,7 +131,7 @@ class mcts:
         else:
             player = "the second player"
         print("%s making a move into the new root %s, whose value is %s and visited number is %s" % (
-        player, newRootIndex, self.cost[newRootIndex], self.numberOfVisited[newRootIndex]))
+            player, newRootIndex, self.cost[newRootIndex], self.numberOfVisited[newRootIndex]))
         self.removeChildren(self.rootIndex, [newRootIndex])
         self.rootIndex = newRootIndex
 
@@ -184,7 +187,7 @@ class mcts:
             nprint("tree traversal terminated on node %s" % (index))
             availableActions = copy.deepcopy(self.actions)
             # for k in self.usedActionsID.keys():
-            #    for i in self.usedActionsID[k]: 
+            #    for i in self.usedActionsID[k]:
             #        availableActions[k].pop(i, None)
             return (index, availableActions)
 
@@ -197,10 +200,18 @@ class mcts:
                 self.indexToActionID[self.indexToNow] = actionId
                 self.initialiseLeafNode(self.indexToNow, index, am)
                 self.children[index].append(self.indexToNow)
+        elif self.gameType == 'competitive' and self.keypoint[index] == 0 and index in list(
+                self.competitiveFeature.keys()):
+            self.indexToNow += 1
+            self.keypoint[self.indexToNow] = self.competitiveFeature[index]
+            self.indexToActionID[self.indexToNow] = 0
+            self.initialiseLeafNode(self.indexToNow, index, {})
+            self.children[index].append(self.indexToNow)
         else:
             for kp in self.keypoints.keys():
                 self.indexToNow += 1
                 self.keypoint[self.indexToNow] = kp
+                self.competitiveFeature[self.indexToNow] = kp
                 self.indexToActionID[self.indexToNow] = 0
                 self.initialiseLeafNode(self.indexToNow, index, {})
                 self.children[index].append(self.indexToNow)
@@ -213,7 +224,7 @@ class mcts:
         self.numberOfVisited[index] += 1
         if self.parent[index] in self.parent:
             nprint("start backPropagating the value %s from node %s, whose parent node is %s" % (
-            value, index, self.parent[index]))
+                value, index, self.parent[index]))
             self.backPropagation(self.parent[index], value)
         else:
             nprint("backPropagating ends on node %s" % (index))
