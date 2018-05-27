@@ -58,7 +58,7 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
         # pick the current best move to take  
         mctsInstance.makeOneMove(bestChild)
                 
-        image1 = mctsInstance.applyManipulationToGetImage(mctsInstance.manipulation[mctsInstance.rootIndex])
+        image1 = mctsInstance.applyManipulation(mctsInstance.manipulation[mctsInstance.rootIndex])
         diffs = mctsInstance.diffImage(mctsInstance.rootIndex)
         path0="%s_pic/%s_temp_%s.png"%(dataSetName,image_index,len(diffs))
         NN.saveInput(image1,path0)
