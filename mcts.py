@@ -373,6 +373,6 @@ class mcts:
                 maxdims += md 
         if len(maxdims[0]) == 3: 
             maxdims = zip (*maxdims)
-            maxdims = zip(maxdims[0], maxdims[1])
+            maxdims = zip(list(maxdims)[0], list(maxdims)[1])
         return (nf,maxdims)
         
