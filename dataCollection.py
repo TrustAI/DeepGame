@@ -25,7 +25,6 @@ class dataCollection:
         self.confidence = {}
         self.fileName = "dataCollection_%s.txt"%(filenamePostfix)
         self.fileHandler = open(self.fileName, 'w')
-        self.succPercent = 0
         self.maxfeatures = 0
         
     def initialiseIndex(self, index):
@@ -51,9 +50,7 @@ class dataCollection:
         
     def addl0Distance(self, l0dist):
         self.l0Distance[self.index] = l0dist
-        
-    def addSuccPercent(self, sp):
-        self.succPercent = sp
+
         
     def addComment(self,str):
         self.fileHandler.write(str)
@@ -104,7 +101,6 @@ class dataCollection:
             self.fileHandler.write("average L1 distance: %s\n"%(l1dist))
             l0dist = sum(self.l0Distance.values()) / len(self.l0Distance.values())
             self.fileHandler.write("average L0 distance: %s\n"%(l0dist))
-            self.fileHandler.write("success rate: %s\n"%(self.succPercent))
         
     def close(self):
         self.fileHandler.close()

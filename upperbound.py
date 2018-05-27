@@ -133,7 +133,6 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
         print("\nfailed to find an adversary image within prespecified bounded computational resource. ")
                                 
     runningTime = time.time() - start_time   
-    dc.addSuccPercent(succNum/float(dataProcessingBatchNum))
     dc.provideDetails()
     dc.summarise()
     dc.close()
