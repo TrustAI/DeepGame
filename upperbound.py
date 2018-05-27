@@ -81,6 +81,9 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
     if gameType == 'competitive':
         #print("max features are %s"%mctsInstance.bestFeatures()[1])
         print("the number of max features is %s"%mctsInstance.bestFeatures()[0])
+        maxfeatures = mctsInstance.bestFeatures()[0]
+    else:
+        maxfeatures = 0
     image1 = mctsInstance.applyManipulation(bestManipulation)
     (newClass,newConfident) = NN.predict(image1)
     newClassStr = NN.LABELS(int(newClass))
@@ -119,7 +122,7 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
         print("manipulated percentage distance %s"%(percent))
         print("class is changed into %s with confidence %s\n"%(newClassStr, newConfident))
         
-        return (time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist)
+        return (time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist, maxfeatures)
         
     else: 
         print("\nfailed to find an adversary image within prespecified bounded computational resource. ")
