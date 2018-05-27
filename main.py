@@ -2,6 +2,8 @@ from __future__ import print_function
 from neural_network import *
 from data_set import *
 import sys 
+from dataCollection import *
+
 
 from upperbound import upperbound
 
@@ -64,11 +66,30 @@ elif len(sys.argv) == 1:
     
 # calling algorithms 
 
+dc = dataCollection("%s_%s_%s_%s_%s_%s"%(dataSetName,bound,tau,gameType,image_index,eta))
+dc.initialiseIndex(image_index)
+
 if bound ==  'ub': 
-    upperbound(dataSetName,bound,tau,gameType,image_index,eta)
+    (elapsedTime, newConfident, percent, l2dist, l1dist, l0dist) = upperbound(dataSetName,bound,tau,gameType,image_index,eta)
+    
+    dc.addRunningTime(elapsedTime)
+    dc.addConfidence(newConfident)
+    dc.addManipulationPercentage(percent)
+    dc.addl2Distance(l2dist)
+    dc.addl1Distance(l1dist)
+    dc.addl0Distance(l0dist)
+
+
 else: 
     print("lower bound algorithm is developing...")
     exit
+    
+    
+dc.provideDetails()
+dc.summarise()
+dc.close()
+
+
     
 from keras import backend as K
 
