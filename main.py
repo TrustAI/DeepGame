@@ -1,9 +1,10 @@
 from __future__ import print_function
+from keras import backend as K
+import sys
+
 from neural_network import *
 from data_set import *
-import sys
 from dataCollection import *
-
 from upperbound import upperbound
 
 # the first way of defining parameters
@@ -65,7 +66,7 @@ elif len(sys.argv) == 1:
 
 # calling algorithms 
 
-dc = dataCollection("%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType, image_index, eta))
+dc = DataCollection("%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType, image_index, eta))
 dc.initialiseIndex(image_index)
 
 if bound == 'ub':
@@ -88,7 +89,5 @@ else:
 dc.provideDetails()
 dc.summarise()
 dc.close()
-
-from keras import backend as K
 
 K.clear_session()

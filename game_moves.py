@@ -24,7 +24,7 @@ import collections
 ################################################################
 
 
-class game_moves:
+class GameMoves:
 
     def __init__(self, data_set, model, image, tau):
         self.data_set = data_set

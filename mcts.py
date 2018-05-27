@@ -22,7 +22,7 @@ effectiveConfidenceWhenChanging = 0.0
 explorationRate = math.sqrt(2)
 
 
-class mcts:
+class MCTS:
 
     def __init__(self, data_set, model, image_index, image, gameType, tau, eta):
         self.data_set = data_set
@@ -35,7 +35,7 @@ class mcts:
 
         (self.originalClass, self.originalConfident) = self.model.predict(self.image)
 
-        self.moves = game_moves(self.data_set, self.model, self.image, self.tau)
+        self.moves = GameMoves(self.data_set, self.model, self.image, self.tau)
 
         self.cost = {}
         self.numberOfVisited = {}

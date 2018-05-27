@@ -10,7 +10,7 @@ import os
 import copy
 
 
-class dataCollection:
+class DataCollection:
     index = 0
     layer = 0
     fileHandler = 0

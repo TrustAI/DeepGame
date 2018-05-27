@@ -18,13 +18,13 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     dataset = DataSet(dataSetName, 'testing')
     image = dataset.getInput(image_index)
     (label, confident) = NN.predict(image)
-    print(
-        "Working on input with index %s, whose class is %s and the confidence is %s." % (image_index, label, confident))
+    print("Working on input with index %s, whose class is %s and the confidence is %s."
+          % (image_index, label, confident))
     origClassStr = NN.LABELS(int(label))
 
     tau = 1
     # choose between "cooperative" and "competitive "
-    mctsInstance = mcts(dataSetName, NN, image_index, image, gameType, tau, eta)
+    mctsInstance = MCTS(dataSetName, NN, image_index, image, gameType, tau, eta)
     mctsInstance.initialiseMoves()
 
     start_time_all = time.time()
