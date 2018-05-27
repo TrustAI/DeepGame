@@ -371,7 +371,9 @@ class mcts:
             if flag == True: 
                 nf += 1
                 maxdims += md 
-        if len(maxdims[0]) == 3: 
+        if len(maxdims) == 0 : 
+            return (0,0)
+        elif len(maxdims[0]) == 3: 
             maxdims = [(x,y) for (x,y,z) in maxdims]
         return (nf,maxdims)
         

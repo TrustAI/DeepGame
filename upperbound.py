@@ -2,9 +2,12 @@ from __future__ import print_function
 from neural_network import *
 from data_set import *
 from mcts import *
+from dataCollection import *
 
 def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
 
+    dc = dataCollection("%s_%s_%s_%s_%s_%s"%(dataSetName,bound,tau,gameType,image_index,eta))
+    dc.initialiseIndex(image_index)
     start_time = time.time()
 
     MCTS_all_maximal_time = 300 
@@ -118,7 +121,19 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
         print("L0 distance %s"%(l0dist))
         print("manipulated percentage distance %s"%(percent))
         print("class is changed into %s with confidence %s\n"%(newClassStr, newConfident))
+        
+        dc.addRunningTime(time.time() - start_time_all)
+        dc.addConfidence(newConfident)
+        dc.addManipulationPercentage(percent)
+        dc.addEuclideanDistance(l2dist)
+        dc.addl1Distance(l1dist)
+        dc.addl0Distance(l0dist)
+        
     else: 
         print("\nfailed to find an adversary image within prespecified bounded computational resource. ")
                                 
     runningTime = time.time() - start_time   
+    dc.addSuccPercent(succNum/float(dataProcessingBatchNum))
+    dc.provideDetails()
+    dc.summarise()
+    dc.close()
