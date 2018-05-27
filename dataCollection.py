@@ -25,7 +25,7 @@ class dataCollection:
         self.confidence = {}
         self.fileName = "dataCollection_%s.txt"%(filenamePostfix)
         self.fileHandler = open(self.fileName, 'w')
-        self.maxfeatures = 0
+        self.maxfeatures = {}
         
     def initialiseIndex(self, index):
         self.index = index
@@ -51,6 +51,8 @@ class dataCollection:
     def addl0Distance(self, l0dist):
         self.l0Distance[self.index] = l0dist
 
+    def addmaxfeatures(self, maxfeatures):
+        self.maxfeatures[self.index] = maxfeatures
         
     def addComment(self,str):
         self.fileHandler.write(str)
