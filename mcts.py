@@ -150,12 +150,12 @@ class mcts:
     def bestChild(self,index):
         allValues = {}
         for childIndex in self.children[index]: 
-            allValues[childIndex] = self.cost[childIndex] / float(self.numberOfVisited[childIndex])
+            allValues[childIndex] = float(self.numberOfVisited[childIndex]) / self.cost[childIndex]
         nprint("finding best children from %s"%(allValues))
         if self.gameType == "competitive" and self.keypoint[index] == 0: 
-            return max(allValues.items(), key=operator.itemgetter(1))[0]
-        else: 
             return min(allValues.items(), key=operator.itemgetter(1))[0]
+        else: 
+            return max(allValues.items(), key=operator.itemgetter(1))[0]
         
     def treeTraversal(self,index):
         if self.fullyExpanded[index] == True: 
@@ -163,15 +163,15 @@ class mcts:
             allValues = {}
             for childIndex in self.children[index]: 
                 # UCB values
-                allValues[childIndex] = (self.cost[childIndex] / float(self.numberOfVisited[childIndex])) + explorationRate * math.sqrt(math.log(self.numberOfVisited[index]) / float(self.numberOfVisited[childIndex]))
+                allValues[childIndex] = (float(self.numberOfVisited[childIndex])/self.cost[childIndex]) * self.eta[1] + explorationRate * math.sqrt(math.log(self.numberOfVisited[index]) / float(self.numberOfVisited[childIndex]))
 
             if self.gameType == "competitive" and self.keypoint[index] == 0 :
-                nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues.values()) for x in allValues.values()])[0] 
-            else: 
                 allValues2 = {}
                 for k,v in allValues.items(): 
                      allValues2[k] = 1 / float(allValues[k])
                 nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues2.values()) for x in allValues2.values()])[0]
+            else: 
+                nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues.values()) for x in allValues.values()])[0] 
 
             if self.keypoint[index] in self.usedActionsID.keys() and self.keypoint[index] != 0 : 
                 self.usedActionsID[self.keypoint[index]].append(self.indexToActionID[index])
