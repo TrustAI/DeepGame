@@ -332,7 +332,7 @@ class mcts:
         nprint("terminated by controlled search: distance = %s"%(dist))
         return dist > distVal 
         
-    def applyManipulationToGetImage(self,manipulation):
+    def applyManipulation(self,manipulation):
         activations1 = self.moves.applyManipulation(self.image,manipulation)
         return activations1
         

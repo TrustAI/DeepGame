@@ -5,7 +5,6 @@ from mcts import *
 
 def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
 
-
     start_time = time.time()
 
     MCTS_all_maximal_time = 300 
@@ -71,8 +70,8 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
                 
         # store the current best
         (_,bestManipulation) = mctsInstance.bestCase
-        image1 = mctsInstance.applyManipulationToGetImage(bestManipulation)
-        path0="%s_pic/%s_currentBemctsInstance.png"%(dataSetName,image_index)
+        image1 = mctsInstance.applyManipulation(bestManipulation)
+        path0="%s_pic/%s_currentBest.png"%(dataSetName,image_index)
         NN.saveInput(image1,path0)
                 
         numberOfMoves += 1
@@ -82,7 +81,7 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
     if gameType == 'competitive':
         #print("max features are %s"%mctsInstance.bestFeatures()[1])
         print("the number of max features is %s"%mctsInstance.bestFeatures()[0])
-    image1 = mctsInstance.applyManipulationToGetImage(bestManipulation)
+    image1 = mctsInstance.applyManipulation(bestManipulation)
     (newClass,newConfident) = NN.predict(image1)
     newClassStr = NN.LABELS(int(newClass))
                 
@@ -124,6 +123,7 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
         
     else: 
         print("\nfailed to find an adversary image within prespecified bounded computational resource. ")
+        return (0, 0, 0, 0, 0, 0)
                                 
     runningTime = time.time() - start_time   
 
