@@ -79,6 +79,9 @@ class mcts:
         self.availableActionIDs = []
         self.usedActionIDs = [] 
         
+        # used in competitive games, 
+        # for the remembering of chosen feature by player I
+        self.competitiveFeature = {}
 
     def initialiseMoves(self): 
         # initialise actions according to the type of manipulations
@@ -196,10 +199,17 @@ class mcts:
                 self.indexToActionID[self.indexToNow] = actionId
                 self.initialiseLeafNode(self.indexToNow,index,am)
                 self.children[index].append(self.indexToNow)
+        elif self.gameType == 'competitive' and self.keypoint[index] == 0 and index in list(self.competitiveFeature.keys()): 
+                self.indexToNow += 1
+                self.keypoint[self.indexToNow] = self.competitiveFeature[index]
+                self.indexToActionID[self.indexToNow] = 0
+                self.initialiseLeafNode(self.indexToNow,index,{})
+                self.children[index].append(self.indexToNow) 
         else: 
             for kp in self.keypoints.keys() : 
                 self.indexToNow += 1
                 self.keypoint[self.indexToNow] = kp
+                self.competitiveFeature[self.indexToNow] = kp
                 self.indexToActionID[self.indexToNow] = 0
                 self.initialiseLeafNode(self.indexToNow,index,{})
                 self.children[index].append(self.indexToNow) 
