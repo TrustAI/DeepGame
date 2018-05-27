@@ -264,7 +264,7 @@ class mcts:
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
                 if self.gameType == 'competitive':
-                    print("the number of max features are %s"%len(self.bestFeatures()))
+                    print("the number of max features is: %s"%len(self.bestFeatures()[0]))
             return (self.depth == 0, dist)
             
         elif dist > distVal: 
@@ -359,6 +359,7 @@ class mcts:
     def bestFeatures(self):
         bestManipulation = self.bestCase[1] 
         maxdims = []
+        nf = 0 
         for i in range(1,len(self.actions)):
             md = []
             flag = False 
@@ -368,9 +369,10 @@ class mcts:
                     if k in v1.keys(): 
                         flag = True
             if flag == True: 
+                nf += 1
                 maxdims += md 
         if len(maxdims[0]) == 3: 
             maxdims = zip (*maxdims)
             maxdims = zip(maxdims[0], maxdims[1])
-        return maxdims
+        return (nf,maxdims)
         
