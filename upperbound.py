@@ -126,7 +126,7 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
         
     else: 
         print("\nfailed to find an adversary image within prespecified bounded computational resource. ")
-        return (0, 0, 0, 0, 0, 0)
+        return (0, 0, 0, 0, 0, 0, 0)
                                 
     runningTime = time.time() - start_time   
 
