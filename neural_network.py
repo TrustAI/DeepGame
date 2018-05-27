@@ -22,15 +22,15 @@ class NeuralNetwork:
     def __init__(self, data_set):
         self.data_set = data_set
         self.model = Sequential()
-        assure_path_exists("%s_pic/"%(self.data_set))
-        
-    def predict(self,input):
+        assure_path_exists("%s_pic/" % (self.data_set))
+
+    def predict(self, input):
         import numpy as np
         newInput2 = np.expand_dims(input, axis=0)
         predictValue = self.model.predict(newInput2)
         newClass = np.argmax(np.ravel(predictValue))
         confident = np.amax(np.ravel(predictValue))
-        return (newClass,confident)   
+        return (newClass, confident)
 
     # To train a neural network.
     def train_network(self):
@@ -159,7 +159,7 @@ class NeuralNetwork:
             self.model = model
 
         else:
-            print("Unsupported dataset %s. Try 'mnist' or 'cifar10'."%data_set)
+            print("Unsupported dataset %s. Try 'mnist' or 'cifar10'." % data_set)
 
     # To save the neural network to disk.
     def save_network(self):
@@ -187,23 +187,22 @@ class NeuralNetwork:
         else:
             print("load_network: Unsupported dataset.")
 
+    def saveInput(self, image, filename):
 
-    def saveInput(self,image,filename):
-        
-            import cv2
-            import copy
+        import cv2
+        import copy
 
-            image_cv = copy.deepcopy(image)
+        image_cv = copy.deepcopy(image)
 
-            cv2.imwrite(filename, image_cv * 255.0,  [cv2.IMWRITE_PNG_COMPRESSION, 9])\
-            
-    def LABELS(self,index):
+        cv2.imwrite(filename, image_cv * 255.0, [cv2.IMWRITE_PNG_COMPRESSION, 9])
+
+    def LABELS(self, index):
         if self.data_set == 'mnist':
             labels = ['0', '1', '2', '3', '4', '5', '6',
-                  '7', '8', '9']
+                      '7', '8', '9']
         elif self.data_set == 'cifar10':
             labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog',
-                  'horse', 'ship', 'truck']
+                      'horse', 'ship', 'truck']
         else:
             print("LABELS: Unsupported dataset.")
         return labels[index]
