@@ -370,7 +370,7 @@ class mcts:
             if flag == True: 
                 maxdims += md 
         if len(maxdims[0]) == 3: 
-            maxdims = zip * maxdims
+            maxdims = zip (*maxdims)
             maxdims = zip(maxdims[0], maxdims[1])
         return maxdims
         
