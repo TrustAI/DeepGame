@@ -9,7 +9,6 @@ import time
 import os
 import copy
 
-from configuration import directory_statistics_string
 
 class dataCollection:
 
@@ -24,7 +23,7 @@ class dataCollection:
         self.l1Distance = {}
         self.l0Distance = {}
         self.confidence = {}
-        self.fileName = "%s/dataCollection_%s.txt"%(directory_statistics_string,filenamePostfix)
+        self.fileName = "dataCollection_%s.txt"%(filenamePostfix)
         self.fileHandler = open(self.fileName, 'w')
         self.succPercent = 0
         self.maxfeatures = 0

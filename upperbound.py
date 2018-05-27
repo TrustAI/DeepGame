@@ -125,7 +125,7 @@ def upperbound(dataSetName,bound,tau,gameType,image_index,eta):
         dc.addRunningTime(time.time() - start_time_all)
         dc.addConfidence(newConfident)
         dc.addManipulationPercentage(percent)
-        dc.addEuclideanDistance(l2dist)
+        dc.addl2Distance(l2dist)
         dc.addl1Distance(l1dist)
         dc.addl0Distance(l0dist)
         

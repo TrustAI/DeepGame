@@ -20,7 +20,7 @@ from basics import *
 from game_moves import *
 
 
-MCTS_multi_samples = 1
+MCTS_multi_samples = 3
 effectiveConfidenceWhenChanging = 0.0
 explorationRate = math.sqrt(2)        
 
