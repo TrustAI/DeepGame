@@ -322,7 +322,7 @@ class MCTSCooperative:
         activations1 = self.moves.applyManipulation(self.image, self.manipulation[index])
         dist = self.computeDistance(activations1)
         nprint("terminated by controlled search: distance = %s" % dist)
-        return dist > distVal
+        return dist > self.eta[1]
 
     def applyManipulation(self, manipulation):
         activations1 = self.moves.applyManipulation(self.image, manipulation)

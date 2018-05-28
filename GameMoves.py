@@ -128,7 +128,7 @@ class GameMoves:
         image1 = copy.deepcopy(image)
         maxVal = np.max(image1)
         minVal = np.min(image1)
-        for elt in manipulation.keys():
+        for elt in list(manipulation.keys()):
             if len(elt) == 2:
                 (fst, snd) = elt
                 image1[fst][snd] += manipulation[elt]
