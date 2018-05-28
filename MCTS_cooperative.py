@@ -27,12 +27,11 @@ explorationRate = math.sqrt(2)
 
 class MCTS:
 
-    def __init__(self, data_set, model, image_index, image, gameType, tau, eta):
+    def __init__(self, data_set, model, image_index, image, tau, eta):
         self.data_set = data_set
         self.image_index = image_index
         self.image = image
         self.model = model
-        self.gameType = gameType
         self.tau = tau
         self.eta = eta
         
@@ -157,10 +156,8 @@ class MCTS:
         for childIndex in self.children[index]: 
             allValues[childIndex] = float(self.numberOfVisited[childIndex]) / self.cost[childIndex]
         nprint("finding best children from %s"%(allValues))
-        if self.gameType == "competitive" and self.keypoint[index] == 0: 
-            return min(allValues.items(), key=operator.itemgetter(1))[0]
-        else: 
-            return max(allValues.items(), key=operator.itemgetter(1))[0]
+        # for cooperative
+        return max(allValues.items(), key=operator.itemgetter(1))[0]
         
     def treeTraversal(self,index):
         if self.fullyExpanded[index] == True: 
@@ -170,13 +167,8 @@ class MCTS:
                 # UCB values
                 allValues[childIndex] = (float(self.numberOfVisited[childIndex])/self.cost[childIndex]) * self.eta[1] + explorationRate * math.sqrt(math.log(self.numberOfVisited[index]) / float(self.numberOfVisited[childIndex]))
 
-            if self.gameType == "competitive" and self.keypoint[index] == 0 :
-                allValues2 = {}
-                for k,v in allValues.items(): 
-                     allValues2[k] = 1 / float(allValues[k])
-                nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues2.values()) for x in allValues2.values()])[0]
-            else: 
-                nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues.values()) for x in allValues.values()])[0] 
+            # for cooperative
+            nextIndex = np.random.choice(list(allValues.keys()), 1, p = [ x/sum(allValues.values()) for x in allValues.values()])[0] 
 
             if self.keypoint[index] in self.usedActionsID.keys() and self.keypoint[index] != 0 : 
                 self.usedActionsID[self.keypoint[index]].append(self.indexToActionID[index])
@@ -202,13 +194,6 @@ class MCTS:
                 self.indexToActionID[self.indexToNow] = actionId
                 self.initialiseLeafNode(self.indexToNow,index,am)
                 self.children[index].append(self.indexToNow)
-                self.competitiveFeature[self.indexToNow] = self.competitiveFeature[index]
-        elif self.gameType == 'competitive' and self.keypoint[index] == 0 and index in list(self.competitiveFeature.keys()): 
-                self.indexToNow += 1
-                self.keypoint[self.indexToNow] = self.competitiveFeature[index]
-                self.indexToActionID[self.indexToNow] = 0
-                self.initialiseLeafNode(self.indexToNow,index,{})
-                self.children[index].append(self.indexToNow) 
                 self.competitiveFeature[self.indexToNow] = self.competitiveFeature[index]
         else: 
             for kp in list(set(self.keypoints.keys())-set([0])) : 
@@ -281,8 +266,6 @@ class MCTS:
                 self.bestCase = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
-                if self.gameType == 'competitive':
-                    print("the number of max features is: %s"%self.bestFeatures()[0])
             return (self.depth == 0, dist)
             
         elif dist > distVal: 
@@ -302,10 +285,7 @@ class MCTS:
 
             #print("continue sampling node ... ")
             #randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k]))) 
-            if self.gameType == 'competitive' and k == 0: 
-                randomActionIndex = self.samplingCompetitiveFeature
-            else: 
-                randomActionIndex = random.choice(self.availableActionIDs[k])
+            randomActionIndex = random.choice(self.availableActionIDs[k])
             if k == 0: 
                 nextAtomicManipulation = {}
             else: 

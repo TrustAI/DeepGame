@@ -24,7 +24,10 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
 
     tau = 1
     # choose between "cooperative" and "competitive "
-    mctsInstance = MCTS(dataSetName, NN, image_index, image, gameType, tau, eta)
+    if gameType == 'cooperative': 
+        mctsInstance = MCTS_cooperative(dataSetName, NN, image_index, image, tau, eta)
+    else: 
+        mctsInstance = MCTS_competitive(dataSetName, NN, image_index, image, tau, eta)
     mctsInstance.initialiseMoves()
 
     start_time_all = time.time()
