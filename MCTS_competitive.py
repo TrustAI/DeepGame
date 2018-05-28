@@ -66,7 +66,7 @@ class MCTS:
         self.indexToActionID = {}
 
         # best case
-        self.bestCase = (2^20,{})
+        self.bestCaseList = {}
         self.numConverge = 0 
         
         # number of adversarial exmaples
@@ -92,6 +92,10 @@ class MCTS:
         for k in actions[0]: 
             self.keypoints[i] = k 
             i += 1
+            
+        # initialise beseCase, for competitive 
+        for kp in list(set(self.keypoints.keys())-set([0])):
+            self.bestCaseList[kp] = (2^20,{})
             
         for i in range(len(actions)): 
             ast = {}
@@ -271,14 +275,13 @@ class MCTS:
             nprint("sampling a path ends in a terminal node with depth %s... "%self.depth)
             self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath)
             self.numAdv += 1
-            nprint("current best %s, considered to be replaced by %s"%(self.bestCase[0],dist))
-            if self.bestCase[0] > dist: 
-                print("update best case from %s to %s"%(self.bestCase[0], dist))
+            nprint("current best %s of %s, considered to be replaced by %s"%(self.bestCaseList[0],k,dist))
+            if self.bestCaseList[k][0] > dist: 
+                print("update best case from %s to %s"%(self.bestCaseList[k][0], dist))
                 self.numConverge += 1
-                self.bestCase = (dist,self.atomicManipulationPath)
+                self.bestCaseList[k] = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
-                print("the number of max features is: %s"%self.bestFeatures()[0])
             return (self.depth == 0, dist)
             
         elif dist > distVal: 
@@ -380,7 +383,10 @@ class MCTS:
         return diffPercent(self.image,activations1)
     
     def bestFeatures(self):
-        bestManipulation = self.bestCase[1] 
+    
+        bestCase = max(self.bestCaseList.items(), key=lambda x: x[1][0])[1]
+        
+        bestManipulation = bestCase[1] 
         maxdims = []
         nf = 0 
         for i in range(1,len(self.actions)):
