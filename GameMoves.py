@@ -32,7 +32,7 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
-        imageEnlargeProportion = 1
+        img_enlarge_ratio = 1
         image1 = copy.deepcopy(self.image)
         if np.max(image1) <= 1:
             image1 = (image1 * 255).astype(np.uint8)
@@ -41,17 +41,17 @@ class GameMoves:
 
         if max(image1.shape) < 100:
             # for small images, sift works by enlarging the images
-            image1 = cv2.resize(image1, (0, 0), fx=imageEnlargeProportion, fy=imageEnlargeProportion)
+            image1 = cv2.resize(image1, (0, 0), fx=img_enlarge_ratio, fy=img_enlarge_ratio)
             kps = self.SIFT_Filtered_twoPlayer(image1)
             for i in range(len(kps)):
                 oldpt = (kps[i].pt[0], kps[i].pt[1])
-                kps[i].pt = (int(oldpt[0] / imageEnlargeProportion), int(oldpt[1] / imageEnlargeProportion))
+                kps[i].pt = (int(oldpt[0] / img_enlarge_ratio), int(oldpt[1] / img_enlarge_ratio))
         else:
             kps = self.SIFT_Filtered_twoPlayer(image1)
 
         print("%s keypoints are found. " % (len(kps)))
 
-        actions = {}
+        actions = dict()
         actions[0] = kps
         s = 1
         kp2 = []
@@ -66,9 +66,9 @@ class GameMoves:
         print("The pixels are partitioned with respect to keypoints.")
 
         # construct moves according to the obtained the partitions 
-        numOfmanipulations = 0
+        num_of_manipulations = 0
         for k, blocks in partitions.items():
-            allAtomicManipulations = []
+            all_atomic_manipulations = []
 
             for i in range(len(blocks)):
                 x = blocks[i][0]
@@ -76,50 +76,50 @@ class GameMoves:
 
                 # + tau 
                 if image0[x][y] == 0 and len(image1.shape) == 2:
-                    atomicManipulation = {}
-                    atomicManipulation[(x, y)] = self.tau
-                    allAtomicManipulations.append(atomicManipulation)
+                    atomic_manipulation = dict()
+                    atomic_manipulation[(x, y)] = self.tau
+                    all_atomic_manipulations.append(atomic_manipulation)
                 elif image0[x][y] == 0:
-                    atomicManipulation = {}
-                    atomicManipulation[(x, y, 0)] = self.tau
-                    allAtomicManipulations.append(atomicManipulation)
-                    atomicManipulation = {}
-                    atomicManipulation[(x, y, 1)] = self.tau
-                    allAtomicManipulations.append(atomicManipulation)
-                    atomicManipulation = {}
-                    atomicManipulation[(x, y, 2)] = self.tau
-                    allAtomicManipulations.append(atomicManipulation)
+                    atomic_manipulation = dict()
+                    atomic_manipulation[(x, y, 0)] = self.tau
+                    all_atomic_manipulations.append(atomic_manipulation)
+                    atomic_manipulation = dict()
+                    atomic_manipulation[(x, y, 1)] = self.tau
+                    all_atomic_manipulations.append(atomic_manipulation)
+                    atomic_manipulation = dict()
+                    atomic_manipulation[(x, y, 2)] = self.tau
+                    all_atomic_manipulations.append(atomic_manipulation)
 
                 # - tau   
                 if image0[x][y] == 0 and len(image1.shape) == 2:
-                    atomicManipulation = {}
-                    atomicManipulation[(x, y)] = -1 * self.tau
-                    allAtomicManipulations.append(atomicManipulation)
+                    atomic_manipulation = dict()
+                    atomic_manipulation[(x, y)] = -1 * self.tau
+                    all_atomic_manipulations.append(atomic_manipulation)
                 elif image0[x][y] == 0:
-                    atomicManipulation = {}
-                    atomicManipulation[(x, y, 0)] = -1 * self.tau
-                    # allAtomicManipulations.append(atomicManipulation)
-                    # atomicManipulation = {}
-                    atomicManipulation[(x, y, 1)] = -1 * self.tau
-                    # allAtomicManipulations.append(atomicManipulation)
-                    # atomicManipulation = {}
-                    atomicManipulation[(x, y, 2)] = -1 * self.tau
-                    allAtomicManipulations.append(atomicManipulation)
+                    atomic_manipulation = dict()
+                    atomic_manipulation[(x, y, 0)] = -1 * self.tau
+                    # all_atomic_manipulations.append(atomic_manipulation)
+                    # atomic_manipulation = {}
+                    atomic_manipulation[(x, y, 1)] = -1 * self.tau
+                    # all_atomic_manipulations.append(atomic_manipulation)
+                    # atomic_manipulation = {}
+                    atomic_manipulation[(x, y, 2)] = -1 * self.tau
+                    all_atomic_manipulations.append(atomic_manipulation)
 
                 image0[x][y] = 1
 
-            actions[s] = allAtomicManipulations
+            actions[s] = all_atomic_manipulations
             kp2.append(kps[s - 1])
 
             s += 1
             print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."
-                  % (len(allAtomicManipulations), int(kps[k - 1].pt[0] / imageEnlargeProportion),
-                     int(kps[k - 1].pt[1] / imageEnlargeProportion), kps[k - 1].response))
-            numOfmanipulations += len(allAtomicManipulations)
+                  % (len(all_atomic_manipulations), int(kps[k - 1].pt[0] / img_enlarge_ratio),
+                     int(kps[k - 1].pt[1] / img_enlarge_ratio), kps[k - 1].response))
+            num_of_manipulations += len(all_atomic_manipulations)
 
         # index-0 keeps the keypoints, actual actions start from 1
         actions[0] = kp2
-        print("the number of all manipulations initialised: %s\n" % numOfmanipulations)
+        print("the number of all manipulations initialised: %s\n" % num_of_manipulations)
         self.moves = actions
 
     def applyManipulation(self, image, manipulation):
@@ -154,7 +154,7 @@ class GameMoves:
         # get partition by keypoints
         import operator
         import random
-        maxNumOfPixelsPerKeyPoint = 1000000
+        max_num_of_pixels_per_key_point = 1000000
         blocks = {}
         if self.data_set != "imageNet":
             for x in range(max(image.shape)):
@@ -172,10 +172,10 @@ class GameMoves:
                         blocks[maxk].append((x, y))
                     else:
                         blocks[maxk] = [(x, y)]
-            if maxNumOfPixelsPerKeyPoint > 0:
+            if max_num_of_pixels_per_key_point > 0:
                 for mk in blocks.keys():
-                    beginingNum = len(blocks[mk])
-                    for i in range(beginingNum - maxNumOfPixelsPerKeyPoint):
+                    begining_num = len(blocks[mk])
+                    for i in range(begining_num - max_num_of_pixels_per_key_point):
                         blocks[mk].remove(random.choice(blocks[mk]))
             return blocks
         else:
