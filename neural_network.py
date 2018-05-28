@@ -22,7 +22,7 @@ class NeuralNetwork:
     def __init__(self, data_set):
         self.data_set = data_set
         self.model = Sequential()
-        assure_path_exists("%s_pic/" % (self.data_set))
+        assure_path_exists("%s_pic/" % self.data_set)
 
     def predict(self, image):
         import numpy as np
