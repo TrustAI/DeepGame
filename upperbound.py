@@ -88,12 +88,15 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         runningTime_all = time.time() - start_time_all
 
     (_, bestManipulation) = mctsInstance.bestCase
+
     if gameType == 'competitive':
-        # print("max features are %s"%mctsInstance.bestFeatures()[1])
+        # print("max features are %s" % mctsInstance.bestFeatures()[1])
         print("the number of max features is %s" % mctsInstance.bestFeatures()[0])
         maxfeatures = mctsInstance.bestFeatures()[0]
-    else:
+    elif gameType == 'cooperative':
         maxfeatures = 0
+    else:
+        print("Unrecognised game type. Try 'cooperative' or 'competitive'.")
     image1 = mctsInstance.applyManipulation(bestManipulation)
     (newClass, newConfident) = NN.predict(image1)
     newClassStr = NN.get_label(int(newClass))
@@ -122,7 +125,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         #    path0="%s/%s_adv_%s_%s_%s.png"%(dataSetName,image_index,i,advnum,advClassStr)
         #    NN.save_input(-1,advimg,path0)
 
-        print("number of adversarial examples found: %s" % (mctsInstance.numAdv))
+        print("number of adversarial examples found: %s" % mctsInstance.numAdv)
 
         l2dist = l2Distance(mctsInstance.image, image1)
         l1dist = l1Distance(mctsInstance.image, image1)
