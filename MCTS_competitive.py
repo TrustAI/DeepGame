@@ -275,7 +275,7 @@ class MCTS_competitive:
             nprint("sampling a path ends in a terminal node with depth %s... "%self.depth)
             self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath)
             self.numAdv += 1
-            nprint("current best %s of %s, considered to be replaced by %s"%(self.bestCaseList[0],k,dist))
+            nprint("current best %s of %s, considered to be replaced by %s"%(self.bestCaseList[k][0],k,dist))
             if self.bestCaseList[k][0] > dist: 
                 print("update best case from %s to %s"%(self.bestCaseList[k][0], dist))
                 self.numConverge += 1
