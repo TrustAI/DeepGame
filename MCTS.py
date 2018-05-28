@@ -23,7 +23,6 @@ from game_moves import *
 MCTS_multi_samples = 3
 effectiveConfidenceWhenChanging = 0.0
 explorationRate = math.sqrt(2)     
-maximumSamplingDepth = 500   
 
 
 class MCTS:
@@ -294,8 +293,8 @@ class MCTS:
             nprint("sampling a path ends with depth %s because no more actions can be taken ... "%self.depth)
             return (self.depth == 0, distVal)
             
-        elif self.depth > maximumSamplingDepth: 
-            print("sampling a path ends with depth %s more than the prespecifided maximum sampling depth ... "%k)
+        elif self.depth > (self.eta[1] / self.tau): 
+            nprint("sampling a path ends with depth %s more than the prespecifided maximum sampling depth ... "%k)
             return (self.depth == 0, distVal)
             
         else: 
