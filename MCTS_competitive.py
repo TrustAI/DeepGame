@@ -284,7 +284,7 @@ class MCTS_competitive:
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
                 # update best case
-                self.bestCase = self.getBestCase()
+                self.getBestCase()
             return (self.depth == 0, dist)
             
         elif dist > distVal: 
