@@ -1,10 +1,12 @@
 from __future__ import print_function
 from keras import backend as K
 import sys
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 from neural_network import *
 from data_set import *
-from dataCollection import *
+from DataCollection import *
 from upperbound import upperbound
 
 # the first way of defining parameters
@@ -60,7 +62,7 @@ elif len(sys.argv) == 1:
     dataSetName = 'cifar10'
     bound = 'ub'
     gameType = 'cooperative'
-    image_index = 3
+    image_index = 0
     eta = ("L1", 40)
     tau = 0.5
 

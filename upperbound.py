@@ -25,9 +25,9 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
 
     tau = 1
     # choose between "cooperative" and "competitive "
-    if gameType == 'cooperative': 
+    if gameType == 'cooperative':
         mctsInstance = MCTS_cooperative(dataSetName, NN, image_index, image, tau, eta)
-    else: 
+    else:
         mctsInstance = MCTS_competitive(dataSetName, NN, image_index, image, tau, eta)
     mctsInstance.initialiseMoves()
 
@@ -96,7 +96,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
 
     if newClass != label:
         path0 = "%s_pic/%s_%s_modified_into_%s_with_confidence_%s.png" % (
-        dataSetName, image_index, origClassStr, newClassStr, newConfident)
+            dataSetName, image_index, origClassStr, newClassStr, newConfident)
         NN.saveInput(image1, path0)
         path0 = "%s_pic/%s_diff.png" % (dataSetName, image_index)
         NN.saveInput(np.subtract(image, image1), path0)
