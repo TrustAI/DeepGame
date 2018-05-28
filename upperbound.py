@@ -27,8 +27,10 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     # choose between "cooperative" and "competitive"
     if gameType == 'cooperative':
         mctsInstance = MCTSCooperative(dataSetName, NN, image_index, image, tau, eta)
-    else:
+    elif gameType == 'competitive':
         mctsInstance = MCTSCompetitive(dataSetName, NN, image_index, image, tau, eta)
+    else:
+        print("Unrecognised game type. Try 'cooperative' or 'competitive'.")
     mctsInstance.initialiseMoves()
 
     start_time_all = time.time()

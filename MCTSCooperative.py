@@ -67,7 +67,7 @@ class MCTSCooperative:
         self.bestCase = (2 ^ 20, {})
         self.numConverge = 0
 
-        # number of adversarial exmaples
+        # number of adversarial examples
         self.numAdv = 0
 
         # temporary variables for sampling 
@@ -212,7 +212,6 @@ class MCTSCooperative:
 
     # start random sampling and return the Euclidean value as the value
     def sampling(self, index, availableActions):
-
         nprint("start sampling node %s" % index)
         availableActions2 = copy.deepcopy(availableActions)
         sampleValues = []
