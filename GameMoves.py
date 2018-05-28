@@ -63,7 +63,7 @@ class GameMoves:
 
         # to compute a partition of the pixels, for an image classification task 
         partitions = self.getPartition(image1, kps)
-        print("The pixels are partitioned with respect to keypoints. ")
+        print("The pixels are partitioned with respect to keypoints.")
 
         # construct moves according to the obtained the partitions 
         numOfmanipulations = 0
@@ -112,14 +112,14 @@ class GameMoves:
             kp2.append(kps[s - 1])
 
             s += 1
-            print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s." % (
-            len(allAtomicManipulations), int(kps[k - 1].pt[0] / imageEnlargeProportion),
-            int(kps[k - 1].pt[1] / imageEnlargeProportion), kps[k - 1].response))
+            print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."
+                  % (len(allAtomicManipulations), int(kps[k - 1].pt[0] / imageEnlargeProportion),
+                     int(kps[k - 1].pt[1] / imageEnlargeProportion), kps[k - 1].response))
             numOfmanipulations += len(allAtomicManipulations)
 
         # index-0 keeps the keypoints, actual actions start from 1
         actions[0] = kp2
-        print("the number of all manipulations initialised: %s\n" % (numOfmanipulations))
+        print("the number of all manipulations initialised: %s\n" % numOfmanipulations)
         self.moves = actions
 
     def applyManipulation(self, image, manipulation):
