@@ -1,8 +1,8 @@
 from __future__ import print_function
 from neural_network import *
 from DateSet import *
-from MCTS_competitive import *
-from MCTS_cooperative import *
+from MCTSCompetitive import *
+from MCTSCooperative import *
 
 
 def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
@@ -13,7 +13,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
 
     NN = NeuralNetwork(dataSetName)
     NN.load_network()
-    print('Dataset is', NN.data_set)
+    print("Dataset is %s." % NN.data_set)
     NN.model.summary()
 
     dataset = DataSet(dataSetName, 'testing')
@@ -24,19 +24,19 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
           % (image_index, origClassStr, confident))
 
     tau = 1
-    # choose between "cooperative" and "competitive "
+    # choose between "cooperative" and "competitive"
     if gameType == 'cooperative':
-        mctsInstance = MCTS_cooperative(dataSetName, NN, image_index, image, tau, eta)
+        mctsInstance = MCTSCooperative(dataSetName, NN, image_index, image, tau, eta)
     else:
-        mctsInstance = MCTS_competitive(dataSetName, NN, image_index, image, tau, eta)
+        mctsInstance = MCTSCompetitive(dataSetName, NN, image_index, image, tau, eta)
     mctsInstance.initialiseMoves()
 
     start_time_all = time.time()
     runningTime_all = 0
     numberOfMoves = 0
-    while not mctsInstance.terminalNode(mctsInstance.rootIndex) \
-            and not mctsInstance.terminatedByEta(mctsInstance.rootIndex) \
-            and runningTime_all <= MCTS_all_maximal_time:
+    while (not mctsInstance.terminalNode(mctsInstance.rootIndex) and
+           not mctsInstance.terminatedByEta(mctsInstance.rootIndex) and
+           runningTime_all <= MCTS_all_maximal_time):
         print("the number of moves we have made up to now: %s" % numberOfMoves)
         l2dist = mctsInstance.l2Dist(mctsInstance.rootIndex)
         l1dist = mctsInstance.l1Dist(mctsInstance.rootIndex)
@@ -60,7 +60,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                 (childTerminated, value) = mctsInstance.sampling(node, availableActions)
                 mctsInstance.backPropagation(node, value)
             runningTime_level = time.time() - start_time_level
-            print("best possible disance up to now is %s" % (str(mctsInstance.bestCase[0])))
+            print("best possible distance up to now is %s" % (str(mctsInstance.bestCase[0])))
         bestChild = mctsInstance.bestChild(mctsInstance.rootIndex)
         # pick the current best move to take  
         mctsInstance.makeOneMove(bestChild)
@@ -70,7 +70,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         path0 = "%s_pic/%s_temp_%s.png" % (dataSetName, image_index, len(diffs))
         NN.save_input(image1, path0)
         (newClass, newConfident) = NN.predict(image1)
-        print("confidence: %s" % (newConfident))
+        print("confidence: %s" % newConfident)
 
         # break if we found that one of the children is a misclassification
         if childTerminated is True:
@@ -130,7 +130,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         print("L1 distance %s" % l1dist)
         print("L0 distance %s" % l0dist)
         print("manipulated percentage distance %s" % percent)
-        print("class is changed into %s with confidence %s\n" % (newClassStr, newConfident))
+        print("class is changed into '%s' with confidence %s\n" % (newClassStr, newConfident))
 
         return time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist, maxfeatures
 

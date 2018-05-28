@@ -23,7 +23,7 @@ effectiveConfidenceWhenChanging = 0.0
 explorationRate = math.sqrt(2)
 
 
-class MCTS_cooperative:
+class MCTSCooperative:
 
     def __init__(self, data_set, model, image_index, image, tau, eta):
         self.data_set = data_set
@@ -90,7 +90,7 @@ class MCTS_cooperative:
             for j in range(len(actions[i])):
                 ast[j] = actions[i][j]
             self.actions[i] = ast
-        nprint("%s actions have been initialised. " % (len(self.actions)))
+        nprint("%s actions have been initialised." % (len(self.actions)))
 
     def initialiseLeafNode(self, index, parentIndex, newAtomicManipulation):
         nprint("initialising a leaf node %s from the node %s" % (index, parentIndex))
@@ -126,12 +126,12 @@ class MCTS_cooperative:
         else:
             player = "the second player"
         print("%s making a move into the new root %s, whose value is %s and visited number is %s" % (
-        player, newRootIndex, self.cost[newRootIndex], self.numberOfVisited[newRootIndex]))
+            player, newRootIndex, self.cost[newRootIndex], self.numberOfVisited[newRootIndex]))
         self.removeChildren(self.rootIndex, [newRootIndex])
         self.rootIndex = newRootIndex
 
     def removeChildren(self, index, indicesToAvoid):
-        if self.fullyExpanded[index] == True:
+        if self.fullyExpanded[index] is True:
             for childIndex in self.children[index]:
                 if childIndex not in indicesToAvoid: self.removeChildren(childIndex, [])
         self.manipulation.pop(index, None)
@@ -146,23 +146,23 @@ class MCTS_cooperative:
         allValues = {}
         for childIndex in self.children[index]:
             allValues[childIndex] = float(self.numberOfVisited[childIndex]) / self.cost[childIndex]
-        nprint("finding best children from %s" % (allValues))
+        nprint("finding best children from %s" % allValues)
         # for cooperative
         return max(allValues.items(), key=operator.itemgetter(1))[0]
 
     def treeTraversal(self, index):
-        if self.fullyExpanded[index] == True:
+        if self.fullyExpanded[index] is True:
             nprint("tree traversal on node %s with childrens %s" % (index, self.children[index]))
             allValues = {}
             for childIndex in self.children[index]:
                 # UCB values
-                allValues[childIndex] = (float(self.numberOfVisited[childIndex]) / self.cost[childIndex]) * self.eta[
-                    1] + explorationRate * math.sqrt(
-                    math.log(self.numberOfVisited[index]) / float(self.numberOfVisited[childIndex]))
+                allValues[childIndex] = ((float(self.numberOfVisited[childIndex]) / self.cost[childIndex]) * self.eta[1]
+                                         + explorationRate * math.sqrt(
+                            math.log(self.numberOfVisited[index]) / float(self.numberOfVisited[childIndex])))
 
             # for cooperative
-            nextIndex = \
-            np.random.choice(list(allValues.keys()), 1, p=[x / sum(allValues.values()) for x in allValues.values()])[0]
+            nextIndex = np.random.choice(list(allValues.keys()), 1,
+                                         p=[x / sum(allValues.values()) for x in allValues.values()])[0]
 
             if self.keypoint[index] in self.usedActionsID.keys() and self.keypoint[index] != 0:
                 self.usedActionsID[self.keypoint[index]].append(self.indexToActionID[index])
@@ -172,15 +172,15 @@ class MCTS_cooperative:
             return self.treeTraversal(nextIndex)
 
         else:
-            nprint("tree traversal terminated on node %s" % (index))
+            nprint("tree traversal terminated on node %s" % index)
             availableActions = copy.deepcopy(self.actions)
             # for k in self.usedActionsID.keys():
             #    for i in self.usedActionsID[k]: 
             #        availableActions[k].pop(i, None)
-            return (index, availableActions)
+            return index, availableActions
 
     def initialiseExplorationNode(self, index, availableActions):
-        nprint("expanding %s" % (index))
+        nprint("expanding %s" % index)
         if self.keypoint[index] != 0:
             for (actionId, am) in availableActions[self.keypoint[index]].items():
                 self.indexToNow += 1
@@ -205,15 +205,15 @@ class MCTS_cooperative:
         self.numberOfVisited[index] += 1
         if self.parent[index] in self.parent:
             nprint("start backPropagating the value %s from node %s, whose parent node is %s" % (
-            value, index, self.parent[index]))
+                value, index, self.parent[index]))
             self.backPropagation(self.parent[index], value)
         else:
-            nprint("backPropagating ends on node %s" % (index))
+            nprint("backPropagating ends on node %s" % index)
 
     # start random sampling and return the Euclidean value as the value
     def sampling(self, index, availableActions):
 
-        nprint("start sampling node %s" % (index))
+        nprint("start sampling node %s" % index)
         availableActions2 = copy.deepcopy(availableActions)
         sampleValues = []
         i = 0
@@ -229,10 +229,9 @@ class MCTS_cooperative:
             (childTerminated, val) = self.sampleNext(self.keypoint[index])
             sampleValues.append(val)
             i += 1
-        return (childTerminated, min(sampleValues))
+        return childTerminated, min(sampleValues)
 
     def sampleNext(self, k):
-
         activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)
         (newClass, newConfident) = self.model.predict(activations1)
         (distMethod, distVal) = self.eta
@@ -263,7 +262,7 @@ class MCTS_cooperative:
             nprint("sampling a path ends by eta with depth %s ... " % self.depth)
             return (self.depth == 0, distVal)
 
-        elif list(set(self.availableActionIDs[k]) - set(self.usedActionIDs[k])) == []:
+        elif not list(set(self.availableActionIDs[k]) - set(self.usedActionIDs[k])):
             nprint("sampling a path ends with depth %s because no more actions can be taken ... " % self.depth)
             return (self.depth == 0, distVal)
 
@@ -305,7 +304,7 @@ class MCTS_cooperative:
                 flag = True
                 break
 
-        if flag == True:
+        if flag is True:
             return self.scrutinizePath(manipulations)
         else:
             return manipulations
@@ -326,7 +325,7 @@ class MCTS_cooperative:
             dist = diffPercent(activations1, self.image)
         elif distMethod == "NumDiffs":
             dist = diffPercent(activations1, self.image)
-        nprint("terminated by controlled search: distance = %s" % (dist))
+        nprint("terminated by controlled search: distance = %s" % dist)
         return dist > distVal
 
     def applyManipulation(self, manipulation):

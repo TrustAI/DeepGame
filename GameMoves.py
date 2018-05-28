@@ -19,7 +19,7 @@ import collections
 
 ############################################################
 #
-#  initialise possible moves for two-player game
+#  initialise possible moves for a two-player game
 #
 ################################################################
 

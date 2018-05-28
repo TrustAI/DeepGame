@@ -23,7 +23,7 @@ effectiveConfidenceWhenChanging = 0.0
 explorationRate = math.sqrt(2)
 
 
-class MCTS_competitive:
+class MCTSCompetitive:
 
     def __init__(self, data_set, model, image_index, image, tau, eta):
         self.data_set = data_set

@@ -29,17 +29,17 @@ class DataCollection:
     def initialiseIndex(self, index):
         self.index = index
 
-    def addMaxFeatures(self, rt):
-        self.maxFeatures[self.index] = rt
+    def addMaxFeatures(self, max_feature):
+        self.maxFeatures[self.index] = max_feature
 
-    def addRunningTime(self, rt):
-        self.runningTime[self.index] = rt
+    def addRunningTime(self, running_time):
+        self.runningTime[self.index] = running_time
 
-    def addConfidence(self, cf):
-        self.confidence[self.index] = cf
+    def addConfidence(self, confidence):
+        self.confidence[self.index] = confidence
 
-    def addManipulationPercentage(self, mp):
-        self.manipulationPercentage[self.index] = mp
+    def addManipulationPercentage(self, mani_percentage):
+        self.manipulationPercentage[self.index] = mani_percentage
 
     def addl2Distance(self, l2dist):
         self.l2Distance[self.index] = l2dist
@@ -53,8 +53,8 @@ class DataCollection:
     def addmaxfeatures(self, maxfeatures):
         self.maxFeatures[self.index] = maxfeatures
 
-    def addComment(self, str):
-        self.fileHandler.write(str)
+    def addComment(self, comment):
+        self.fileHandler.write(comment)
 
     def provideDetails(self):
         self.fileHandler.write("running time: \n")
@@ -92,20 +92,20 @@ class DataCollection:
             self.fileHandler.write("none of the images were successfully manipulated.")
             return
         else:
-            # art = sum(self.runningTime.values()) / len(self.runningTime.values())
-            art = np.asarray(self.runningTime.values()).mean()
+            art = sum(self.runningTime.values()) / len(self.runningTime.values())
+            # art = np.asarray(self.runningTime.values()).mean()
             self.fileHandler.write("average running time: %s\n" % art)
-            # amp = sum(self.manipulationPercentage.values()) / len(self.manipulationPercentage.values())
-            amp = np.asarray(self.manipulationPercentage.values()).mean()
+            amp = sum(self.manipulationPercentage.values()) / len(self.manipulationPercentage.values())
+            # amp = np.asarray(self.manipulationPercentage.values()).mean()
             self.fileHandler.write("average manipulation percentage: %s\n" % amp)
-            # l2dist = sum(self.l2Distance.values()) / len(self.l2Distance.values())
-            l2dist = np.asarray(self.l2Distance.values()).mean()
+            l2dist = sum(self.l2Distance.values()) / len(self.l2Distance.values())
+            # l2dist = np.asarray(self.l2Distance.values()).mean()
             self.fileHandler.write("average euclidean distance: %s\n" % l2dist)
-            # l1dist = sum(self.l1Distance.values()) / len(self.l1Distance.values())
-            l1dist = np.asarray(self.l1Distance.values()).mean()
+            l1dist = sum(self.l1Distance.values()) / len(self.l1Distance.values())
+            # l1dist = np.asarray(self.l1Distance.values()).mean()
             self.fileHandler.write("average L1 distance: %s\n" % l1dist)
-            # l0dist = sum(self.l0Distance.values()) / len(self.l0Distance.values())
-            l0dist = np.asarray(self.l0Distance.values()).mean()
+            l0dist = sum(self.l0Distance.values()) / len(self.l0Distance.values())
+            # l0dist = np.asarray(self.l0Distance.values()).mean()
             self.fileHandler.write("average L0 distance: %s\n" % l0dist)
 
     def close(self):
