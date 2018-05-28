@@ -26,7 +26,7 @@ explorationRate = math.sqrt(2)
 maximumSamplingDepth = 500   
 
 
-class mcts:
+class MCTS:
 
     def __init__(self, data_set, model, image_index, image, gameType, tau, eta):
         self.data_set = data_set
