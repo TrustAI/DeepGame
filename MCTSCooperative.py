@@ -229,19 +229,24 @@ class MCTSCooperative:
             sampleValues.append(val)
             i += 1
         return childTerminated, min(sampleValues)
+        
+    def computeDistance(self,newImage): 
+        (distMethod, _) = self.eta
+        if distMethod == "L2":
+            dist = l2Distance(newImage, self.image)
+        elif distMethod == "L1":
+            dist = l1Distance(newImage, self.image)
+        elif distMethod == "Percentage":
+            dist = diffPercent(newImage, self.image)
+        elif distMethod == "NumDiffs":
+            dist = diffPercent(newImage, self.image) * self.image.size
+        return dist 
 
     def sampleNext(self, k):
         activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)
         (newClass, newConfident) = self.model.predict(activations1)
         (distMethod, distVal) = self.eta
-        if distMethod == "L2":
-            dist = l2Distance(activations1, self.image)
-        elif distMethod == "L1":
-            dist = l1Distance(activations1, self.image)
-        elif distMethod == "Percentage":
-            dist = diffPercent(activations1, self.image)
-        elif distMethod == "NumDiffs":
-            dist = diffPercent(activations1, self.image) * self.image.size
+        dist = self.computeDistance(activations1)
 
         # need not only class change, but also high confidence adversary examples
         if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
@@ -315,15 +320,7 @@ class MCTSCooperative:
 
     def terminatedByEta(self, index):
         activations1 = self.moves.applyManipulation(self.image, self.manipulation[index])
-        (distMethod, distVal) = self.eta
-        if distMethod == "L2":
-            dist = l2Distance(activations1, self.image)
-        elif distMethod == "L1":
-            dist = l1Distance(activations1, self.image)
-        elif distMethod == "Percentage":
-            dist = diffPercent(activations1, self.image)
-        elif distMethod == "NumDiffs":
-            dist = diffPercent(activations1, self.image)
+        dist = self.computeDistance(activations1)
         nprint("terminated by controlled search: distance = %s" % dist)
         return dist > distVal
 
