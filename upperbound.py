@@ -19,9 +19,9 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     dataset = DataSet(dataSetName, 'testing')
     image = dataset.getInput(image_index)
     (label, confident) = NN.predict(image)
-    print("Working on input with index %s, whose class is %s and the confidence is %s."
-          % (image_index, label, confident))
     origClassStr = NN.get_label(int(label))
+    print("Working on input with index %s, whose class is '%s' and the confidence is %s."
+          % (image_index, origClassStr, confident))
 
     tau = 1
     # choose between "cooperative" and "competitive "
@@ -72,7 +72,8 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         print("confidence: %s" % (newConfident))
 
         # break if we found that one of the children is a misclassification
-        if childTerminated is True: break
+        if childTerminated is True:
+            break
 
         # store the current best
         (_, bestManipulation) = mctsInstance.bestCase
@@ -100,7 +101,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         NN.save_input(image1, path0)
         path0 = "%s_pic/%s_diff.png" % (dataSetName, image_index)
         NN.save_input(np.subtract(image, image1), path0)
-        print("\nfound an adversary image within prespecified bounded computational resource. "
+        print("\nfound an adversary image within pre-specified bounded computational resource. "
               "The following is its information: ")
         print("difference between images: %s" % (diffImage(image, image1)))
 
@@ -124,16 +125,16 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         l1dist = l1Distance(mctsInstance.image, image1)
         l0dist = l0Distance(mctsInstance.image, image1)
         percent = diffPercent(mctsInstance.image, image1)
-        print("L2 distance %s" % (l2dist))
-        print("L1 distance %s" % (l1dist))
-        print("L0 distance %s" % (l0dist))
-        print("manipulated percentage distance %s" % (percent))
+        print("L2 distance %s" % l2dist)
+        print("L1 distance %s" % l1dist)
+        print("L0 distance %s" % l0dist)
+        print("manipulated percentage distance %s" % percent)
         print("class is changed into %s with confidence %s\n" % (newClassStr, newConfident))
 
         return time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist, maxfeatures
 
     else:
-        print("\nfailed to find an adversary image within prespecified bounded computational resource. ")
-        return (0, 0, 0, 0, 0, 0, 0)
+        print("\nfailed to find an adversary image within pre-specified bounded computational resource. ")
+        return 0, 0, 0, 0, 0, 0, 0
 
     runningTime = time.time() - start_time
