@@ -9,7 +9,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     start_time = time.time()
 
     MCTS_all_maximal_time = 300
-    MCTS_level_maximal_time = 120
+    MCTS_level_maximal_time = 60
 
     NN = NeuralNetwork(dataSetName)
     NN.load_network()
@@ -124,48 +124,14 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
 
         start_time_all = time.time()
         runningTime_all = 0
-        numberOfMoves = 0
-        while (not mctsInstance.terminalNode(mctsInstance.rootIndex) and
-               not mctsInstance.terminatedByEta(mctsInstance.rootIndex) and
-               runningTime_all <= MCTS_all_maximal_time):
-            print("the number of moves we have made up to now: %s" % numberOfMoves)
-            l2dist = mctsInstance.l2Dist(mctsInstance.rootIndex)
-            l1dist = mctsInstance.l1Dist(mctsInstance.rootIndex)
-            l0dist = mctsInstance.l0Dist(mctsInstance.rootIndex)
-            percent = mctsInstance.diffPercent(mctsInstance.rootIndex)
-            diffs = mctsInstance.diffImage(mctsInstance.rootIndex)
-            print("L2 distance %s" % l2dist)
-            print("L1 distance %s" % l1dist)
-            print("L0 distance %s" % l0dist)
-            print("manipulated percentage distance %s" % percent)
-            print("manipulated dimensions %s" % diffs)
+        while runningTime_all <= MCTS_all_maximal_time:
 
-            start_time_level = time.time()
-            runningTime_level = 0
-            childTerminated = False
-            while runningTime_level <= MCTS_level_maximal_time:
-                # Here are three steps for MCTS
-                (leafNode, availableActions) = mctsInstance.treeTraversal(mctsInstance.rootIndex)
-                newNodes = mctsInstance.initialiseExplorationNode(leafNode, availableActions)
-                for node in newNodes:
-                    (childTerminated, value) = mctsInstance.sampling(node, availableActions)
-                    mctsInstance.backPropagation(node, value)
-                runningTime_level = time.time() - start_time_level
-                print("best possible distance up to now is %s" % (str(mctsInstance.bestCase[0])))
-            bestChild = mctsInstance.bestChild(mctsInstance.rootIndex)
-            # pick the current best move to take  
-            mctsInstance.makeOneMove(bestChild)
-
-            image1 = mctsInstance.applyManipulation(mctsInstance.manipulation[mctsInstance.rootIndex])
-            diffs = mctsInstance.diffImage(mctsInstance.rootIndex)
-            path0 = "%s_pic/%s_temp_%s.png" % (dataSetName, image_index, len(diffs))
-            NN.save_input(image1, path0)
-            (newClass, newConfident) = NN.predict(image1)
-            print("confidence: %s" % newConfident)
-
-            # break if we found that one of the children is a misclassification
-            if childTerminated is True:
-                break
+            (leafNode, availableActions) = mctsInstance.treeTraversal(mctsInstance.rootIndex)
+            newNodes = mctsInstance.initialiseExplorationNode(leafNode, availableActions)
+            for node in newNodes:
+                (childTerminated, value) = mctsInstance.sampling(node, availableActions)
+                mctsInstance.backPropagation(node, value)
+            print("best possible distance up to now is %s" % (str(mctsInstance.bestCase[0])))
 
             # store the current best
             (_, bestManipulation) = mctsInstance.bestCase
@@ -173,7 +139,6 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             path0 = "%s_pic/%s_currentBest.png" % (dataSetName, image_index)
             NN.save_input(image1, path0)
 
-            numberOfMoves += 1
             runningTime_all = time.time() - start_time_all
 
         (bestValue, bestManipulation) = mctsInstance.bestCase
