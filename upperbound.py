@@ -21,7 +21,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     (label, confident) = NN.predict(image)
     print("Working on input with index %s, whose class is %s and the confidence is %s."
           % (image_index, label, confident))
-    origClassStr = NN.LABELS(int(label))
+    origClassStr = NN.get_label(int(label))
 
     tau = 1
     # choose between "cooperative" and "competitive "
@@ -92,7 +92,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         maxfeatures = 0
     image1 = mctsInstance.applyManipulation(bestManipulation)
     (newClass, newConfident) = NN.predict(image1)
-    newClassStr = NN.LABELS(int(newClass))
+    newClassStr = NN.get_label(int(newClass))
 
     if newClass != label:
         path0 = "%s_pic/%s_%s_modified_into_%s_with_confidence_%s.png" % (
@@ -114,7 +114,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         # for i in range(len(advImages)):
         #    (advnum,advimg) = advImages[i]
         #    (advClass,advConfident) = NN.predictWithImage(model,advimg)
-        #    advClassStr = dataBasics.LABELS(int(advClass))
+        #    advClassStr = dataBasics.get_label(int(advClass))
         #    path0="%s/%s_adv_%s_%s_%s.png"%(dataSetName,image_index,i,advnum,advClassStr)
         #    NN.save_input(-1,advimg,path0)
 
@@ -130,7 +130,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         print("manipulated percentage distance %s" % (percent))
         print("class is changed into %s with confidence %s\n" % (newClassStr, newConfident))
 
-        return (time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist, maxfeatures)
+        return time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist, maxfeatures
 
     else:
         print("\nfailed to find an adversary image within prespecified bounded computational resource. ")

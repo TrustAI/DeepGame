@@ -196,7 +196,7 @@ class NeuralNetwork:
 
         cv2.imwrite(filename, image_cv * 255.0, [cv2.IMWRITE_PNG_COMPRESSION, 9])
 
-    def LABELS(self, index):
+    def get_label(self, index):
         if self.data_set == 'mnist':
             labels = ['0', '1', '2', '3', '4', '5', '6',
                       '7', '8', '9']
