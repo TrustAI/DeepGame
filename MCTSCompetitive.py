@@ -257,7 +257,7 @@ class MCTSCompetitive:
             minIndex = sampleValues.index(min(sampleValues))
             #print(index, self.bestCaseList[index][0], min(sampleValues), self.eta)
             if self.bestCaseList[index][0] > sampleValues[minIndex]:
-                print("on node %s, update best case from %s to %s, start updating ancestor nodes" % (index, self.bestCaseList[index][0], sampleValues[minIndex]))
+                nprint("on node %s, update best case from %s to %s, start updating ancestor nodes" % (index, self.bestCaseList[index][0], sampleValues[minIndex]))
                 self.numConverge += 1
                 self.bestCaseList[index] = (sampleValues[minIndex], samplePaths[minIndex])
                 # update best case
@@ -401,7 +401,7 @@ class MCTSCompetitive:
             self.updateBestCase(parentIndex)
         else: 
             self.bestCase = self.bestCaseList[0]
-            print("up to now, the best case is %s, whose distance to the original input is %s"%(self.bestCase[1],self.bestCase[0]))
+            print("the best case is updated into distance %s and manipulation %s"%(self.bestCase[0],self.bestCase[1]))
 
     def bestFeatures(self):
         bestManipulation = self.bestCase[1]
