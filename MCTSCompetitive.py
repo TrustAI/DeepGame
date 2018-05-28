@@ -18,7 +18,7 @@ import math
 from basics import *
 from GameMoves import *
 
-MCTS_multi_samples = 3
+MCTS_multi_samples = 1
 effectiveConfidenceWhenChanging = 0.0
 explorationRate = math.sqrt(2)
 
@@ -41,33 +41,37 @@ class MCTSCompetitive:
         self.numberOfVisited = {}
         self.parent = {}
         self.children = {}
+        self.children[-1] = {0}
         self.fullyExpanded = {}
 
         self.indexToNow = 0
         # current root node
         self.rootIndex = 0
+        
+        # maintain for every node on the tree the current best 
+        self.bestCaseList = {}
+        # best case for the root node 
+        # please note the difference with the cooperative game 
+        self.bestCase = (2 ^ 20, {})
 
         self.manipulation = {}
         # initialise root node
         self.manipulation[-1] = {}
         self.initialiseLeafNode(0, -1, {})
+        self.bestCaseList[0] = (0, [])
+        self.bestCaseList[-1] = (0, [])
 
         # record all the keypoints: index -> kp
         self.keypoints = {}
         # mapping nodes to keypoints
         self.keypoint = {}
+        self.keypoint[-1] = 0
         self.keypoint[0] = 0
 
         # local actions
         self.actions = {}
         self.usedActionsID = {}
         self.indexToActionID = {}
-
-        # maintain for every node on the tree the current best 
-        self.bestCaseList = {}
-        # best case for the root node 
-        # please note the difference with the cooperative game 
-        self.bestCase = (2 ^ 20, {})
 
         self.numConverge = 0
 
@@ -104,6 +108,7 @@ class MCTSCompetitive:
         self.children[index] = []
         self.fullyExpanded[index] = False
         self.numberOfVisited[index] = 0
+
         # activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
 
     def destructor(self):
@@ -199,7 +204,7 @@ class MCTSCompetitive:
                 self.indexToActionID[self.indexToNow] = actionId
                 self.initialiseLeafNode(self.indexToNow, index, am)
                 self.children[index].append(self.indexToNow)
-                self.bestCaseList[self.indexToNow] = (self.eta[1], [])
+                self.bestCaseList[self.indexToNow] = (0, [])
         else:
             for kp in list(set(self.keypoints.keys()) - set([0])):
                 self.indexToNow += 1
@@ -207,7 +212,7 @@ class MCTSCompetitive:
                 self.indexToActionID[self.indexToNow] = 0
                 self.initialiseLeafNode(self.indexToNow, index, {})
                 self.children[index].append(self.indexToNow)
-                self.bestCaseList[self.indexToNow] = (0, [])
+                self.bestCaseList[self.indexToNow] = (self.eta[1], [])
 
 
         self.fullyExpanded[index] = True
@@ -250,8 +255,9 @@ class MCTSCompetitive:
             return childTerminated, min(sampleValues)
         else: 
             minIndex = sampleValues.index(min(sampleValues))
+            #print(index, self.bestCaseList[index][0], min(sampleValues), self.eta)
             if self.bestCaseList[index][0] > sampleValues[minIndex]:
-                print("on node %s, update best case from %s to %s" % (index, self.bestCaseList[index][0], dist))
+                print("on node %s, update best case from %s to %s, start updating ancestor nodes" % (index, self.bestCaseList[index][0], sampleValues[minIndex]))
                 self.numConverge += 1
                 self.bestCaseList[index] = (sampleValues[minIndex], samplePaths[minIndex])
                 # update best case
@@ -374,7 +380,7 @@ class MCTSCompetitive:
         return diffPercent(self.image, activations1)
 
     def updateBestCase(self,index):
-        if index >= 0: 
+        if index > 0: 
             parentIndex = self.parent[index]       
             if self.keypoint[parentIndex] == 0: 
                 tempVal = 0
@@ -383,7 +389,7 @@ class MCTSCompetitive:
                     if self.bestCaseList[childIndex][0] > tempVal: 
                         tempVal = self.bestCaseList[childIndex][0]
                         tempPath = self.bestCaseList[childIndex][1]
-                self.elf.bestCaseList[index] = (tempVal,tempPath)
+                self.bestCaseList[parentIndex] = (tempVal,tempPath)
             else: 
                 tempVal = self.eta[1]
                 tempPath = [] 
@@ -391,10 +397,11 @@ class MCTSCompetitive:
                     if self.bestCaseList[childIndex][0] < tempVal: 
                         tempVal = self.bestCaseList[childIndex][0]
                         tempPath = self.bestCaseList[childIndex][1]
-                self.elf.bestCaseList[index] = (tempVal,tempPath)
+                self.bestCaseList[parentIndex] = (tempVal,tempPath)
             self.updateBestCase(parentIndex)
         else: 
-            print("up to now, the best case is %s"%(self.bestCase))
+            self.bestCase = self.bestCaseList[0]
+            print("up to now, the best case is %s, whose distance to the original input is %s"%(self.bestCase[1],self.bestCase[0]))
 
     def bestFeatures(self):
         bestManipulation = self.bestCase[1]
