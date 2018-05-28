@@ -39,7 +39,7 @@ class MCTS:
         
         (self.originalClass,self.originalConfident) = self.model.predict(self.image)
         
-        self.moves = game_moves(self.data_set, self.model, self.image, self.tau)
+        self.moves = GameMoves(self.data_set, self.model, self.image, self.tau)
 
         self.cost = {}
         self.numberOfVisited = {}
