@@ -106,7 +106,7 @@ class DataCollection:
             self.fileHandler.write("average L1 distance: %s\n" % l1dist)
             # l0dist = sum(self.l0Distance.values()) / len(self.l0Distance.values())
             l0dist = np.mean(list(self.l0Distance.values()))
-            self.fileHandler.write("average L0 distance: %s" + "\n" * 5 % l0dist)
+            self.fileHandler.write("average L0 distance: %s\n\n\n\n\n" % l0dist)
 
     def close(self):
         self.fileHandler.close()

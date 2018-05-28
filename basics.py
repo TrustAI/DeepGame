@@ -9,9 +9,9 @@ import copy
 
 
 def assure_path_exists(path):
-    dir = os.path.dirname(path)
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    directory = os.path.dirname(path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 
 def current_milli_time():
@@ -44,11 +44,11 @@ def l0Distance(image1, image2):
 
 def mergeTwoDicts(x, y):
     z = x.copy()
-    for k, v in y.items():
-        if k in z.keys():
-            z[k] += y[k]
+    for key, value in y.items():
+        if key in z.keys():
+            z[key] += y[key]
         else:
-            z[k] = y[k]
+            z[key] = y[key]
     # z.update(y)
     return z
 
@@ -57,7 +57,7 @@ def nprint(str):
     return 0
 
 
-def printDict(dict):
-    for k, v in dict.items():
-        print("%s : %s" % (k, v))
+def printDict(dictionary):
+    for key, value in dictionary.items():
+        print("%s : %s" % (key, value))
     print("\n")
