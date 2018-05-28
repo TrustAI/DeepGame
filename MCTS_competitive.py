@@ -66,6 +66,7 @@ class MCTS_competitive:
         self.indexToActionID = {}
 
         # best case
+        self.bestCase = (2^20,{})
         self.bestCaseList = {}
         self.numConverge = 0 
         
@@ -282,6 +283,8 @@ class MCTS_competitive:
                 self.bestCaseList[k] = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
                 self.model.saveInput(activations1,path0)
+                # update best case
+                self.bestCase = self.getBestCase()
             return (self.depth == 0, dist)
             
         elif dist > distVal: 
@@ -381,13 +384,15 @@ class MCTS_competitive:
     def diffPercent(self,index): 
         activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         return diffPercent(self.image,activations1)
-    
-    def bestFeatures(self):
+        
+    def getBestCase(self):
         tobeconsidered = copy.deepcopy(self.bestCaseList)
         tobeconsidered.pop(0)
-        bestCase = max(tobeconsidered.items(), key=lambda x: x[1][0])[1]
+        self.bestCase = max(tobeconsidered.items(), key=lambda x: x[1][0])[1]
+                    
+    def bestFeatures(self):
         
-        bestManipulation = bestCase[1] 
+        bestManipulation = self.bestCase[1] 
         maxdims = []
         nf = 0 
         for i in range(1,len(self.actions)):
