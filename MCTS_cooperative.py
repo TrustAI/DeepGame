@@ -103,7 +103,6 @@ class MCTS:
         self.children[index] = []
         self.fullyExpanded[index] = False
         self.numberOfVisited[index] = 0    
-        #activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
 
 
     def destructor(self): 
