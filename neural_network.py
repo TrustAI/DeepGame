@@ -187,7 +187,7 @@ class NeuralNetwork:
         else:
             print("load_network: Unsupported dataset.")
 
-    def saveInput(self, image, filename):
+    def save_input(self, image, filename):
 
         import cv2
         import copy

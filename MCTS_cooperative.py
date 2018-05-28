@@ -256,7 +256,7 @@ class MCTS_cooperative:
                 self.numConverge += 1
                 self.bestCase = (dist, self.atomicManipulationPath)
                 path0 = "%s_pic/%s_currentBest_%s.png" % (self.data_set, self.image_index, self.numConverge)
-                self.model.saveInput(activations1, path0)
+                self.model.save_input(activations1, path0)
             return (self.depth == 0, dist)
 
         elif dist > distVal:

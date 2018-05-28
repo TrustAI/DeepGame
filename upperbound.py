@@ -67,7 +67,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         image1 = mctsInstance.applyManipulation(mctsInstance.manipulation[mctsInstance.rootIndex])
         diffs = mctsInstance.diffImage(mctsInstance.rootIndex)
         path0 = "%s_pic/%s_temp_%s.png" % (dataSetName, image_index, len(diffs))
-        NN.saveInput(image1, path0)
+        NN.save_input(image1, path0)
         (newClass, newConfident) = NN.predict(image1)
         print("confidence: %s" % (newConfident))
 
@@ -78,7 +78,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         (_, bestManipulation) = mctsInstance.bestCase
         image1 = mctsInstance.applyManipulation(bestManipulation)
         path0 = "%s_pic/%s_currentBest.png" % (dataSetName, image_index)
-        NN.saveInput(image1, path0)
+        NN.save_input(image1, path0)
 
         numberOfMoves += 1
         runningTime_all = time.time() - start_time_all
@@ -97,9 +97,9 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     if newClass != label:
         path0 = "%s_pic/%s_%s_modified_into_%s_with_confidence_%s.png" % (
             dataSetName, image_index, origClassStr, newClassStr, newConfident)
-        NN.saveInput(image1, path0)
+        NN.save_input(image1, path0)
         path0 = "%s_pic/%s_diff.png" % (dataSetName, image_index)
-        NN.saveInput(np.subtract(image, image1), path0)
+        NN.save_input(np.subtract(image, image1), path0)
         print("\nfound an adversary image within prespecified bounded computational resource. "
               "The following is its information: ")
         print("difference between images: %s" % (diffImage(image, image1)))
@@ -109,14 +109,14 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         # advImages = mctsInstance.analyseAdv.analyse()
         # for (v,pixelImage) in pixelImages:
         #    path0="%s/%s_useful_%s.png"%(dataSetName,image_index,v)
-        #    NN.saveInput(-1,pixelImage,path0)
+        #    NN.save_input(-1,pixelImage,path0)
 
         # for i in range(len(advImages)):
         #    (advnum,advimg) = advImages[i]
         #    (advClass,advConfident) = NN.predictWithImage(model,advimg)
         #    advClassStr = dataBasics.LABELS(int(advClass))
         #    path0="%s/%s_adv_%s_%s_%s.png"%(dataSetName,image_index,i,advnum,advClassStr)
-        #    NN.saveInput(-1,advimg,path0)
+        #    NN.save_input(-1,advimg,path0)
 
         print("number of adversarial examples found: %s" % (mctsInstance.numAdv))
 

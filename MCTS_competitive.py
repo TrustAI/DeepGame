@@ -284,7 +284,7 @@ class MCTS_competitive:
                 self.numConverge += 1
                 self.bestCaseList[k] = (dist, self.atomicManipulationPath)
                 path0 = "%s_pic/%s_currentBest_%s.png" % (self.data_set, self.image_index, self.numConverge)
-                self.model.saveInput(activations1, path0)
+                self.model.save_input(activations1, path0)
                 # update best case
                 self.bestCase = self.getBestCase()
             return (self.depth == 0, dist)
