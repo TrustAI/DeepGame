@@ -403,8 +403,9 @@ class MCTSCompetitive:
                 self.bestCaseList[parentIndex] = (tempVal,tempPath)
             self.updateBestCase(parentIndex)
         else: 
-            self.bestCase = self.bestCaseList[0]
-            print("the best case is updated into distance %s and manipulation %s"%(self.bestCase[0],self.bestCase[1]))
+            if self.bestCase[0] != self.bestCaseList[0][0]: 
+                self.bestCase = self.bestCaseList[0]
+                nprint("the best case is updated into distance %s and manipulation %s"%(self.bestCase[0],self.bestCase[1]))
 
     def bestFeatures(self):
         bestManipulation = self.bestCase[1]
