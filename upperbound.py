@@ -1,6 +1,6 @@
 from __future__ import print_function
 from neural_network import *
-from data_set import *
+from DateSet import *
 from MCTS_competitive import *
 from MCTS_cooperative import *
 
@@ -17,7 +17,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     NN.model.summary()
 
     dataset = DataSet(dataSetName, 'testing')
-    image = dataset.getInput(image_index)
+    image = dataset.get_input(image_index)
     (label, confident) = NN.predict(image)
     origClassStr = NN.get_label(int(label))
     print("Working on input with index %s, whose class is '%s' and the confidence is %s."
