@@ -38,23 +38,12 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             (leafNode, availableActions) = mctsInstance.treeTraversal(mctsInstance.rootIndex)
             newNodes = mctsInstance.initialiseExplorationNode(leafNode, availableActions)
             for node in newNodes:
-                (childTerminated, value) = mctsInstance.sampling(node, availableActions)
+                (_, value) = mctsInstance.sampling(node, availableActions)
                 mctsInstance.backPropagation(node, value)
             if currentBest > mctsInstance.bestCase[0]: 
                 print("best possible distance up to now is %s" % (str(mctsInstance.bestCase[0])))
                 currentBest = mctsInstance.bestCase[0]
             bestChild = mctsInstance.bestChild(mctsInstance.rootIndex)
-
-            image1 = mctsInstance.applyManipulation(mctsInstance.manipulation[mctsInstance.rootIndex])
-            diffs = mctsInstance.diffImage(mctsInstance.rootIndex)
-            path0 = "%s_pic/%s_temp_%s.png" % (dataSetName, image_index, len(diffs))
-            NN.save_input(image1, path0)
-            (newClass, newConfident) = NN.predict(image1)
-            print("confidence: %s" % newConfident)
-
-            # break if we found that one of the children is a misclassification
-            if childTerminated is True:
-                break
 
             # store the current best
             (_, bestManipulation) = mctsInstance.bestCase
@@ -111,7 +100,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             (leafNode, availableActions) = mctsInstance.treeTraversal(mctsInstance.rootIndex)
             newNodes = mctsInstance.initialiseExplorationNode(leafNode, availableActions)
             for node in newNodes:
-                (childTerminated, value) = mctsInstance.sampling(node, availableActions)
+                (_, value) = mctsInstance.sampling(node, availableActions)
                 mctsInstance.backPropagation(node, value)
             if currentBest > mctsInstance.bestCase[0]: 
                 print("best possible distance up to now is %s" % (str(mctsInstance.bestCase[0])))
