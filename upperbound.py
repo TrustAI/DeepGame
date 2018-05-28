@@ -1,7 +1,8 @@
 from __future__ import print_function
 from neural_network import *
 from data_set import *
-from MCTS import *
+from MCTS_competitive import *
+from MCTS_cooperative import *
 
 
 def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
