@@ -24,13 +24,13 @@ class NeuralNetwork:
         self.model = Sequential()
         assure_path_exists("%s_pic/" % (self.data_set))
 
-    def predict(self, input):
+    def predict(self, image):
         import numpy as np
-        newInput2 = np.expand_dims(input, axis=0)
-        predictValue = self.model.predict(newInput2)
-        newClass = np.argmax(np.ravel(predictValue))
-        confident = np.amax(np.ravel(predictValue))
-        return (newClass, confident)
+        image = np.expand_dims(image, axis=0)
+        predict_value = self.model.predict(image)
+        new_class = np.argmax(np.ravel(predict_value))
+        confident = np.amax(np.ravel(predict_value))
+        return new_class, confident
 
     # To train a neural network.
     def train_network(self):
