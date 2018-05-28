@@ -176,11 +176,11 @@ class MCTSCompetitive:
                     allValues2[k] = 1 / float(allValues[k])
                 probdist = [x / sum(allValues2.values()) for x in allValues2.values()]
                 #nextIndex = np.random.choice(list(allValues.keys()), 1, p=probdist)[0]
-                nextIndex = allValues.keys()[probdist.index(max(probdist))]
+                nextIndex = list(allValues.keys())[probdist.index(max(probdist))]
             else:
                 probdist = [x / sum(allValues.values()) for x in allValues.values()]
                 #nextIndex = np.random.choice(list(allValues.keys()), 1, p=probdist)[0]
-                nextIndex = allValues.keys()[probdist.index(max(probdist))]
+                nextIndex = list(allValues.keys())[probdist.index(max(probdist))]
 
 
             if self.keypoint[index] in self.usedActionsID.keys() and self.keypoint[index] != 0:
