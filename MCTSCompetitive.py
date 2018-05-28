@@ -63,9 +63,12 @@ class MCTSCompetitive:
         self.usedActionsID = {}
         self.indexToActionID = {}
 
-        # best case
-        self.bestCase = (2 ^ 20, {})
+        # maintain for every node on the tree the current best 
         self.bestCaseList = {}
+        # best case for the root node 
+        # please note the difference with the cooperative game 
+        self.bestCase = (2 ^ 20, {})
+
         self.numConverge = 0
 
         # number of adversarial examples
@@ -76,11 +79,6 @@ class MCTSCompetitive:
         self.depth = 0
         self.availableActionIDs = []
         self.usedActionIDs = []
-        self.samplingCompetitiveFeature = 0
-
-        # used in competitive games, 
-        # for the remembering of chosen feature by player I
-        self.competitiveFeature = {}
 
     def initialiseMoves(self):
         # initialise actions according to the type of manipulations
@@ -90,10 +88,6 @@ class MCTSCompetitive:
         for k in actions[0]:
             self.keypoints[i] = k
             i += 1
-
-        # initialise bestCase, for competitive
-        for kp in list(self.keypoints.keys()):
-            self.bestCaseList[kp] = (2 ^ 20, {})
 
         for i in range(len(actions)):
             ast = {}
@@ -205,14 +199,7 @@ class MCTSCompetitive:
                 self.indexToActionID[self.indexToNow] = actionId
                 self.initialiseLeafNode(self.indexToNow, index, am)
                 self.children[index].append(self.indexToNow)
-                self.competitiveFeature[self.indexToNow] = self.competitiveFeature[index]
-        elif self.keypoint[index] == 0 and index in list(self.competitiveFeature.keys()):
-            self.indexToNow += 1
-            self.keypoint[self.indexToNow] = self.competitiveFeature[index]
-            self.indexToActionID[self.indexToNow] = 0
-            self.initialiseLeafNode(self.indexToNow, index, {})
-            self.children[index].append(self.indexToNow)
-            self.competitiveFeature[self.indexToNow] = self.competitiveFeature[index]
+                self.bestCaseList[self.indexToNow] = (self.eta[1], [])
         else:
             for kp in list(set(self.keypoints.keys()) - set([0])):
                 self.indexToNow += 1
@@ -220,7 +207,8 @@ class MCTSCompetitive:
                 self.indexToActionID[self.indexToNow] = 0
                 self.initialiseLeafNode(self.indexToNow, index, {})
                 self.children[index].append(self.indexToNow)
-                self.competitiveFeature[self.indexToNow] = kp
+                self.bestCaseList[self.indexToNow] = (0, [])
+
 
         self.fullyExpanded[index] = True
         self.usedActionsID = {}
@@ -240,9 +228,9 @@ class MCTSCompetitive:
     def sampling(self, index, availableActions):
         nprint("start sampling node %s" % index)
         availableActions2 = copy.deepcopy(availableActions)
-        self.samplingCompetitiveFeature = self.competitiveFeature[index]
         # availableActions2[self.keypoint[index]].pop(self.indexToActionID[index], None)
         sampleValues = []
+        samplePaths = []
         i = 0
         for i in range(MCTS_multi_samples):
             self.atomicManipulationPath = self.manipulation[index]
@@ -255,8 +243,20 @@ class MCTSCompetitive:
                 self.usedActionIDs[k] = []
             (childTerminated, val) = self.sampleNext(self.keypoint[index])
             sampleValues.append(val)
+            samplePaths.append(self.atomicManipulationPath)
             i += 1
-        return childTerminated, min(sampleValues)
+            
+        if self.keypoint[index] == 0: 
+            return childTerminated, min(sampleValues)
+        else: 
+            minIndex = sampleValues.index(min(sampleValues))
+            if self.bestCaseList[index][0] > sampleValues[minIndex]:
+                print("on node %s, update best case from %s to %s" % (index, self.bestCaseList[index][0], dist))
+                self.numConverge += 1
+                self.bestCaseList[index] = (sampleValues[minIndex], samplePaths[minIndex])
+                # update best case
+                self.updateBestCase(index)
+            return childTerminated, min(sampleValues)
 
     def sampleNext(self, k):
         activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)
@@ -276,15 +276,7 @@ class MCTSCompetitive:
             nprint("sampling a path ends in a terminal node with depth %s... " % self.depth)
             self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath)
             self.numAdv += 1
-            nprint("current best %s of %s, considered to be replaced by %s" % (self.bestCaseList[k][0], k, dist))
-            if self.bestCaseList[k][0] > dist:
-                print("update best case from %s to %s" % (self.bestCaseList[k][0], dist))
-                self.numConverge += 1
-                self.bestCaseList[k] = (dist, self.atomicManipulationPath)
-                path0 = "%s_pic/%s_currentBest_%s.png" % (self.data_set, self.image_index, self.numConverge)
-                self.model.save_input(activations1, path0)
-                # update best case
-                self.bestCase = self.getBestCase()
+
             return (self.depth == 0, dist)
 
         elif dist > distVal:
@@ -301,14 +293,9 @@ class MCTSCompetitive:
             return (self.depth == 0, distVal)
 
         else:
-            # print(k,self.samplingCompetitiveFeature,dist)
-
             # print("continue sampling node ... ")
             # randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])))
-            if k == 0:
-                randomActionIndex = self.samplingCompetitiveFeature
-            else:
-                randomActionIndex = random.choice(self.availableActionIDs[k])
+            randomActionIndex = random.choice(self.availableActionIDs[k])
             if k == 0:
                 nextAtomicManipulation = {}
             else:
@@ -386,11 +373,28 @@ class MCTSCompetitive:
         activations1 = self.moves.applyManipulation(self.image, self.manipulation[index])
         return diffPercent(self.image, activations1)
 
-    def getBestCase(self):
-        tobeconsidered = copy.deepcopy(self.bestCaseList)
-        tobeconsidered.pop(0)
-        # self.bestCase = max(tobeconsidered.items(), key=lambda x: x[1][0])[1]
-        return max(tobeconsidered.items(), key=lambda x: x[1][0])[1]
+    def updateBestCase(self,index):
+        if index >= 0: 
+            parentIndex = self.parent[index]       
+            if self.keypoint[parentIndex] == 0: 
+                tempVal = 0
+                tempPath = [] 
+                for childIndex in self.children[parentIndex]: 
+                    if self.bestCaseList[childIndex][0] > tempVal: 
+                        tempVal = self.bestCaseList[childIndex][0]
+                        tempPath = self.bestCaseList[childIndex][1]
+                self.elf.bestCaseList[index] = (tempVal,tempPath)
+            else: 
+                tempVal = self.eta[1]
+                tempPath = [] 
+                for childIndex in self.children[parentIndex]: 
+                    if self.bestCaseList[childIndex][0] < tempVal: 
+                        tempVal = self.bestCaseList[childIndex][0]
+                        tempPath = self.bestCaseList[childIndex][1]
+                self.elf.bestCaseList[index] = (tempVal,tempPath)
+            self.updateBestCase(parentIndex)
+        else: 
+            print("up to now, the best case is %s"%(self.bestCase))
 
     def bestFeatures(self):
         bestManipulation = self.bestCase[1]
