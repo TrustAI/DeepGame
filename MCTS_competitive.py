@@ -278,7 +278,7 @@ class MCTS_competitive:
             self.numAdv += 1
             nprint("current best %s of %s, considered to be replaced by %s"%(self.bestCaseList[k][0],k,dist))
             if self.bestCaseList[k][0] > dist: 
-                print("update best case from %s to %s"%(self.bestCaseList[k][0], dist))
+                print("update best case of feature %s from %s to %s"%(k, self.bestCaseList[k][0], dist))
                 self.numConverge += 1
                 self.bestCaseList[k] = (dist,self.atomicManipulationPath)
                 path0="%s_pic/%s_currentBest_%s.png"%(self.data_set,self.image_index,self.numConverge)
