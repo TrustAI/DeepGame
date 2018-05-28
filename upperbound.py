@@ -50,6 +50,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             start_time_level = time.time()
             runningTime_level = 0
             childTerminated = False
+            currentBest = eta[1]
             while runningTime_level <= MCTS_level_maximal_time:
                 # Here are three steps for MCTS
                 (leafNode, availableActions) = mctsInstance.treeTraversal(mctsInstance.rootIndex)
@@ -58,7 +59,9 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                     (childTerminated, value) = mctsInstance.sampling(node, availableActions)
                     mctsInstance.backPropagation(node, value)
                 runningTime_level = time.time() - start_time_level
-                print("best possible distance up to now is %s" % (str(mctsInstance.bestCase[0])))
+                if currentBest > mctsInstance.bestCase[0]: 
+                    print("best possible distance up to now is %s" % (str(mctsInstance.bestCase[0])))
+                    currentBest = mctsInstance.bestCase[0]
             bestChild = mctsInstance.bestChild(mctsInstance.rootIndex)
             # pick the current best move to take  
             mctsInstance.makeOneMove(bestChild)
