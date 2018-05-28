@@ -50,8 +50,8 @@ class DataCollection:
     def addl0Distance(self, l0dist):
         self.l0Distance[self.index] = l0dist
 
-    def addmaxfeatures(self, maxFeatures):
-        self.maxFeatures[self.index] = maxFeatures
+    def addmaxfeatures(self, maxfeatures):
+        self.maxFeatures[self.index] = maxfeatures
 
     def addComment(self, str):
         self.fileHandler.write(str)
@@ -89,7 +89,7 @@ class DataCollection:
 
     def summarise(self):
         if len(self.manipulationPercentage) is 0:
-            self.fileHandler.write("none of the images were successfully manipulated. ")
+            self.fileHandler.write("none of the images were successfully manipulated.")
             return
         else:
             # art = sum(self.runningTime.values()) / len(self.runningTime.values())

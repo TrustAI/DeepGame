@@ -34,19 +34,20 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     start_time_all = time.time()
     runningTime_all = 0
     numberOfMoves = 0
-    while mctsInstance.terminalNode(mctsInstance.rootIndex) == False and mctsInstance.terminatedByEta(
-            mctsInstance.rootIndex) == False and runningTime_all <= MCTS_all_maximal_time:
-        print("the number of moves we have made up to now: %s" % (numberOfMoves))
-        eudist = mctsInstance.l2Dist(mctsInstance.rootIndex)
+    while not mctsInstance.terminalNode(mctsInstance.rootIndex) \
+            and not mctsInstance.terminatedByEta(mctsInstance.rootIndex) \
+            and runningTime_all <= MCTS_all_maximal_time:
+        print("the number of moves we have made up to now: %s" % numberOfMoves)
+        l2dist = mctsInstance.l2Dist(mctsInstance.rootIndex)
         l1dist = mctsInstance.l1Dist(mctsInstance.rootIndex)
         l0dist = mctsInstance.l0Dist(mctsInstance.rootIndex)
         percent = mctsInstance.diffPercent(mctsInstance.rootIndex)
         diffs = mctsInstance.diffImage(mctsInstance.rootIndex)
-        print("L2 distance %s" % (eudist))
-        print("L1 distance %s" % (l1dist))
-        print("L0 distance %s" % (l0dist))
-        print("manipulated percentage distance %s" % (percent))
-        print("manipulated dimensions %s" % (diffs))
+        print("L2 distance %s" % l2dist)
+        print("L1 distance %s" % l1dist)
+        print("L0 distance %s" % l0dist)
+        print("manipulated percentage distance %s" % percent)
+        print("manipulated dimensions %s" % diffs)
 
         start_time_level = time.time()
         runningTime_level = 0
