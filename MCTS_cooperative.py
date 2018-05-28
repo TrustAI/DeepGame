@@ -77,11 +77,6 @@ class MCTS:
         self.depth = 0
         self.availableActionIDs = []
         self.usedActionIDs = [] 
-        self.samplingCompetitiveFeature = 0
-        
-        # used in competitive games, 
-        # for the remembering of chosen feature by player I
-        self.competitiveFeature = {}
         
 
     def initialiseMoves(self): 
@@ -194,7 +189,6 @@ class MCTS:
                 self.indexToActionID[self.indexToNow] = actionId
                 self.initialiseLeafNode(self.indexToNow,index,am)
                 self.children[index].append(self.indexToNow)
-                self.competitiveFeature[self.indexToNow] = self.competitiveFeature[index]
         else: 
             for kp in list(set(self.keypoints.keys())-set([0])) : 
                 self.indexToNow += 1
@@ -202,7 +196,6 @@ class MCTS:
                 self.indexToActionID[self.indexToNow] = 0
                 self.initialiseLeafNode(self.indexToNow,index,{})
                 self.children[index].append(self.indexToNow) 
-                self.competitiveFeature[self.indexToNow] = kp
         
         self.fullyExpanded[index] = True
         self.usedActionsID = {}
@@ -222,8 +215,6 @@ class MCTS:
     
         nprint("start sampling node %s"%(index))
         availableActions2 = copy.deepcopy(availableActions)
-        self.samplingCompetitiveFeature = self.competitiveFeature[index]
-        #availableActions2[self.keypoint[index]].pop(self.indexToActionID[index], None)
         sampleValues = []
         i = 0
         for i in range(MCTS_multi_samples): 
@@ -281,8 +272,6 @@ class MCTS:
             return (self.depth == 0, distVal)
             
         else: 
-            #print(k,self.samplingCompetitiveFeature,dist)
-
             #print("continue sampling node ... ")
             #randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k]))) 
             randomActionIndex = random.choice(self.availableActionIDs[k])
@@ -363,24 +352,3 @@ class MCTS:
         activations1 = self.moves.applyManipulation(self.image,self.manipulation[index])
         return diffPercent(self.image,activations1)
     
-    def bestFeatures(self):
-        bestManipulation = self.bestCase[1] 
-        maxdims = []
-        nf = 0 
-        for i in range(1,len(self.actions)):
-            md = []
-            flag = False 
-            for k, v in bestManipulation.items(): 
-                for k1, v1 in self.actions[i].items(): 
-                    md += list(v1.keys())
-                    if k in v1.keys(): 
-                        flag = True
-            if flag == True: 
-                nf += 1
-                maxdims += md 
-        if len(maxdims) == 0 : 
-            return (0,0)
-        elif len(maxdims[0]) == 3: 
-            maxdims = [(x,y) for (x,y,z) in maxdims]
-        return (nf,maxdims)
-        
