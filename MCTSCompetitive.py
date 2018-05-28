@@ -174,11 +174,14 @@ class MCTSCompetitive:
                 allValues2 = {}
                 for k, v in allValues.items():
                     allValues2[k] = 1 / float(allValues[k])
-                nextIndex = np.random.choice(list(allValues.keys()), 1,
-                                             p=[x / sum(allValues2.values()) for x in allValues2.values()])[0]
+                probdist = [x / sum(allValues2.values()) for x in allValues2.values()]
+                #nextIndex = np.random.choice(list(allValues.keys()), 1, p=probdist)[0]
+                nextIndex = probdist.index(max(probdist))
             else:
-                nextIndex = np.random.choice(list(allValues.keys()), 1,
-                                             p=[x / sum(allValues.values()) for x in allValues.values()])[0]
+                probdist = [x / sum(allValues.values()) for x in allValues.values()]
+                #nextIndex = np.random.choice(list(allValues.keys()), 1, p=probdist)[0]
+                nextIndex = probdist.index(max(probdist))
+
 
             if self.keypoint[index] in self.usedActionsID.keys() and self.keypoint[index] != 0:
                 self.usedActionsID[self.keypoint[index]].append(self.indexToActionID[index])
