@@ -94,7 +94,7 @@ class MCTS_competitive:
             i += 1
             
         # initialise beseCase, for competitive 
-        for kp in list(set(self.keypoints.keys())-set([0])):
+        for kp in list(self.keypoints.keys()):
             self.bestCaseList[kp] = (2^20,{})
             
         for i in range(len(actions)): 
@@ -383,8 +383,9 @@ class MCTS_competitive:
         return diffPercent(self.image,activations1)
     
     def bestFeatures(self):
-    
-        bestCase = max(self.bestCaseList.items(), key=lambda x: x[1][0])[1]
+        tobeconsidered = copy.deepcopy(self.bestCaseList)
+        tobeconsidered.pop(0)
+        bestCase = max(tobeconsidered.items(), key=lambda x: x[1][0])[1]
         
         bestManipulation = bestCase[1] 
         maxdims = []
