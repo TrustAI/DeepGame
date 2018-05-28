@@ -118,6 +118,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             return 0, 0, 0, 0, 0, 0, 0
         
     elif gameType == 'competitive':
+    
         mctsInstance = MCTSCompetitive(dataSetName, NN, image_index, image, tau, eta)
         mctsInstance.initialiseMoves()
 
@@ -175,42 +176,44 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             numberOfMoves += 1
             runningTime_all = time.time() - start_time_all
 
-        (_, bestManipulation) = mctsInstance.bestCase
+        (bestValue, bestManipulation) = mctsInstance.bestCase
 
         print("the number of max features is %s" % mctsInstance.bestFeatures()[0])
         maxfeatures = mctsInstance.bestFeatures()[0]
 
-        image1 = mctsInstance.applyManipulation(bestManipulation)
-        (newClass, newConfident) = NN.predict(image1)
-        newClassStr = NN.get_label(int(newClass))
+        if bestValue < eta[1]: 
 
-        if newClass != label:
-            path0 = "%s_pic/%s_%s_modified_into_%s_with_confidence_%s.png" % (
-                dataSetName, image_index, origClassStr, newClassStr, newConfident)
-            NN.save_input(image1, path0)
-            path0 = "%s_pic/%s_diff.png" % (dataSetName, image_index)
-            NN.save_input(np.subtract(image, image1), path0)
-            print("\nfound an adversary image within pre-specified bounded computational resource. "
-                  "The following is its information: ")
-            print("difference between images: %s" % (diffImage(image, image1)))
+            image1 = mctsInstance.applyManipulation(bestManipulation)
+            (newClass, newConfident) = NN.predict(image1)
+            newClassStr = NN.get_label(int(newClass))
 
-            print("number of adversarial examples found: %s" % mctsInstance.numAdv)
+            if newClass != label:
+                path0 = "%s_pic/%s_%s_modified_into_%s_with_confidence_%s.png" % (
+                    dataSetName, image_index, origClassStr, newClassStr, newConfident)
+                NN.save_input(image1, path0)
+                path0 = "%s_pic/%s_diff.png" % (dataSetName, image_index)
+                NN.save_input(np.subtract(image, image1), path0)
+                print("\nfound an adversary image within pre-specified bounded computational resource. "
+                     "The following is its information: ")
+                print("difference between images: %s" % (diffImage(image, image1)))
 
-            l2dist = l2Distance(mctsInstance.image, image1)
-            l1dist = l1Distance(mctsInstance.image, image1)
-            l0dist = l0Distance(mctsInstance.image, image1)
-            percent = diffPercent(mctsInstance.image, image1)
-            print("L2 distance %s" % l2dist)
-            print("L1 distance %s" % l1dist)
-            print("L0 distance %s" % l0dist)
-            print("manipulated percentage distance %s" % percent)
-            print("class is changed into '%s' with confidence %s\n" % (newClassStr, newConfident))
+                print("number of adversarial examples found: %s" % mctsInstance.numAdv)
 
-            return time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist, maxfeatures
+                l2dist = l2Distance(mctsInstance.image, image1)
+                l1dist = l1Distance(mctsInstance.image, image1)
+                l0dist = l0Distance(mctsInstance.image, image1)
+                percent = diffPercent(mctsInstance.image, image1)
+                print("L2 distance %s" % l2dist)
+                print("L1 distance %s" % l1dist)
+                print("L0 distance %s" % l0dist)
+                print("manipulated percentage distance %s" % percent)
+                print("class is changed into '%s' with confidence %s\n" % (newClassStr, newConfident))
 
-        else:
-            print("\nfailed to find an adversary image within pre-specified bounded computational resource. ")
-            return 0, 0, 0, 0, 0, 0, 0
+                return time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist, maxfeatures
+
+            else:
+                print("\nthere exists a feature which, up to now, hasn't been discovered with an adversarial exammple. ")
+                return 0, 0, 0, 0, 0, 0, 0
             
     else:
         print("Unrecognised game type. Try 'cooperative' or 'competitive'.")
