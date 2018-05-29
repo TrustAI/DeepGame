@@ -207,7 +207,7 @@ class MCTSCompetitive:
                 self.indexToActionID[self.indexToNow] = actionId
                 self.initialiseLeafNode(self.indexToNow, index, am)
                 self.children[index].append(self.indexToNow)
-                self.bestCaseList[self.indexToNow] = (0, [])
+                self.bestCaseList[self.indexToNow] = (0, {})
         else:
             for kp in list(set(self.keypoints.keys()) - set([0])):
                 self.indexToNow += 1
@@ -215,7 +215,7 @@ class MCTSCompetitive:
                 self.indexToActionID[self.indexToNow] = 0
                 self.initialiseLeafNode(self.indexToNow, index, {})
                 self.children[index].append(self.indexToNow)
-                self.bestCaseList[self.indexToNow] = (self.eta[1], [])
+                self.bestCaseList[self.indexToNow] = (self.eta[1], {})
 
 
         self.fullyExpanded[index] = True
