@@ -47,7 +47,7 @@ class MCTSCompetitive:
         self.indexToNow = 0
         # current root node
         self.rootIndex = 0
-        
+
         # maintain for every node on the tree the current best 
         self.bestCaseList = {}
         # best case for the root node 
@@ -74,7 +74,7 @@ class MCTSCompetitive:
         self.indexToActionID = {}
 
         self.numConverge = 0
-        
+
         # how many sampling is conducted
         self.numOfSampling = 0
 
@@ -178,13 +178,12 @@ class MCTSCompetitive:
                 for k, v in allValues.items():
                     allValues2[k] = 1 / float(allValues[k])
                 probdist = [x / sum(allValues2.values()) for x in allValues2.values()]
-                #nextIndex = np.random.choice(list(allValues.keys()), 1, p=probdist)[0]
+                # nextIndex = np.random.choice(list(allValues.keys()), 1, p=probdist)[0]
                 nextIndex = list(allValues.keys())[probdist.index(max(probdist))]
             else:
                 probdist = [x / sum(allValues.values()) for x in allValues.values()]
-                #nextIndex = np.random.choice(list(allValues.keys()), 1, p=probdist)[0]
+                # nextIndex = np.random.choice(list(allValues.keys()), 1, p=probdist)[0]
                 nextIndex = list(allValues.keys())[probdist.index(max(probdist))]
-
 
             if self.keypoint[index] in self.usedActionsID.keys() and self.keypoint[index] != 0:
                 self.usedActionsID[self.keypoint[index]].append(self.indexToActionID[index])
@@ -219,7 +218,6 @@ class MCTSCompetitive:
                 self.initialiseLeafNode(self.indexToNow, index, {})
                 self.children[index].append(self.indexToNow)
                 self.bestCaseList[self.indexToNow] = (self.eta[1], {})
-
 
         self.fullyExpanded[index] = True
         self.usedActionsID = {}
@@ -257,21 +255,22 @@ class MCTSCompetitive:
             sampleValues.append(val)
             samplePaths.append(self.atomicManipulationPath)
             i += 1
-            
-        if self.keypoint[index] == 0: 
+
+        if self.keypoint[index] == 0:
             return childTerminated, min(sampleValues)
-        else: 
+        else:
             minIndex = sampleValues.index(min(sampleValues))
-            #print(index, self.bestCaseList[index][0], min(sampleValues), self.eta)
+            # print(index, self.bestCaseList[index][0], min(sampleValues), self.eta)
             if self.bestCaseList[index][0] > sampleValues[minIndex]:
-                nprint("on node %s, update best case from %s to %s, start updating ancestor nodes" % (index, self.bestCaseList[index][0], sampleValues[minIndex]))
+                nprint("on node %s, update best case from %s to %s, start updating ancestor nodes" % (
+                    index, self.bestCaseList[index][0], sampleValues[minIndex]))
                 self.numConverge += 1
                 self.bestCaseList[index] = (sampleValues[minIndex], samplePaths[minIndex])
                 # update best case
                 self.updateBestCase(index)
             return childTerminated, min(sampleValues)
-            
-    def computeDistance(self,newImage): 
+
+    def computeDistance(self, newImage):
         (distMethod, _) = self.eta
         if distMethod == "L2":
             dist = l2Distance(newImage, self.image)
@@ -281,7 +280,7 @@ class MCTSCompetitive:
             dist = diffPercent(newImage, self.image)
         elif distMethod == "NumDiffs":
             dist = diffPercent(newImage, self.image) * self.image.size
-        return dist 
+        return dist
 
     def sampleNext(self, k):
         activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)
@@ -385,30 +384,31 @@ class MCTSCompetitive:
         activations1 = self.moves.applyManipulation(self.image, self.manipulation[index])
         return diffPercent(self.image, activations1)
 
-    def updateBestCase(self,index):
-        if index > 0: 
-            parentIndex = self.parent[index]       
-            if self.keypoint[parentIndex] == 0: 
+    def updateBestCase(self, index):
+        if index > 0:
+            parentIndex = self.parent[index]
+            if self.keypoint[parentIndex] == 0:
                 tempVal = 0
-                tempPath = [] 
-                for childIndex in self.children[parentIndex]: 
-                    if self.bestCaseList[childIndex][0] > tempVal: 
+                tempPath = []
+                for childIndex in self.children[parentIndex]:
+                    if self.bestCaseList[childIndex][0] > tempVal:
                         tempVal = self.bestCaseList[childIndex][0]
                         tempPath = self.bestCaseList[childIndex][1]
-                self.bestCaseList[parentIndex] = (tempVal,tempPath)
-            else: 
+                self.bestCaseList[parentIndex] = (tempVal, tempPath)
+            else:
                 tempVal = self.eta[1]
-                tempPath = [] 
-                for childIndex in self.children[parentIndex]: 
-                    if self.bestCaseList[childIndex][0] < tempVal: 
+                tempPath = []
+                for childIndex in self.children[parentIndex]:
+                    if self.bestCaseList[childIndex][0] < tempVal:
                         tempVal = self.bestCaseList[childIndex][0]
                         tempPath = self.bestCaseList[childIndex][1]
-                self.bestCaseList[parentIndex] = (tempVal,tempPath)
+                self.bestCaseList[parentIndex] = (tempVal, tempPath)
             self.updateBestCase(parentIndex)
-        else: 
-            if self.bestCase[0] != self.bestCaseList[0][0]: 
+        else:
+            if self.bestCase[0] != self.bestCaseList[0][0]:
                 self.bestCase = self.bestCaseList[0]
-                nprint("the best case is updated into distance %s and manipulation %s"%(self.bestCase[0],self.bestCase[1]))
+                nprint("the best case is updated into distance %s and manipulation %s" % (
+                    self.bestCase[0], self.bestCase[1]))
 
     def bestFeatures(self):
         bestManipulation = self.bestCase[1]

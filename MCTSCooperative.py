@@ -69,7 +69,7 @@ class MCTSCooperative:
 
         # number of adversarial examples
         self.numAdv = 0
-        
+
         # how many sampling is conducted
         self.numOfSampling = 0
 
@@ -233,8 +233,8 @@ class MCTSCooperative:
             sampleValues.append(val)
             i += 1
         return childTerminated, min(sampleValues)
-        
-    def computeDistance(self,newImage): 
+
+    def computeDistance(self, newImage):
         (distMethod, _) = self.eta
         if distMethod == "L2":
             dist = l2Distance(newImage, self.image)
@@ -244,7 +244,7 @@ class MCTSCooperative:
             dist = diffPercent(newImage, self.image)
         elif distMethod == "NumDiffs":
             dist = diffPercent(newImage, self.image) * self.image.size
-        return dist 
+        return dist
 
     def sampleNext(self, k):
         activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)

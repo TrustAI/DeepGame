@@ -2,9 +2,10 @@ from __future__ import print_function
 from keras import backend as K
 import sys
 import os
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-from neural_network import *
+from NeuralNetwork import *
 from DateSet import *
 from DataCollection import *
 from upperbound import upperbound
@@ -72,7 +73,8 @@ dc = DataCollection("%s_%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType,
 dc.initialiseIndex(image_index)
 
 if bound == 'ub':
-    (elapsedTime, newConfident, percent, l2dist, l1dist, l0dist, maxFeatures) = upperbound(dataSetName, bound, tau, gameType, image_index, eta)
+    (elapsedTime, newConfident, percent, l2dist, l1dist, l0dist, maxFeatures) = upperbound(dataSetName, bound, tau,
+                                                                                           gameType, image_index, eta)
 
     dc.addRunningTime(elapsedTime)
     dc.addConfidence(newConfident)

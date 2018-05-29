@@ -1,5 +1,5 @@
 from __future__ import print_function
-from neural_network import *
+from NeuralNetwork import *
 from DateSet import *
 from MCTSCompetitive import *
 from MCTSCooperative import *

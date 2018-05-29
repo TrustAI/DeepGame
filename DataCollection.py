@@ -84,7 +84,7 @@ class DataCollection:
             for i, r in self.maxFeatures.items():
                 self.fileHandler.write("%s:%s\n" % (i, r))
             self.fileHandler.write("\n")
-        else: 
+        else:
             self.fileHandler.write("none of the inputs were successfully manipulated")
 
     def summarise(self):
