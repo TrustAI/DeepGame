@@ -1,5 +1,5 @@
 #!/bin/bash
-for i in {12..18}
+for i in {19..25}
 do
     python main.py cifar10 ub cooperative $i L1 40 0.2
     python main.py cifar10 ub competitive $i L1 40 0.2
