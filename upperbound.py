@@ -22,7 +22,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     origClassStr = NN.get_label(int(label))
     print("Working on input with index %s, whose class is '%s' and the confidence is %s."
           % (image_index, origClassStr, confident))
-    print("the second player is %s."% (gameType))
+    print("the second player is %s." % gameType)
 
     tau = 1
     # choose between "cooperative" and "competitive"
@@ -41,7 +41,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             for node in newNodes:
                 (_, value) = mctsInstance.sampling(node, availableActions)
                 mctsInstance.backPropagation(node, value)
-            if currentBest > mctsInstance.bestCase[0]: 
+            if currentBest > mctsInstance.bestCase[0]:
                 print("best distance up to now is %s" % (str(mctsInstance.bestCase[0])))
                 currentBest = mctsInstance.bestCase[0]
             bestChild = mctsInstance.bestChild(mctsInstance.rootIndex)
@@ -55,7 +55,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             runningTime_all = time.time() - start_time_all
 
         (_, bestManipulation) = mctsInstance.bestCase
-        
+
         print("the number of sampling: %s" % mctsInstance.numOfSampling)
         print("the number of adversarial examples: %s\n" % mctsInstance.numAdv)
 
@@ -90,9 +90,9 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         else:
             print("\nfailed to find an adversary image within pre-specified bounded computational resource. ")
             return 0, 0, 0, 0, 0, 0, 0
-        
+
     elif gameType == 'competitive':
-    
+
         mctsInstance = MCTSCompetitive(dataSetName, NN, image_index, image, tau, eta)
         mctsInstance.initialiseMoves()
 
@@ -106,7 +106,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             for node in newNodes:
                 (_, value) = mctsInstance.sampling(node, availableActions)
                 mctsInstance.backPropagation(node, value)
-            if currentBest > mctsInstance.bestCase[0]: 
+            if currentBest > mctsInstance.bestCase[0]:
                 print("best distance up to now is %s" % (str(mctsInstance.bestCase[0])))
                 currentBest = mctsInstance.bestCase[0]
 
@@ -119,14 +119,14 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             runningTime_all = time.time() - start_time_all
 
         (bestValue, bestManipulation) = mctsInstance.bestCase
-        
+
         print("the number of sampling: %s" % mctsInstance.numOfSampling)
         print("the number of adversarial examples: %s\n" % mctsInstance.numAdv)
 
         print("the number of max features is %s" % mctsInstance.bestFeatures()[0])
         maxfeatures = mctsInstance.bestFeatures()[0]
 
-        if bestValue < eta[1]: 
+        if bestValue < eta[1]:
 
             image1 = mctsInstance.applyManipulation(bestManipulation)
             (newClass, newConfident) = NN.predict(image1)
@@ -139,7 +139,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                 path0 = "%s_pic/%s_diff.png" % (dataSetName, image_index)
                 NN.save_input(np.subtract(image, image1), path0)
                 print("\nfound an adversary image within pre-specified bounded computational resource. "
-                     "The following is its information: ")
+                      "The following is its information: ")
                 print("difference between images: %s" % (diffImage(image, image1)))
 
                 print("number of adversarial examples found: %s" % mctsInstance.numAdv)
@@ -157,9 +157,12 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                 return time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist, maxfeatures
 
             else:
-                print("\nthe robustness of the (input,model) is under control, with the first player is able to defeat the second player who aims to find adversarial example by playing suitable strategies on selecting features. ")
+                print("\nthe robustness of the (input, model) is under control, "
+                      "with the first player is able to defeat the second player "
+                      "who aims to find adversarial example by "
+                      "playing suitable strategies on selecting features. ")
                 return 0, 0, 0, 0, 0, 0, 0
-            
+
     else:
         print("Unrecognised game type. Try 'cooperative' or 'competitive'.")
 
