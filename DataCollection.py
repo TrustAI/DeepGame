@@ -54,38 +54,38 @@ class DataCollection:
         self.fileHandler.write(comment)
 
     def provideDetails(self):
-        self.fileHandler.write("running time: \n")
-        for i, r in self.runningTime.items():
-            self.fileHandler.write("%s:%s\n" % (i, r))
-
-        self.fileHandler.write("manipulation percentage: \n")
-        for i, r in self.manipulationPercentage.items():
-            self.fileHandler.write("%s:%s\n" % (i, r))
-
-        self.fileHandler.write("L2 distance: \n")
-        for i, r in self.l2Distance.items():
-            self.fileHandler.write("%s:%s\n" % (i, r))
-
-        self.fileHandler.write("L1 distance: \n")
-        for i, r in self.l1Distance.items():
-            self.fileHandler.write("%s:%s\n" % (i, r))
-
-        self.fileHandler.write("L0 distance: \n")
-        for i, r in self.l0Distance.items():
-            self.fileHandler.write("%s:%s\n" % (i, r))
-
-        self.fileHandler.write("confidence: \n")
-        for i, r in self.confidence.items():
-            self.fileHandler.write("%s:%s\n" % (i, r))
-        self.fileHandler.write("\n")
-
-        self.fileHandler.write("max features: \n")
         if not bool(self.maxFeatures):
-            for i, r in self.maxFeatures.items():
+            self.fileHandler.write("running time: \n")
+            for i, r in self.runningTime.items():
+                self.fileHandler.write("%s:%s\n" % (i, r))
+
+            self.fileHandler.write("manipulation percentage: \n")
+            for i, r in self.manipulationPercentage.items():
+                self.fileHandler.write("%s:%s\n" % (i, r))
+
+            self.fileHandler.write("L2 distance: \n")
+            for i, r in self.l2Distance.items():
+                self.fileHandler.write("%s:%s\n" % (i, r))
+
+            self.fileHandler.write("L1 distance: \n")
+            for i, r in self.l1Distance.items():
+                self.fileHandler.write("%s:%s\n" % (i, r))
+
+            self.fileHandler.write("L0 distance: \n")
+            for i, r in self.l0Distance.items():
+                self.fileHandler.write("%s:%s\n" % (i, r))
+
+            self.fileHandler.write("confidence: \n")
+            for i, r in self.confidence.items():
                 self.fileHandler.write("%s:%s\n" % (i, r))
             self.fileHandler.write("\n")
+
+            self.fileHandler.write("max features: \n")
+                for i, r in self.maxFeatures.items():
+                    self.fileHandler.write("%s:%s\n" % (i, r))
+                self.fileHandler.write("\n")
         else: 
-            self.fileHanler.write("empty max features")
+            self.fileHanler.write("none of the inputs were successfully manipulated")
 
     def summarise(self):
         if len(self.manipulationPercentage) is 0:
