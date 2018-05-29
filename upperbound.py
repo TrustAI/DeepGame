@@ -41,7 +41,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                 (_, value) = mctsInstance.sampling(node, availableActions)
                 mctsInstance.backPropagation(node, value)
             if currentBest > mctsInstance.bestCase[0]: 
-                print("best possible distance up to now is %s" % (str(mctsInstance.bestCase[0])))
+                print("best distance up to now is %s" % (str(mctsInstance.bestCase[0])))
                 currentBest = mctsInstance.bestCase[0]
             bestChild = mctsInstance.bestChild(mctsInstance.rootIndex)
 
@@ -103,7 +103,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                 (_, value) = mctsInstance.sampling(node, availableActions)
                 mctsInstance.backPropagation(node, value)
             if currentBest > mctsInstance.bestCase[0]: 
-                print("best possible distance up to now is %s" % (str(mctsInstance.bestCase[0])))
+                print("best distance up to now is %s" % (str(mctsInstance.bestCase[0])))
                 currentBest = mctsInstance.bestCase[0]
 
             # store the current best
