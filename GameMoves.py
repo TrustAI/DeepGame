@@ -58,8 +58,8 @@ class GameMoves:
 
         actions = dict()
         actions[0] = kps
-        # s = 1
-        # kp2 = []
+        s = 1
+        kp2 = []
 
         if len(image1.shape) == 2:
             image0 = np.zeros(image1.shape)
@@ -113,18 +113,18 @@ class GameMoves:
 
                 image0[x][y] = 1
 
-            actions[k] = all_atomic_manipulations
-            # actions[s] = all_atomic_manipulations
-            # kp2.append(kps[s - 1])
+            # actions[k] = all_atomic_manipulations
+            actions[s] = all_atomic_manipulations
+            kp2.append(kps[s - 1])
 
-            # s += 1
+            s += 1
             print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."
                   % (len(all_atomic_manipulations), int(kps[k - 1].pt[0] / img_enlarge_ratio),
                      int(kps[k - 1].pt[1] / img_enlarge_ratio), kps[k - 1].response))
             num_of_manipulations += len(all_atomic_manipulations)
 
         # index-0 keeps the keypoints, actual actions start from 1
-        # actions[0] = kp2
+        actions[0] = kp2
         print("the number of all manipulations initialised: %s\n" % num_of_manipulations)
         self.moves = actions
 
