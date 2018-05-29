@@ -90,6 +90,7 @@ class MCTSCompetitive:
     def initialiseMoves(self):
         # initialise actions according to the type of manipulations
         actions = self.moves.moves
+        print((actions.keys()))
         self.keypoints[0] = 0
         i = 1
         for k in actions[0]:
