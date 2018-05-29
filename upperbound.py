@@ -124,15 +124,18 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         print("the number of adversarial examples: %s\n" % mctsInstance.numAdv)
 
         print("the number of max features is %s" % mctsInstance.bestFeatures()[0])
-        maxfeatures = mctsInstance.bestFeatures()[0]
 
         if bestValue < eta[1]: 
+        
 
             image1 = mctsInstance.applyManipulation(bestManipulation)
             (newClass, newConfident) = NN.predict(image1)
             newClassStr = NN.get_label(int(newClass))
 
             if newClass != label:
+            
+                maxfeatures = mctsInstance.bestFeatures()[0]
+            
                 path0 = "%s_pic/%s_%s_modified_into_%s_with_confidence_%s.png" % (
                     dataSetName, image_index, origClassStr, newClassStr, newConfident)
                 NN.save_input(image1, path0)
