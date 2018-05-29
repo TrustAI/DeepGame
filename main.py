@@ -61,7 +61,7 @@ elif len(sys.argv) == 1:
     dataSetName = 'cifar10'
     bound = 'ub'
     gameType = 'cooperative'
-    image_index = 0
+    image_index = 3
     eta = ('L1', 40)
     tau = 0.5
 
