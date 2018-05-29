@@ -72,8 +72,7 @@ dc = DataCollection("%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType, im
 dc.initialiseIndex(image_index)
 
 if bound == 'ub':
-    (elapsedTime, newConfident, percent, l2dist, l1dist, l0dist, maxFeatures) = upperbound(dataSetName, bound, tau,
-                                                                                           gameType, image_index, eta)
+    (elapsedTime, newConfident, percent, l2dist, l1dist, l0dist, maxFeatures) = upperbound(dataSetName, bound, tau, gameType, image_index, eta)
 
     dc.addRunningTime(elapsedTime)
     dc.addConfidence(newConfident)
