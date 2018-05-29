@@ -11,7 +11,6 @@ from DataCollection import *
 from upperbound import upperbound
 
 # the first way of defining parameters
-
 if len(sys.argv) == 8:
 
     if sys.argv[1] == 'mnist' or sys.argv[1] == 'cifar10':
@@ -57,18 +56,16 @@ if len(sys.argv) == 8:
         print("please specify as the 7th argument the tau: [int/float]")
         exit
 
-
 elif len(sys.argv) == 1:
     # the second way of defining parameters
     dataSetName = 'cifar10'
     bound = 'ub'
     gameType = 'cooperative'
-    image_index = 3
+    image_index = 0
     eta = ('L1', 40)
     tau = 0.5
 
-# calling algorithms 
-
+# calling algorithms
 dc = DataCollection("%s_%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType, image_index, eta[0], eta[1]))
 dc.initialiseIndex(image_index)
 

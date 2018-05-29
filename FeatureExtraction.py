@@ -82,6 +82,8 @@ class FeatureExtraction:
             print("Extracting image features using '%s' pattern." % self.PATTERN)
 
 
+
+
         else:
             print("Unrecognised feature extraction pattern. "
                   "Try 'black-box' or 'white-box'.")
