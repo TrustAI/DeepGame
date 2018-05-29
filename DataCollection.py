@@ -81,9 +81,9 @@ class DataCollection:
             self.fileHandler.write("\n")
 
             self.fileHandler.write("max features: \n")
-                for i, r in self.maxFeatures.items():
-                    self.fileHandler.write("%s:%s\n" % (i, r))
-                self.fileHandler.write("\n")
+            for i, r in self.maxFeatures.items():
+                self.fileHandler.write("%s:%s\n" % (i, r))
+            self.fileHandler.write("\n")
         else: 
             self.fileHanler.write("none of the inputs were successfully manipulated")
 
