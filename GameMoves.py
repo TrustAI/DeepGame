@@ -33,9 +33,9 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
-        feature_extraction = FeatureExtraction(self.image)
+        feature_extraction = FeatureExtraction(self.image, pattern='white-box', model=self.model)
         kps = feature_extraction.get_key_points()
-        partitions = feature_extraction.get_partitions()
+        partitions = feature_extraction.get_partitions(pixel_bounds=(0, 1))
 
         img_enlarge_ratio = 1
         image1 = copy.deepcopy(self.image)
@@ -118,9 +118,9 @@ class GameMoves:
             kp2.append(kps[s - 1])
 
             s += 1
-            print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."
-                  % (len(all_atomic_manipulations), int(kps[k - 1].pt[0] / img_enlarge_ratio),
-                     int(kps[k - 1].pt[1] / img_enlarge_ratio), kps[k - 1].response))
+            # print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."
+            #       % (len(all_atomic_manipulations), int(kps[k - 1].pt[0] / img_enlarge_ratio),
+            #          int(kps[k - 1].pt[1] / img_enlarge_ratio), kps[k - 1].response))
             num_of_manipulations += len(all_atomic_manipulations)
 
         # index-0 keeps the keypoints, actual actions start from 1

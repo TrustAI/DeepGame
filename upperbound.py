@@ -162,15 +162,15 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                       "who aims to find adversarial example by "
                       "playing suitable strategies on selecting features. ")
                 return 0, 0, 0, 0, 0, 0, 0
-        
-        else: 
-        
+
+        else:
+
             print("\nthe robustness of the (input, model) is under control, "
-                    "with the first player is able to defeat the second player "
-                    "who aims to find adversarial example by "
-                    "playing suitable strategies on selecting features. ")
+                  "with the first player is able to defeat the second player "
+                  "who aims to find adversarial example by "
+                  "playing suitable strategies on selecting features. ")
             return 0, 0, 0, 0, 0, 0, 0
-        
+
 
     else:
         print("Unrecognised game type. Try 'cooperative' or 'competitive'.")
