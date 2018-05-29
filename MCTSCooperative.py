@@ -69,6 +69,9 @@ class MCTSCooperative:
 
         # number of adversarial examples
         self.numAdv = 0
+        
+        # how many sampling is conducted
+        self.numOfSampling = 0
 
         # temporary variables for sampling 
         self.atomicManipulationPath = []
@@ -226,6 +229,7 @@ class MCTSCooperative:
             for k in self.keypoints.keys():
                 self.usedActionIDs[k] = []
             (childTerminated, val) = self.sampleNext(self.keypoint[index])
+            self.numOfSampling += 1
             sampleValues.append(val)
             i += 1
         return childTerminated, min(sampleValues)

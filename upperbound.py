@@ -115,6 +115,11 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             runningTime_all = time.time() - start_time_all
 
         (bestValue, bestManipulation) = mctsInstance.bestCase
+        
+        print("the number of sampling: %s" % mctsInstance.numOfSampling)
+        print("the number of adversarial examples: %s" % mctsInstance.numAdv)
+
+
 
         print("the number of max features is %s" % mctsInstance.bestFeatures()[0])
         maxfeatures = mctsInstance.bestFeatures()[0]
@@ -150,7 +155,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                 return time.time() - start_time_all, newConfident, percent, l2dist, l1dist, l0dist, maxfeatures
 
             else:
-                print("\nthere exists a feature which, up to now, hasn't been discovered with an adversarial exammple. ")
+                print("\nthe robustness of the (input,model) is under control, with the first player is able to defeat the second player who aims to find adversarial example by playing suitable strategies on selecting features. ")
                 return 0, 0, 0, 0, 0, 0, 0
             
     else:

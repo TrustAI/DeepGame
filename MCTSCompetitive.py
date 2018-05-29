@@ -74,6 +74,9 @@ class MCTSCompetitive:
         self.indexToActionID = {}
 
         self.numConverge = 0
+        
+        # how many sampling is conducted
+        self.numOfSampling = 0
 
         # number of adversarial examples
         self.numAdv = 0
@@ -250,6 +253,7 @@ class MCTSCompetitive:
             for k in self.keypoints.keys():
                 self.usedActionIDs[k] = []
             (childTerminated, val) = self.sampleNext(self.keypoint[index])
+            self.numOfSampling += 1
             sampleValues.append(val)
             samplePaths.append(self.atomicManipulationPath)
             i += 1
