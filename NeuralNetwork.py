@@ -6,7 +6,6 @@ Author: Min Wu
 Email: min.wu@cs.ox.ac.uk
 """
 
-import tensorflow as tf
 import keras
 from keras.datasets import mnist, cifar10
 from keras.models import Sequential, load_model

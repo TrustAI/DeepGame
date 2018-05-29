@@ -14,6 +14,7 @@ from keras import backend as K
 from scipy.stats import truncnorm, norm
 
 from basics import *
+from FeatureExtraction import *
 import collections
 
 
@@ -32,29 +33,33 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
+        feature_extraction = FeatureExtraction(self.image)
+        kps = feature_extraction.get_key_points()
+        partitions = feature_extraction.get_partitions()
+
         img_enlarge_ratio = 1
         image1 = copy.deepcopy(self.image)
-        if np.max(image1) <= 1:
-            image1 = (image1 * 255).astype(np.uint8)
-        else:
-            image1 = image1.astype(np.uint8)
-
-        if max(image1.shape) < 100:
-            # for small images, sift works by enlarging the images
-            image1 = cv2.resize(image1, (0, 0), fx=img_enlarge_ratio, fy=img_enlarge_ratio)
-            kps = self.SIFT_Filtered_twoPlayer(image1)
-            for i in range(len(kps)):
-                oldpt = (kps[i].pt[0], kps[i].pt[1])
-                kps[i].pt = (int(oldpt[0] / img_enlarge_ratio), int(oldpt[1] / img_enlarge_ratio))
-        else:
-            kps = self.SIFT_Filtered_twoPlayer(image1)
-
-        print("%s keypoints are found. " % (len(kps)))
+        # if np.max(image1) <= 1:
+        #     image1 = (image1 * 255).astype(np.uint8)
+        # else:
+        #     image1 = image1.astype(np.uint8)
+        #
+        # if max(image1.shape) < 100:
+        #     # for small images, sift works by enlarging the images
+        #     image1 = cv2.resize(image1, (0, 0), fx=img_enlarge_ratio, fy=img_enlarge_ratio)
+        #     kps = self.SIFT_Filtered_twoPlayer(image1)
+        #     for i in range(len(kps)):
+        #         oldpt = (kps[i].pt[0], kps[i].pt[1])
+        #         kps[i].pt = (int(oldpt[0] / img_enlarge_ratio), int(oldpt[1] / img_enlarge_ratio))
+        # else:
+        #     kps = self.SIFT_Filtered_twoPlayer(image1)
+        #
+        # print("%s keypoints are found. " % (len(kps)))
 
         actions = dict()
         actions[0] = kps
-        s = 1
-        kp2 = []
+        # s = 1
+        # kp2 = []
 
         if len(image1.shape) == 2:
             image0 = np.zeros(image1.shape)
@@ -62,7 +67,7 @@ class GameMoves:
             image0 = np.zeros(image1.shape[:2])
 
         # to compute a partition of the pixels, for an image classification task 
-        partitions = self.getPartition(image1, kps)
+        # partitions = self.getPartition(image1, kps)
         print("The pixels are partitioned with respect to keypoints.")
 
         # construct moves according to the obtained the partitions 
@@ -108,17 +113,18 @@ class GameMoves:
 
                 image0[x][y] = 1
 
-            actions[s] = all_atomic_manipulations
-            kp2.append(kps[s - 1])
+            actions[k] = all_atomic_manipulations
+            # actions[s] = all_atomic_manipulations
+            # kp2.append(kps[s - 1])
 
-            s += 1
+            # s += 1
             print("%s manipulations have been initialised for keypoint (%s,%s), whose response is %s."
                   % (len(all_atomic_manipulations), int(kps[k - 1].pt[0] / img_enlarge_ratio),
                      int(kps[k - 1].pt[1] / img_enlarge_ratio), kps[k - 1].response))
             num_of_manipulations += len(all_atomic_manipulations)
 
         # index-0 keeps the keypoints, actual actions start from 1
-        actions[0] = kp2
+        # actions[0] = kp2
         print("the number of all manipulations initialised: %s\n" % num_of_manipulations)
         self.moves = actions
 
@@ -145,6 +151,8 @@ class GameMoves:
                     image1[fst][snd][thd] = maxVal
         return image1
 
+
+"""
     def SIFT_Filtered_twoPlayer(self, image):  # threshold=0.0):
         sift = cv2.xfeatures2d.SIFT_create()  # cv2.SIFT() # cv2.SURF(400) #
         kp, des = sift.detectAndCompute(image, None)
@@ -191,3 +199,4 @@ class GameMoves:
                         maxk += 1
                         blocks[maxk] = [(x, y)]
             return blocks
+"""

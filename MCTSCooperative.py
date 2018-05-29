@@ -54,7 +54,7 @@ class MCTSCooperative:
 
         # record all the keypoints: index -> kp
         self.keypoints = {}
-        # mapping nodes to keyponts
+        # mapping nodes to keypoints
         self.keypoint = {}
         self.keypoint[0] = 0
 
@@ -155,7 +155,7 @@ class MCTSCooperative:
 
     def treeTraversal(self, index):
         if self.fullyExpanded[index] is True:
-            nprint("tree traversal on node %s with childrens %s" % (index, self.children[index]))
+            nprint("tree traversal on node %s with children %s" % (index, self.children[index]))
             allValues = {}
             for childIndex in self.children[index]:
                 # UCB values
