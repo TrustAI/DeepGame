@@ -33,28 +33,28 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
-        # feature_extraction = FeatureExtraction(self.image)
-        # kps = feature_extraction.get_key_points()
-        # partitions = feature_extraction.get_partitions()
+        feature_extraction = FeatureExtraction(self.image)
+        kps = feature_extraction.get_key_points()
+        partitions = feature_extraction.get_partitions()
 
         img_enlarge_ratio = 1
         image1 = copy.deepcopy(self.image)
-        if np.max(image1) <= 1:
-            image1 = (image1 * 255).astype(np.uint8)
-        else:
-            image1 = image1.astype(np.uint8)
-
-        if max(image1.shape) < 100:
-            # for small images, sift works by enlarging the images
-            image1 = cv2.resize(image1, (0, 0), fx=img_enlarge_ratio, fy=img_enlarge_ratio)
-            kps = self.SIFT_Filtered_twoPlayer(image1)
-            for i in range(len(kps)):
-                oldpt = (kps[i].pt[0], kps[i].pt[1])
-                kps[i].pt = (int(oldpt[0] / img_enlarge_ratio), int(oldpt[1] / img_enlarge_ratio))
-        else:
-            kps = self.SIFT_Filtered_twoPlayer(image1)
-
-        print("%s keypoints are found. " % (len(kps)))
+        # if np.max(image1) <= 1:
+        #     image1 = (image1 * 255).astype(np.uint8)
+        # else:
+        #     image1 = image1.astype(np.uint8)
+        #
+        # if max(image1.shape) < 100:
+        #     # for small images, sift works by enlarging the images
+        #     image1 = cv2.resize(image1, (0, 0), fx=img_enlarge_ratio, fy=img_enlarge_ratio)
+        #     kps = self.SIFT_Filtered_twoPlayer(image1)
+        #     for i in range(len(kps)):
+        #         oldpt = (kps[i].pt[0], kps[i].pt[1])
+        #         kps[i].pt = (int(oldpt[0] / img_enlarge_ratio), int(oldpt[1] / img_enlarge_ratio))
+        # else:
+        #     kps = self.SIFT_Filtered_twoPlayer(image1)
+        #
+        # print("%s keypoints are found. " % (len(kps)))
 
         actions = dict()
         actions[0] = kps
@@ -67,7 +67,7 @@ class GameMoves:
             image0 = np.zeros(image1.shape[:2])
 
         # to compute a partition of the pixels, for an image classification task 
-        partitions = self.getPartition(image1, kps)
+        # partitions = self.getPartition(image1, kps)
         print("The pixels are partitioned with respect to keypoints.")
 
         # construct moves according to the obtained the partitions 
