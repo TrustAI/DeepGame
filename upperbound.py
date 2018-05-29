@@ -55,6 +55,9 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             runningTime_all = time.time() - start_time_all
 
         (_, bestManipulation) = mctsInstance.bestCase
+        
+        print("the number of sampling: %s" % mctsInstance.numOfSampling)
+        print("the number of adversarial examples: %s\n" % mctsInstance.numAdv)
 
         image1 = mctsInstance.applyManipulation(bestManipulation)
         (newClass, newConfident) = NN.predict(image1)

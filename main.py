@@ -63,12 +63,12 @@ elif len(sys.argv) == 1:
     bound = 'ub'
     gameType = 'cooperative'
     image_index = 3
-    eta = ("L1", 40)
+    eta = ('L1', 40)
     tau = 0.5
 
 # calling algorithms 
 
-dc = DataCollection("%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType, image_index, eta))
+dc = DataCollection("%s_%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType, image_index, eta[0], eta[1]))
 dc.initialiseIndex(image_index)
 
 if bound == 'ub':

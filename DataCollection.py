@@ -85,7 +85,7 @@ class DataCollection:
                 self.fileHandler.write("%s:%s\n" % (i, r))
             self.fileHandler.write("\n")
         else: 
-            self.fileHanler.write("none of the inputs were successfully manipulated")
+            self.fileHandler.write("none of the inputs were successfully manipulated")
 
     def summarise(self):
         if len(self.manipulationPercentage) is 0:
