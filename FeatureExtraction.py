@@ -1,7 +1,7 @@
 """
 Construct a FeatureExtraction class to retrieve
 'key points' and 'partitions' of an image
-in a black-box or white-box pattern.
+in a black-box or grey-box pattern.
 
 Author: Min Wu
 Email: min.wu@cs.ox.ac.uk
@@ -32,8 +32,8 @@ class FeatureExtraction:
 
         self.img_enlarge_ratio = 1
 
-        if self.PATTERN == 'white-box' and self.MODEL is None:
-            print("For 'white-box' feature extraction, please specify a neural network.")
+        if self.PATTERN == 'grey-box' and self.MODEL is None:
+            print("For 'grey-box' feature extraction, please specify a neural network.")
             exit
 
     def get_partitions(self, pixel_bounds=(0, 1), num_partition=10):
@@ -80,7 +80,7 @@ class FeatureExtraction:
                             partitions[maxk] = [(x, y)]
                 return partitions
 
-        elif self.PATTERN == 'white-box':
+        elif self.PATTERN == 'grey-box':
             print("Extracting image features using '%s' pattern." % self.PATTERN)
 
             image_class, _ = self.MODEL.predict(self.IMAGE)
@@ -132,7 +132,7 @@ class FeatureExtraction:
 
         else:
             print("Unrecognised feature extraction pattern. "
-                  "Try 'black-box' or 'white-box'.")
+                  "Try 'black-box' or 'grey-box'.")
 
     def get_key_points(self, num_partition=10):
         if self.PATTERN == 'black-box':
@@ -156,7 +156,7 @@ class FeatureExtraction:
             else:
                 key_points, _ = sift.detectAndCompute(image, None)
 
-        elif self.PATTERN == 'white-box':
+        elif self.PATTERN == 'grey-box':
             key_points = [key for key in range(num_partition)]
             # key_points = {}
             # for key in range(num_partition):
