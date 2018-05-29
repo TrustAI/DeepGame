@@ -50,9 +50,6 @@ class DataCollection:
     def addl0Distance(self, l0dist):
         self.l0Distance[self.index] = l0dist
 
-    def addmaxfeatures(self, maxfeatures):
-        self.maxFeatures[self.index] = maxfeatures
-
     def addComment(self, comment):
         self.fileHandler.write(comment)
 
@@ -83,9 +80,12 @@ class DataCollection:
         self.fileHandler.write("\n")
 
         self.fileHandler.write("max features: \n")
-        for i, r in self.maxFeatures.items():
-            self.fileHandler.write("%s:%s\n" % (i, r))
-        self.fileHandler.write("\n")
+        if not bool(self.maxFeatures):
+            for i, r in self.maxFeatures.items():
+                self.fileHandler.write("%s:%s\n" % (i, r))
+            self.fileHandler.write("\n")
+        else: 
+            self.fileHanler.write("empty max features")
 
     def summarise(self):
         if len(self.manipulationPercentage) is 0:

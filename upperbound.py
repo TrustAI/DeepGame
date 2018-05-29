@@ -117,9 +117,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         (bestValue, bestManipulation) = mctsInstance.bestCase
         
         print("the number of sampling: %s" % mctsInstance.numOfSampling)
-        print("the number of adversarial examples: %s" % mctsInstance.numAdv)
-
-
+        print("the number of adversarial examples: %s\n" % mctsInstance.numAdv)
 
         print("the number of max features is %s" % mctsInstance.bestFeatures()[0])
         maxfeatures = mctsInstance.bestFeatures()[0]
