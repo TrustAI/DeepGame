@@ -80,8 +80,7 @@ if bound == 'ub':
     dc.addl2Distance(l2dist)
     dc.addl1Distance(l1dist)
     dc.addl0Distance(l0dist)
-    dc.addmaxfeatures(maxFeatures)
-
+    dc.addMaxFeatures(maxFeatures)
 
 else:
     print("lower bound algorithm is developing...")

@@ -22,6 +22,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     origClassStr = NN.get_label(int(label))
     print("Working on input with index %s, whose class is '%s' and the confidence is %s."
           % (image_index, origClassStr, confident))
+    print("the second player is %s."% (gameType))
 
     tau = 1
     # choose between "cooperative" and "competitive"
