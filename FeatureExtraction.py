@@ -1,6 +1,6 @@
 """
 Construct a FeatureExtraction class to retrieve
-'key points' and 'partitions' of an image
+'key points', 'partitions', `saliency map' of an image
 in a black-box or grey-box pattern.
 
 Author: Min Wu
@@ -17,15 +17,21 @@ from keras import backend as K
 
 class FeatureExtraction:
     def __init__(self, pattern='black-box'):
-        # self.IMAGE = image
-        # self.MODEL = model
         self.PATTERN = pattern
+
+        # black-box parameters
         self.IMG_ENLARGE_RATIO = 1
         self.IMAGE_SIZE_BOUND = 100
         self.MAX_NUM_OF_PIXELS_PER_KEY_POINT = 1000000
+
+        # grey-box parameters
+        self.NUM_PARTITION = 10
+        self.PIXEL_BOUNDS = (0, 1)
         self.NUM_OF_PIXEL_MANIPULATION = 2
 
     def get_key_points(self, image, num_partition=10):
+        self.NUM_PARTITION = num_partition
+
         if self.PATTERN == 'black-box':
             image = copy.deepcopy(image)
 
@@ -48,10 +54,7 @@ class FeatureExtraction:
                 key_points, _ = sift.detectAndCompute(image, None)
 
         elif self.PATTERN == 'grey-box':
-            key_points = [key for key in range(num_partition)]
-            # key_points = {}
-            # for key in range(num_partition):
-            #     key_points[key] = []
+            key_points = [key for key in range(self.NUM_PARTITION)]
 
         else:
             print("Unrecognised feature extraction pattern. "
@@ -59,7 +62,9 @@ class FeatureExtraction:
 
         return key_points
 
-    def get_partitions(self, image, model=None, pixel_bounds=(0, 1), num_partition=10):
+    def get_partitions(self, image, model=None, num_partition=10, pixel_bounds=(0, 1)):
+        self.NUM_PARTITION = num_partition
+        self.PIXEL_BOUNDS = pixel_bounds
 
         if self.PATTERN == 'grey-box' and model is None:
             print("For 'grey-box' feature extraction, please specify a neural network.")
@@ -68,14 +73,14 @@ class FeatureExtraction:
         if self.PATTERN == 'grey-box':
             print("Extracting image features using '%s' pattern." % self.PATTERN)
 
-            saliency_map = self.get_saliency_map(image, model, pixel_bounds)
+            saliency_map = self.get_saliency_map(image, model, self.PIXEL_BOUNDS)
 
             partitions = {}
-            quotient, remainder = divmod(len(saliency_map), num_partition)
-            for key in range(1, num_partition + 1):
+            quotient, remainder = divmod(len(saliency_map), self.NUM_PARTITION)
+            for key in range(1, self.NUM_PARTITION + 1):
                 partitions[key] = [(int(saliency_map[idx, 0]), int(saliency_map[idx, 1])) for idx in
                                    range((key - 1) * quotient, key * quotient)]
-                if key == num_partition:
+                if key == self.NUM_PARTITION:
                     partitions[key].extend((int(saliency_map[idx, 0]), int(saliency_map[idx, 1])) for idx in
                                            range(key * quotient, len(saliency_map)))
 
@@ -129,9 +134,11 @@ class FeatureExtraction:
                   "Try 'black-box' or 'grey-box'.")
 
     def get_saliency_map(self, image, model, pixel_bounds=(0, 1)):
+        self.PIXEL_BOUNDS = pixel_bounds
+
         image_class, _ = model.predict(image)
 
-        new_pixel_list = np.linspace(pixel_bounds[0], pixel_bounds[1], self.NUM_OF_PIXEL_MANIPULATION)
+        new_pixel_list = np.linspace(self.PIXEL_BOUNDS[0], self.PIXEL_BOUNDS[1], self.NUM_OF_PIXEL_MANIPULATION)
         image_batch = np.kron(np.ones((self.NUM_OF_PIXEL_MANIPULATION, 1, 1, 1)), image)
 
         manipulated_images = []
