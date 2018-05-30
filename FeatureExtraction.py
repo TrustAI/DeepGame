@@ -15,6 +15,7 @@ import random
 from keras import backend as K
 
 
+# Define a Feature Extraction class.
 class FeatureExtraction:
     def __init__(self, pattern='black-box'):
         self.PATTERN = pattern

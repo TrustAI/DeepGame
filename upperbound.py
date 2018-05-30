@@ -24,7 +24,8 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
           % (image_index, origClassStr, confident))
     print("the second player is %s." % gameType)
 
-    tau = 1
+    # tau = 1
+
     # choose between "cooperative" and "competitive"
     if gameType == 'cooperative':
         mctsInstance = MCTSCooperative(dataSetName, NN, image_index, image, tau, eta)

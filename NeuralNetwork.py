@@ -197,11 +197,9 @@ class NeuralNetwork:
 
     def get_label(self, index):
         if self.data_set == 'mnist':
-            labels = ['0', '1', '2', '3', '4', '5', '6',
-                      '7', '8', '9']
+            labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         elif self.data_set == 'cifar10':
-            labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog',
-                      'horse', 'ship', 'truck']
+            labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
         else:
             print("LABELS: Unsupported dataset.")
         return labels[index]

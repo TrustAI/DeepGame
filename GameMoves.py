@@ -33,7 +33,7 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
-        feature_extraction = FeatureExtraction(pattern='grey-box')
+        feature_extraction = FeatureExtraction(pattern='black-box')
         kps = feature_extraction.get_key_points(self.image)
         partitions = feature_extraction.get_partitions(self.image, self.model)
 
@@ -151,7 +151,7 @@ class GameMoves:
         return image1
 
 
-
+"""
     def SIFT_Filtered_twoPlayer(self, image):  # threshold=0.0):
         sift = cv2.xfeatures2d.SIFT_create()  # cv2.SIFT() # cv2.SURF(400) #
         kp, des = sift.detectAndCompute(image, None)
@@ -198,3 +198,4 @@ class GameMoves:
                         maxk += 1
                         blocks[maxk] = [(x, y)]
             return blocks
+"""
