@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+5#!/usr/bin/env python
 
 """
 A data structure for organising search
@@ -249,6 +249,7 @@ class MCTSCooperative:
     def sampleNext(self, k):
         activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)
         (newClass, newConfident) = self.model.predict(activations1)
+		return (self.depth == 0, newConfident)
         (distMethod, distVal) = self.eta
         dist = self.computeDistance(activations1)
 
