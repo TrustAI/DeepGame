@@ -33,7 +33,7 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
-        feature_extraction = FeatureExtraction(pattern='black-box')
+        feature_extraction = FeatureExtraction(pattern='grey-box')
         kps = feature_extraction.get_key_points(self.image)
         partitions = feature_extraction.get_partitions(self.image, self.model)
 
@@ -129,7 +129,6 @@ class GameMoves:
         self.moves = actions
 
     def applyManipulation(self, image, manipulation):
-
         # apply a specific manipulation to have a manipulated input
         image1 = copy.deepcopy(image)
         maxVal = np.max(image1)
