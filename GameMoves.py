@@ -33,9 +33,9 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
-        feature_extraction = FeatureExtraction(self.image, pattern='grey-box', model=self.model)
-        kps = feature_extraction.get_key_points()
-        partitions = feature_extraction.get_partitions(pixel_bounds=(0, 1))
+        feature_extraction = FeatureExtraction(pattern='grey-box')
+        kps = feature_extraction.get_key_points(self.image)
+        partitions = feature_extraction.get_partitions(self.image, self.model)
 
         img_enlarge_ratio = 1
         image1 = copy.deepcopy(self.image)
