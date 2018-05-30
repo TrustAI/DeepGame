@@ -249,6 +249,24 @@ class MCTSCooperative:
     def sampleNext(self, k):
         activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)
         (newClass, newConfident) = self.model.predict(activations1)
+        
+        if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
+            nprint("sampling a path ends in a terminal node with depth %s... " % self.depth)
+            self.atomicManipulationPath = self.scrutinizePath(self.atomicManipulationPath)
+            self.numAdv += 1
+            nprint("current best %s, considered to be replaced by %s" % (self.bestCase[0], dist))
+            if self.bestCase[0] > dist:
+                print("update best case from %s to %s" % (self.bestCase[0], dist))
+                self.numConverge += 1
+                self.bestCase = (dist, self.atomicManipulationPath)
+                path0 = "%s_pic/%s_currentBest_%s.png" % (self.data_set, self.image_index, self.numConverge)
+                self.model.save_input(activations1, path0)
+            return (True, newConfident)
+        else: 
+            return (False, newConfident)
+
+        
+    '''
         (distMethod, distVal) = self.eta
         dist = self.computeDistance(activations1)
 
@@ -299,6 +317,8 @@ class MCTSCooperative:
                 return self.sampleNext(randomActionIndex)
             else:
                 return self.sampleNext(0)
+                
+    '''
 
     def scrutinizePath(self, manipulations):
         flag = False
