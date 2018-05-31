@@ -172,7 +172,6 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                   "playing suitable strategies on selecting features. ")
             return 0, 0, 0, 0, 0, 0, 0
 
-
     else:
         print("Unrecognised game type. Try 'cooperative' or 'competitive'.")
 

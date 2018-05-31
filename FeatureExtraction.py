@@ -85,12 +85,12 @@ class FeatureExtraction:
 
             partitions = {}
             quotient, remainder = divmod(len(saliency_map), self.NUM_PARTITION)
-            for key in range(1, self.NUM_PARTITION + 1):
+            for key in range(self.NUM_PARTITION):
                 partitions[key] = [(int(saliency_map[idx, 0]), int(saliency_map[idx, 1])) for idx in
-                                   range((key - 1) * quotient, key * quotient)]
-                if key == self.NUM_PARTITION:
+                                   range(key * quotient, (key + 1) * quotient)]
+                if key == self.NUM_PARTITION - 1:
                     partitions[key].extend((int(saliency_map[idx, 0]), int(saliency_map[idx, 1])) for idx in
-                                           range(key * quotient, len(saliency_map)))
+                                           range((key + 1) * quotient, len(saliency_map)))
             return partitions
 
         # Black-box pattern: get partitions from key points.
@@ -107,7 +107,7 @@ class FeatureExtraction:
                     for y in range(max(image.shape)):
                         ps = 0
                         maxk = -1
-                        for i in range(1, len(key_points) + 1):
+                        for i in range(len(key_points)):
                             k = key_points[i - 1]
                             dist2 = np.linalg.norm(np.array([x, y]) - np.array([k.pt[0], k.pt[1]]))
                             ps2 = norm.pdf(dist2, loc=0.0, scale=k.size)

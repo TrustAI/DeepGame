@@ -9,6 +9,7 @@ from NeuralNetwork import *
 from DateSet import *
 from DataCollection import *
 from upperbound import upperbound
+from lowerbound import lowerbound
 
 # the first way of defining parameters
 if len(sys.argv) == 8:
@@ -58,10 +59,10 @@ if len(sys.argv) == 8:
 
 elif len(sys.argv) == 1:
     # the second way of defining parameters
-    dataSetName = 'cifar10'
-    bound = 'ub'
+    dataSetName = 'mnist'
+    bound = 'lb'
     gameType = 'cooperative'
-    image_index = 3
+    image_index = 0
     eta = ('L1', 40)
     tau = 0.5
 
@@ -80,6 +81,9 @@ if bound == 'ub':
     dc.addl1Distance(l1dist)
     dc.addl0Distance(l0dist)
     dc.addMaxFeatures(maxFeatures)
+
+elif bound == 'lb':
+    lowerbound(dataSetName, image_index, gameType, eta, tau)
 
 else:
     print("lower bound algorithm is developing...")

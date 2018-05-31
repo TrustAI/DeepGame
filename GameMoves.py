@@ -33,7 +33,7 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
-        feature_extraction = FeatureExtraction(pattern='black-box')
+        feature_extraction = FeatureExtraction(pattern='grey-box')
         kps = feature_extraction.get_key_points(self.image)
         partitions = feature_extraction.get_partitions(self.image, self.model)
 
