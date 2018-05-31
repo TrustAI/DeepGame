@@ -317,8 +317,6 @@ class MCTSCooperative:
             else:
                 return self.sampleNext(0)
                 
-
-
     def scrutinizePath(self, manipulations):
         flag = False
         tempManipulations = copy.deepcopy(manipulations)

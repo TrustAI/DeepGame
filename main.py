@@ -59,8 +59,8 @@ if len(sys.argv) == 8:
 
 elif len(sys.argv) == 1:
     # the second way of defining parameters
-    dataSetName = 'mnist'
-    bound = 'lb'
+    dataSetName = 'cifar10'
+    bound = 'ub'
     gameType = 'cooperative'
     image_index = 0
     eta = ('L1', 40)
