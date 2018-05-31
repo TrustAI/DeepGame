@@ -30,12 +30,12 @@ class FeatureExtraction:
         self.PIXEL_BOUNDS = (0, 1)
         self.NUM_OF_PIXEL_MANIPULATION = 2
 
-    # get key points of an image
+    # Get key points of an image.
     def get_key_points(self, image, num_partition=10):
         self.NUM_PARTITION = num_partition
 
-        # black-box pattern: get key points from SIFT,
-        # enlarge the image if it is small
+        # Black-box pattern: get key points from SIFT,
+        # enlarge the image if it is small.
         if self.PATTERN == 'black-box':
             image = copy.deepcopy(image)
 
@@ -47,7 +47,7 @@ class FeatureExtraction:
                 image = image.astype(np.uint8)
 
             if max(image.shape) < self.IMAGE_SIZE_BOUND:
-                # for a small image, SIFT works by enlarging the image
+                # For a small image, SIFT works by enlarging the image.
                 image = cv2.resize(image, (0, 0), fx=self.IMG_ENLARGE_RATIO, fy=self.IMG_ENLARGE_RATIO)
                 key_points, _ = sift.detectAndCompute(image, None)
                 for i in range(len(key_points)):
@@ -57,7 +57,7 @@ class FeatureExtraction:
             else:
                 key_points, _ = sift.detectAndCompute(image, None)
 
-        # grey-box pattern: get key points from partition ID
+        # Grey-box pattern: get key points from partition ID.
         elif self.PATTERN == 'grey-box':
             key_points = [key for key in range(self.NUM_PARTITION)]
 
@@ -67,17 +67,17 @@ class FeatureExtraction:
 
         return key_points
 
-    # get partitions of an image
+    # Get partitions of an image.
     def get_partitions(self, image, model=None, num_partition=10, pixel_bounds=(0, 1)):
         self.NUM_PARTITION = num_partition
         self.PIXEL_BOUNDS = pixel_bounds
 
-        # grey-box pattern: must specify a neural network
+        # Grey-box pattern: must specify a neural network.
         if self.PATTERN == 'grey-box' and model is None:
             print("For 'grey-box' feature extraction, please specify a neural network.")
             exit
 
-        # grey-box pattern: get partitions from saliency map
+        # Grey-box pattern: get partitions from saliency map.
         if self.PATTERN == 'grey-box':
             print("Extracting image features using '%s' pattern." % self.PATTERN)
 
@@ -93,7 +93,7 @@ class FeatureExtraction:
                                            range(key * quotient, len(saliency_map)))
             return partitions
 
-        # black-box pattern: get partitions from key points
+        # Black-box pattern: get partitions from key points.
         elif self.PATTERN == 'black-box':
             print("Extracting image features using '%s' pattern." % self.PATTERN)
 
@@ -101,7 +101,7 @@ class FeatureExtraction:
             print("%s keypoints are found. " % (len(key_points)))
 
             partitions = {}
-            # for small images, such as MNIST, CIFAR10
+            # For small images, such as MNIST, CIFAR10.
             if max(image.shape) < self.IMAGE_SIZE_BOUND:
                 for x in range(max(image.shape)):
                     for y in range(max(image.shape)):
@@ -118,14 +118,14 @@ class FeatureExtraction:
                             partitions[maxk].append((x, y))
                         else:
                             partitions[maxk] = [(x, y)]
-                # if a partition gets too many pixels, randomly remove some pixels
+                # If a partition gets too many pixels, randomly remove some pixels.
                 if self.MAX_NUM_OF_PIXELS_PER_KEY_POINT > 0:
                     for mk in partitions.keys():
                         begining_num = len(partitions[mk])
                         for i in range(begining_num - self.MAX_NUM_OF_PIXELS_PER_KEY_POINT):
                             partitions[mk].remove(random.choice(partitions[mk]))
                 return partitions
-            # for large images, such as ImageNet
+            # For large images, such as ImageNet.
             else:
                 key_points = key_points[:200]
                 each_num = max(image.shape) ** 2 / len(key_points)
@@ -144,7 +144,7 @@ class FeatureExtraction:
             print("Unrecognised feature extraction pattern. "
                   "Try 'black-box' or 'grey-box'.")
 
-    # get saliency map of an image
+    # Get saliency map of an image.
     def get_saliency_map(self, image, model, pixel_bounds=(0, 1)):
         self.PIXEL_BOUNDS = pixel_bounds
 
@@ -166,8 +166,8 @@ class FeatureExtraction:
         manipulated_images = np.asarray(manipulated_images)  # [row*col, pixel_num, row, col, chl]
         manipulated_images = manipulated_images.reshape(row * col * self.NUM_OF_PIXEL_MANIPULATION, row, col, chl)
 
-        # use softmax logits instead of probabilities,
-        # as probabilities may not reflect precise influence of one single pixel change
+        # Use softmax logits instead of probabilities,
+        # as probabilities may not reflect precise influence of one single pixel change.
         features_list = self.softmax_logits(manipulated_images, model.model)
         feature_change = features_list[:, image_class].reshape(-1, self.NUM_OF_PIXEL_MANIPULATION).transpose()
 
@@ -188,11 +188,9 @@ class FeatureExtraction:
 
         return saliency_map
 
-    # get softmax logits, i.e., the inputs to the softmax function of the classification layer
+    # Get softmax logits, i.e., the inputs to the softmax function of the classification layer,
+    # as softmax probabilities may be too close to each other after just one pixel manipulation.
     def softmax_logits(self, manipulated_images, model):
-        # get logits of softmax function, as softmax probabilities
-        # may be too close to each other after just one pixel manipulation
-
         func = K.function([model.layers[0].input] + [K.learning_phase()],
                           [model.layers[model.layers.__len__() - 1].output.op.inputs[0]])
 
