@@ -34,6 +34,11 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         start_time_all = time.time()
         runningTime_all = 0
         while runningTime_all <= MCTS_all_maximal_time:
+        
+            if runningTime_all > MCTS_level_maximal_time: 
+                bestChild = mctsInstance.bestChild(mctsInstance.rootIndex)
+                # pick the current best move to take  
+                mctsInstance.makeOneMove(bestChild)
 
             currentBest = eta[1]
             # Here are three steps for MCTS
