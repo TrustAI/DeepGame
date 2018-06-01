@@ -31,7 +31,7 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
 
     if game_type == 'cooperative':
         coop_game = CooperativeAStar(image, NN, eta, tau)
-        coop_game.atomic_manipulation()
+        coop_game.player1(image)
 
     elif game_type == 'competitive':
         comp_game = CompetitiveAlphaBeta(image, NN, eta, tau)
