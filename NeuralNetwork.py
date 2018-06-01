@@ -6,11 +6,14 @@ Author: Min Wu
 Email: min.wu@cs.ox.ac.uk
 """
 
+import cv2
+import copy
 import keras
 from keras.datasets import mnist, cifar10
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from keras.preprocessing.image import ImageDataGenerator
+from keras import backend as K
 
 from basics import assure_path_exists
 
@@ -187,12 +190,7 @@ class NeuralNetwork:
             print("load_network: Unsupported dataset.")
 
     def save_input(self, image, filename):
-
-        import cv2
-        import copy
-
         image_cv = copy.deepcopy(image)
-
         cv2.imwrite(filename, image_cv * 255.0, [cv2.IMWRITE_PNG_COMPRESSION, 9])
 
     def get_label(self, index):
@@ -203,3 +201,17 @@ class NeuralNetwork:
         else:
             print("LABELS: Unsupported dataset.")
         return labels[index]
+
+    # Get softmax logits, i.e., the inputs to the softmax function of the classification layer,
+    # as softmax probabilities may be too close to each other after just one pixel manipulation.
+    def softmax_logits(self, manipulated_images):
+        model = self.model
+
+        func = K.function([model.layers[0].input] + [K.learning_phase()],
+                          [model.layers[model.layers.__len__() - 1].output.op.inputs[0]])
+
+        # func = K.function([model.layers[0].input] + [K.learning_phase()],
+        #                   [model.layers[model.layers.__len__() - 1].output])
+
+        softmax_logits = func([manipulated_images, 0])[0]
+        return softmax_logits

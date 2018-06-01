@@ -58,7 +58,7 @@ class CooperativeAStar:
     def atomic_manipulation(self):
         pixels = self.PARTITIONS[0]
         tau = self.TAU
-        model = self.MODEL.model
+        model = self.MODEL
         image = self.IMAGE
 
         (row, col, chl) = image.shape
@@ -75,15 +75,18 @@ class CooperativeAStar:
         manipulated_images = np.asarray(manipulated_images)  # [len(pixels), chl*2, row, col, chl]
         manipulated_images = manipulated_images.reshape(len(pixels) * chl * 2, row, col, chl)
 
-        probabilities = model.predict(manipulated_images)
+        # probabilities = model.predict(manipulated_images)
+        softmax_logits = model.softmax_logits(manipulated_images)
 
         estimation = []
         cost = []
         heuristic = []
         for idx in range(len(manipulated_images)):
             cost.append(self.cal_distance(manipulated_images[idx], self.IMAGE))
-            [p_max, p_2dn_max] = heapq.nlargest(2, probabilities[idx])
+            [p_max, p_2dn_max] = heapq.nlargest(2, softmax_logits[idx])
             heuristic.append((p_max - p_2dn_max) * 2 / tau)
             estimation.append(cost[idx] + heuristic[idx])
+
+        print("Atomic manipulations done.")
 
 

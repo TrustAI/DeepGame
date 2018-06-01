@@ -10,8 +10,8 @@ Email: min.wu@cs.ox.ac.uk
 import copy
 import numpy as np
 import cv2
-from scipy.stats import norm
 import random
+from scipy.stats import norm
 from keras import backend as K
 
 
@@ -168,7 +168,8 @@ class FeatureExtraction:
 
         # Use softmax logits instead of probabilities,
         # as probabilities may not reflect precise influence of one single pixel change.
-        features_list = self.softmax_logits(manipulated_images, model.model)
+        # features_list = self.softmax_logits(manipulated_images, model.model)
+        features_list = model.softmax_logits(manipulated_images)
         feature_change = features_list[:, image_class].reshape(-1, self.NUM_OF_PIXEL_MANIPULATION).transpose()
 
         min_indices = np.argmin(feature_change, axis=0)
@@ -188,6 +189,7 @@ class FeatureExtraction:
 
         return saliency_map
 
+"""
     # Get softmax logits, i.e., the inputs to the softmax function of the classification layer,
     # as softmax probabilities may be too close to each other after just one pixel manipulation.
     def softmax_logits(self, manipulated_images, model):
@@ -199,3 +201,4 @@ class FeatureExtraction:
 
         softmax_logits = func([manipulated_images, 0])[0]
         return softmax_logits
+"""
