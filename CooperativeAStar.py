@@ -14,8 +14,9 @@ from basics import *
 
 
 class CooperativeAStar:
-    def __init__(self, image, model, eta, tau):
+    def __init__(self, image, model, eta, tau, bounds=(0,1)):
         self.IMAGE = image
+        self.IMAGE_BOUNDS = bounds
         self.MODEL = model
         self.DIST_METRIC = eta[0]
         self.DIST_VAL = eta[1]
@@ -29,6 +30,8 @@ class CooperativeAStar:
         self.ADV_MANIPULATION = ()
         self.ADVERSARY_FOUND = None
         self.ADVERSARY = None
+
+        print("Distance metric %s, with bound value %s." % (self.DIST_METRIC, self.DIST_VAL))
 
     def cal_distance(self, image1, image2):
         if self.DIST_METRIC == 'L0':
@@ -46,36 +49,37 @@ class CooperativeAStar:
 
         self.ADV_MANIPULATION = min(self.DIST_EVALUATION, key=self.DIST_EVALUATION.get)
         self.DIST_EVALUATION.pop(self.ADV_MANIPULATION)
+        print(self.ADV_MANIPULATION)
 
-        new_image = image.copy()
+        new_image = copy.deepcopy(self.IMAGE)
         atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
         for atomic in atomic_list:
-            new_image[atomic[0:3]] += atomic[3]
+            new_image = self.atomic_manipulation(new_image, atomic)
 
         new_label, new_confidence = self.MODEL.predict(new_image)
         if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
-            print("Adversarial distance exceeds distance bound.")
+            # print("Adversarial distance exceeds distance bound.")
             self.ADVERSARY_FOUND = False
         elif new_label != self.LABEL:
-            print("Adversarial image is found.")
+            # print("Adversarial image is found.")
             self.ADVERSARY_FOUND = True
             self.ADVERSARY = new_image
         else:
             self.play_game(new_image)
 
     def player1(self, image):
-        print("Player I is acting on features.")
+        # print("Player I is acting on features.")
 
         for partitionID in self.PARTITIONS.keys():
             self.player2(image, partitionID)
 
     def player2(self, image, partition_idx):
-        print("Player II is acting on pixels in each partition.")
+        # print("Player II is acting on pixels in each partition.")
 
         pixels = self.PARTITIONS[partition_idx]
-        self.atomic_manipulation(image, pixels)
+        self.target_pixels(image, pixels)
 
-    def atomic_manipulation(self, image, pixels):
+    def target_pixels(self, image, pixels):
         tau = self.TAU
         model = self.MODEL
 
@@ -88,11 +92,15 @@ class CooperativeAStar:
         for (x, y) in pixels:
             changed_img_batch = img_batch.copy()
             for z in range(chl):
-                changed_img_batch[z * 2, x, y, z] += tau
-                atomic_manipulations.update({idx: (x, y, z, tau)})
+                atomic = (x, y, z, 1*tau)
+                changed_img_batch[z*2] = self.atomic_manipulation(image, atomic)
+                # changed_img_batch[z * 2, x, y, z] += tau
+                atomic_manipulations.update({idx: atomic})
                 idx += 1
-                changed_img_batch[z * 2 + 1, x, y, z] -= tau
-                atomic_manipulations.update({idx: (x, y, z, -tau)})
+                atomic = (x, y, z, -1*tau)
+                changed_img_batch[z * 2 + 1] = self.atomic_manipulation(image, atomic)
+                # changed_img_batch[z * 2 + 1, x, y, z] -= tau
+                atomic_manipulations.update({idx: atomic})
                 idx += 1
             manipulated_images.append(changed_img_batch)  # each loop append [chl*2, row, col, chl]
 
@@ -109,6 +117,15 @@ class CooperativeAStar:
             estimation = cost + heuristic
 
             self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
+        # print("Atomic manipulations of target pixels done.")
 
-        print("Atomic manipulations done.")
+    def atomic_manipulation(self, img, atomic):
+        image = img.copy()
+        if image[atomic[0:3]] + atomic[3] > max(self.IMAGE_BOUNDS):
+            image[atomic[0:3]] = max(self.IMAGE_BOUNDS)
+        elif image[atomic[0:3]] + atomic[3] < min(self.IMAGE_BOUNDS):
+            image[atomic[0:3]] = min(self.IMAGE_BOUNDS)
+        else:
+            image[atomic[0:3]] += atomic[3]
+        return image
 

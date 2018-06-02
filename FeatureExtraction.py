@@ -188,17 +188,3 @@ class FeatureExtraction:
         saliency_map = target_feature_list[target_feature_list[:, 2].argsort()]
 
         return saliency_map
-
-"""
-    # Get softmax logits, i.e., the inputs to the softmax function of the classification layer,
-    # as softmax probabilities may be too close to each other after just one pixel manipulation.
-    def softmax_logits(self, manipulated_images, model):
-        func = K.function([model.layers[0].input] + [K.learning_phase()],
-                          [model.layers[model.layers.__len__() - 1].output.op.inputs[0]])
-
-        # func = K.function([model.layers[0].input] + [K.learning_phase()],
-        #                   [model.layers[model.layers.__len__() - 1].output])
-
-        softmax_logits = func([manipulated_images, 0])[0]
-        return softmax_logits
-"""

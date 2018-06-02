@@ -27,7 +27,7 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
     label_str = NN.get_label(int(label))
     print("Working on input with index %s, whose class is '%s' and the confidence is %s."
           % (image_index, label_str, confidence))
-    print("the second player is being %s." % game_type)
+    print("The second player is being %s." % game_type)
 
     path = "%s_pic/%s_%s_with_confidence_%s.png" % (
         dataset_name, image_index, label_str, confidence)
@@ -41,8 +41,8 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
             adv_label, adv_confidence = NN.predict(adversary)
             adv_label_str = NN.get_label(int(adv_label))
 
-            print("\nfound an adversary image within pre-specified bounded computational resource. "
-                  "The following is its information: ")
+            print("\nFound an adversary within pre-specified bounded computational resource. "
+                  "\nThe following is its information: ")
             print("difference between images: %s" % (diffImage(image, adversary)))
             l2dist = l2Distance(image, adversary)
             l1dist = l1Distance(image, adversary)
