@@ -14,7 +14,7 @@ from basics import *
 
 
 class CooperativeAStar:
-    def __init__(self, image, model, eta, tau, bounds=(0,1)):
+    def __init__(self, image, model, eta, tau, bounds=(0, 1)):
         self.IMAGE = image
         self.IMAGE_BOUNDS = bounds
         self.MODEL = model
@@ -49,12 +49,13 @@ class CooperativeAStar:
 
         self.ADV_MANIPULATION = min(self.DIST_EVALUATION, key=self.DIST_EVALUATION.get)
         self.DIST_EVALUATION.pop(self.ADV_MANIPULATION)
-        print(self.ADV_MANIPULATION)
+        print("Current best manipulations:", self.ADV_MANIPULATION)
 
         new_image = copy.deepcopy(self.IMAGE)
         atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
         for atomic in atomic_list:
-            new_image = self.atomic_manipulation(new_image, atomic)
+            valid, new_image = self.atomic_manipulation(new_image, atomic)
+            # print(valid)
 
         new_label, new_confidence = self.MODEL.predict(new_image)
         if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
@@ -82,30 +83,45 @@ class CooperativeAStar:
     def target_pixels(self, image, pixels):
         tau = self.TAU
         model = self.MODEL
-
-        atomic_manipulations = {}
         (row, col, chl) = image.shape
-        img_batch = np.kron(np.ones((chl * 2, 1, 1, 1)), image)
 
+        # img_batch = np.kron(np.ones((chl * 2, 1, 1, 1)), image)
+        # atomic_manipulations = {}
+        # manipulated_images = []
+        # idx = 0
+        # for (x, y) in pixels:
+        #     changed_img_batch = img_batch.copy()
+        #     for z in range(chl):
+        #         atomic = (x, y, z, 1 * tau)
+        #         changed_img_batch[z * 2] = self.atomic_manipulation(image, atomic)
+        #         # changed_img_batch[z * 2, x, y, z] += tau
+        #         atomic_manipulations.update({idx: atomic})
+        #         idx += 1
+        #         atomic = (x, y, z, -1 * tau)
+        #         changed_img_batch[z * 2 + 1] = self.atomic_manipulation(image, atomic)
+        #         # changed_img_batch[z * 2 + 1, x, y, z] -= tau
+        #         atomic_manipulations.update({idx: atomic})
+        #         idx += 1
+        #     manipulated_images.append(changed_img_batch)  # each loop append [chl*2, row, col, chl]
+        #
+        # manipulated_images = np.asarray(manipulated_images)  # [len(pixels), chl*2, row, col, chl]
+        # manipulated_images = manipulated_images.reshape(len(pixels) * chl * 2, row, col, chl)
+
+        atomic_manipulations = []
         manipulated_images = []
-        idx = 0
         for (x, y) in pixels:
-            changed_img_batch = img_batch.copy()
             for z in range(chl):
-                atomic = (x, y, z, 1*tau)
-                changed_img_batch[z*2] = self.atomic_manipulation(image, atomic)
-                # changed_img_batch[z * 2, x, y, z] += tau
-                atomic_manipulations.update({idx: atomic})
-                idx += 1
-                atomic = (x, y, z, -1*tau)
-                changed_img_batch[z * 2 + 1] = self.atomic_manipulation(image, atomic)
-                # changed_img_batch[z * 2 + 1, x, y, z] -= tau
-                atomic_manipulations.update({idx: atomic})
-                idx += 1
-            manipulated_images.append(changed_img_batch)  # each loop append [chl*2, row, col, chl]
-
-        manipulated_images = np.asarray(manipulated_images)  # [len(pixels), chl*2, row, col, chl]
-        manipulated_images = manipulated_images.reshape(len(pixels) * chl * 2, row, col, chl)
+                atomic = (x, y, z, 1 * tau)
+                valid, atomic_image = self.atomic_manipulation(image, atomic)
+                if valid is True:
+                    manipulated_images.append(atomic_image)
+                    atomic_manipulations.append(atomic)
+                atomic = (x, y, z, -1 * tau)
+                valid, atomic_image = self.atomic_manipulation(image, atomic)
+                if valid is True:
+                    manipulated_images.append(atomic_image)
+                    atomic_manipulations.append(atomic)
+        manipulated_images = np.asarray(manipulated_images)
 
         # probabilities = model.predict(manipulated_images)
         softmax_logits = model.softmax_logits(manipulated_images)
@@ -113,19 +129,27 @@ class CooperativeAStar:
         for idx in range(len(manipulated_images)):
             cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
             [p_max, p_2dn_max] = heapq.nlargest(2, softmax_logits[idx])
-            heuristic = (p_max - p_2dn_max) * 2 / tau
+            heuristic = (p_max - p_2dn_max) * 4 / tau
             estimation = cost + heuristic
 
             self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
         # print("Atomic manipulations of target pixels done.")
 
-    def atomic_manipulation(self, img, atomic):
-        image = img.copy()
-        if image[atomic[0:3]] + atomic[3] > max(self.IMAGE_BOUNDS):
-            image[atomic[0:3]] = max(self.IMAGE_BOUNDS)
-        elif image[atomic[0:3]] + atomic[3] < min(self.IMAGE_BOUNDS):
-            image[atomic[0:3]] = min(self.IMAGE_BOUNDS)
-        else:
-            image[atomic[0:3]] += atomic[3]
-        return image
+    def atomic_manipulation(self, image, atomic):
+        atomic_image = image.copy()
+        chl = atomic[0:3]
+        tau = atomic[3]
 
+        if (atomic_image[chl] >= max(self.IMAGE_BOUNDS) and tau >= 0) or (
+                atomic_image[chl] <= min(self.IMAGE_BOUNDS) and tau <= 0):
+            valid = False
+            return valid, atomic_image
+        else:
+            if atomic_image[chl] + tau > max(self.IMAGE_BOUNDS):
+                atomic_image[chl] = max(self.IMAGE_BOUNDS)
+            elif atomic_image[chl] + tau < min(self.IMAGE_BOUNDS):
+                atomic_image[chl] = min(self.IMAGE_BOUNDS)
+            else:
+                atomic_image[chl] += tau
+            valid = True
+            return valid, atomic_image

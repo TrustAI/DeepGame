@@ -64,7 +64,7 @@ elif len(sys.argv) == 1:
     gameType = 'cooperative'
     image_index = 0
     eta = ('L1', 40)
-    tau = 0.5
+    tau = 1
 
 # calling algorithms
 dc = DataCollection("%s_%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType, image_index, eta[0], eta[1]))
