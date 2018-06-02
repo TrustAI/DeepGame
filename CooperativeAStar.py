@@ -81,8 +81,8 @@ class CooperativeAStar:
         self.target_pixels(image, pixels)
 
     def target_pixels(self, image, pixels):
-        tau = self.TAU
-        model = self.MODEL
+        # tau = self.TAU
+        # model = self.MODEL
         (row, col, chl) = image.shape
 
         # img_batch = np.kron(np.ones((chl * 2, 1, 1, 1)), image)
@@ -111,25 +111,25 @@ class CooperativeAStar:
         manipulated_images = []
         for (x, y) in pixels:
             for z in range(chl):
-                atomic = (x, y, z, 1 * tau)
+                atomic = (x, y, z, 1 * self.TAU)
                 valid, atomic_image = self.atomic_manipulation(image, atomic)
                 if valid is True:
                     manipulated_images.append(atomic_image)
                     atomic_manipulations.append(atomic)
-                atomic = (x, y, z, -1 * tau)
+                atomic = (x, y, z, -1 * self.TAU)
                 valid, atomic_image = self.atomic_manipulation(image, atomic)
                 if valid is True:
                     manipulated_images.append(atomic_image)
                     atomic_manipulations.append(atomic)
         manipulated_images = np.asarray(manipulated_images)
 
-        # probabilities = model.predict(manipulated_images)
-        softmax_logits = model.softmax_logits(manipulated_images)
+        # probabilities = self.MODEL.predict(manipulated_images)
+        softmax_logits = self.MODEL.softmax_logits(manipulated_images)
 
         for idx in range(len(manipulated_images)):
             cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
             [p_max, p_2dn_max] = heapq.nlargest(2, softmax_logits[idx])
-            heuristic = (p_max - p_2dn_max) * 4 / tau
+            heuristic = (p_max - p_2dn_max) * 4 / self.TAU
             estimation = cost + heuristic
 
             self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
@@ -138,18 +138,18 @@ class CooperativeAStar:
     def atomic_manipulation(self, image, atomic):
         atomic_image = image.copy()
         chl = atomic[0:3]
-        tau = atomic[3]
+        manipulate = atomic[3]
 
-        if (atomic_image[chl] >= max(self.IMAGE_BOUNDS) and tau >= 0) or (
-                atomic_image[chl] <= min(self.IMAGE_BOUNDS) and tau <= 0):
+        if (atomic_image[chl] >= max(self.IMAGE_BOUNDS) and manipulate >= 0) or (
+                atomic_image[chl] <= min(self.IMAGE_BOUNDS) and manipulate <= 0):
             valid = False
             return valid, atomic_image
         else:
-            if atomic_image[chl] + tau > max(self.IMAGE_BOUNDS):
+            if atomic_image[chl] + manipulate > max(self.IMAGE_BOUNDS):
                 atomic_image[chl] = max(self.IMAGE_BOUNDS)
-            elif atomic_image[chl] + tau < min(self.IMAGE_BOUNDS):
+            elif atomic_image[chl] + manipulate < min(self.IMAGE_BOUNDS):
                 atomic_image[chl] = min(self.IMAGE_BOUNDS)
             else:
-                atomic_image[chl] += tau
+                atomic_image[chl] += manipulate
             valid = True
             return valid, atomic_image
