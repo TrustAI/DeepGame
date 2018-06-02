@@ -20,13 +20,15 @@ class CooperativeAStar:
         self.DIST_METRIC = eta[0]
         self.DIST_VAL = eta[1]
         self.TAU = tau
-        self.CLASS, _ = self.MODEL.predict(self.IMAGE)
+        self.LABEL, _ = self.MODEL.predict(self.IMAGE)
 
         feature_extraction = FeatureExtraction(pattern='grey-box')
         self.PARTITIONS = feature_extraction.get_partitions(self.IMAGE, self.MODEL, num_partition=10)
 
-        self.ATOMIC_MANIPULATIONS = {}
-        self.ADVERSARY_PATH = ()
+        self.DIST_EVALUATION = {}
+        self.ADV_MANIPULATION = ()
+        self.ADVERSARY_FOUND = None
+        self.ADVERSARY = None
 
     def cal_distance(self, image1, image2):
         if self.DIST_METRIC == 'L0':
@@ -39,62 +41,43 @@ class CooperativeAStar:
             print("Unrecognised distance metric. "
                   "Try 'L0', 'L1', 'L2'.")
 
-    def player1(self, image):
-        # estimations = []
-        # manipulations = []
-        # indices = []
+    def play_game(self, image):
+        self.player1(image)
 
-        for partitionID in self.PARTITIONS.keys():
-            self.player2(image, partitionID)
-            # estimation, manipulation, idx = self.player2(image, partitionID)
-            # estimations.append(estimation)
-            # manipulations.append(manipulation)
-            # indices.append(idx)
-
-        # min_partition_idx = np.argmin(estimations)
-        # min_manipulation = manipulations[min_partition_idx]
-        # min_idx = indices[min_partition_idx]
-
-        self.ADVERSARY_PATH = min(self.ATOMIC_MANIPULATIONS, key=self.ATOMIC_MANIPULATIONS.get)
-        self.ATOMIC_MANIPULATIONS.pop(self.ADVERSARY_PATH)
+        self.ADV_MANIPULATION = min(self.DIST_EVALUATION, key=self.DIST_EVALUATION.get)
+        self.DIST_EVALUATION.pop(self.ADV_MANIPULATION)
 
         new_image = image.copy()
-
-        atomic_list = [self.ADVERSARY_PATH[i:i + 4] for i in range(0, len(self.ADVERSARY_PATH), 4)]
+        atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
         for atomic in atomic_list:
             new_image[atomic[0:3]] += atomic[3]
 
-        new_class, confidence = self.MODEL.predict(new_image)
+        new_label, new_confidence = self.MODEL.predict(new_image)
         if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
             print("Adversarial distance exceeds distance bound.")
-        elif new_class != self.CLASS:
+            self.ADVERSARY_FOUND = False
+        elif new_label != self.LABEL:
             print("Adversarial image is found.")
+            self.ADVERSARY_FOUND = True
+            self.ADVERSARY = new_image
         else:
-            self.player1(new_image)
+            self.play_game(new_image)
 
-        print("Player I.")
+    def player1(self, image):
+        print("Player I is acting on features.")
+
+        for partitionID in self.PARTITIONS.keys():
+            self.player2(image, partitionID)
 
     def player2(self, image, partition_idx):
-        (row, col, chl) = image.shape
+        print("Player II is acting on pixels in each partition.")
 
         pixels = self.PARTITIONS[partition_idx]
-        atomic_manipulations, estimation = self.atomic_manipulation(image, pixels)
-
-        # min_estimation = np.min(estimation)
-        # min_idx = np.argmin(estimation)
-        # min_manipulation = atomic_manipulations[min_idx]
-        # quotient, _ = divmod(min_idx, chl * 2)
-        # min_pixel = pixels[quotient]
-
-        print("Player II.")
-
-        return  # min_estimation, min_manipulation, min_idx
+        self.atomic_manipulation(image, pixels)
 
     def atomic_manipulation(self, image, pixels):
-        # pixels = self.PARTITIONS[0]
         tau = self.TAU
         model = self.MODEL
-        # image = self.IMAGE
 
         atomic_manipulations = {}
         (row, col, chl) = image.shape
@@ -119,21 +102,13 @@ class CooperativeAStar:
         # probabilities = model.predict(manipulated_images)
         softmax_logits = model.softmax_logits(manipulated_images)
 
-        # cost = []
-        # heuristic = []
-        # estimation = []
         for idx in range(len(manipulated_images)):
             cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
             [p_max, p_2dn_max] = heapq.nlargest(2, softmax_logits[idx])
             heuristic = (p_max - p_2dn_max) * 2 / tau
             estimation = cost + heuristic
 
-            self.ATOMIC_MANIPULATIONS.update({self.ADVERSARY_PATH + atomic_manipulations[idx]: estimation})
-
-            # cost.append(self.cal_distance(manipulated_images[idx], self.IMAGE))
-            # [p_max, p_2dn_max] = heapq.nlargest(2, softmax_logits[idx])
-            # heuristic.append((p_max - p_2dn_max) * 2 / tau)
-            # estimation.append(cost[idx] + heuristic[idx])
+            self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
 
         print("Atomic manipulations done.")
-        return atomic_manipulations, estimation
+
