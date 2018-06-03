@@ -8,7 +8,7 @@ from CooperativeMCTS import *
 def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
     start_time = time.time()
 
-    MCTS_all_maximal_time = 600
+    MCTS_all_maximal_time = 300
     MCTS_level_maximal_time = 60
 
     NN = NeuralNetwork(dataSetName)

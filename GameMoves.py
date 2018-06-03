@@ -33,7 +33,7 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
-        feature_extraction = FeatureExtraction(pattern='grey-box')
+        feature_extraction = FeatureExtraction(pattern='black-box')
         kps = feature_extraction.get_key_points(self.image)
         partitions = feature_extraction.get_partitions(self.image, self.model)
 
@@ -87,11 +87,11 @@ class GameMoves:
                 elif image0[x][y] == 0:
                     atomic_manipulation = dict()
                     atomic_manipulation[(x, y, 0)] = self.tau
-                    all_atomic_manipulations.append(atomic_manipulation)
-                    atomic_manipulation = dict()
+                    #all_atomic_manipulations.append(atomic_manipulation)
+                    #atomic_manipulation = dict()
                     atomic_manipulation[(x, y, 1)] = self.tau
-                    all_atomic_manipulations.append(atomic_manipulation)
-                    atomic_manipulation = dict()
+                    #all_atomic_manipulations.append(atomic_manipulation)
+                    #atomic_manipulation = dict()
                     atomic_manipulation[(x, y, 2)] = self.tau
                     all_atomic_manipulations.append(atomic_manipulation)
 
