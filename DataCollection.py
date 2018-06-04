@@ -9,6 +9,8 @@ import time
 import os
 import copy
 
+from basics import assure_path_exists
+
 
 class DataCollection:
     index = 0
@@ -22,7 +24,8 @@ class DataCollection:
         self.l1Distance = {}
         self.l0Distance = {}
         self.confidence = {}
-        self.fileName = "dataCollection_%s.txt" % (filenamePostfix)
+        assure_path_exists("dataCollection/")
+        self.fileName = "dataCollection/%s.txt" % filenamePostfix
         self.fileHandler = open(self.fileName, 'a')
         self.maxFeatures = {}
 
