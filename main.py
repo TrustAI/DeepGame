@@ -38,10 +38,10 @@ if len(sys.argv) == 8:
         print("please specify as the 4th argument the index of the image: [int]")
         exit
 
-    if sys.argv[5] == 'L1' or sys.argv[5] == 'L2':
+    if sys.argv[5] == 'L0' or sys.argv[5] == 'L1' or sys.argv[5] == 'L2':
         distanceMeasure = sys.argv[5]
     else:
-        print("please specify as the 5th argument the distance measure: L1 or L2")
+        print("please specify as the 5th argument the distance measure: L0, L1, or L2")
         exit
 
     if isinstance(float(sys.argv[6]), float):
