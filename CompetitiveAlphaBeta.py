@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 Construct a CompetitiveAlphaBeta class to compute
 the lower bound of Player I’s maximum adversary distance
