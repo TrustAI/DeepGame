@@ -35,17 +35,6 @@ class CooperativeAStar:
 
         print("Distance metric %s, with bound value %s." % (self.DIST_METRIC, self.DIST_VAL))
 
-    def cal_distance(self, image1, image2):
-        if self.DIST_METRIC == 'L0':
-            return l0Distance(image1, image2)
-        elif self.DIST_METRIC == 'L1':
-            return l1Distance(image1, image2)
-        elif self.DIST_METRIC == 'L2':
-            return l2Distance(image1, image2)
-        else:
-            print("Unrecognised distance metric. "
-                  "Try 'L0', 'L1', 'L2'.")
-
     def play_game(self, image):
         self.player1(image)
 
@@ -56,7 +45,7 @@ class CooperativeAStar:
         new_image = copy.deepcopy(self.IMAGE)
         atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
         for atomic in atomic_list:
-            valid, new_image = self.atomic_manipulation(new_image, atomic)
+            valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
             # print(valid)
 
         new_label, new_confidence = self.MODEL.predict(new_image)
@@ -114,30 +103,30 @@ class CooperativeAStar:
         for (x, y) in pixels:
             for z in range(chl):
                 atomic = (x, y, z, 1 * self.TAU)
-                valid, atomic_image = self.atomic_manipulation(image, atomic)
+                valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
                 if valid is True:
                     manipulated_images.append(atomic_image)
                     atomic_manipulations.append(atomic)
                 atomic = (x, y, z, -1 * self.TAU)
-                valid, atomic_image = self.atomic_manipulation(image, atomic)
+                valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
                 if valid is True:
                     manipulated_images.append(atomic_image)
                     atomic_manipulations.append(atomic)
         manipulated_images = np.asarray(manipulated_images)
 
-        # probabilities = self.MODEL.predict(manipulated_images)
-        softmax_logits = self.MODEL.softmax_logits(manipulated_images)
+        probabilities = self.MODEL.model.predict(manipulated_images)
+        # softmax_logits = self.MODEL.softmax_logits(manipulated_images)
 
         for idx in range(len(manipulated_images)):
             cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
-            [p_max, p_2dn_max] = heapq.nlargest(2, softmax_logits[idx])
-            heuristic = (p_max - p_2dn_max) * 10 / self.TAU
+            [p_max, p_2dn_max] = heapq.nlargest(2, probabilities[idx])
+            heuristic = (p_max - p_2dn_max) * 2 / self.TAU  # heuristic value determines Admissible (lb) or not (ub)
             estimation = cost + heuristic
 
             self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
         # print("Atomic manipulations of target pixels done.")
 
-    def atomic_manipulation(self, image, atomic):
+    def apply_atomic_manipulation(self, image, atomic):
         atomic_image = image.copy()
         chl = atomic[0:3]
         manipulate = atomic[3]
@@ -155,3 +144,14 @@ class CooperativeAStar:
                 atomic_image[chl] += manipulate
             valid = True
             return valid, atomic_image
+
+    def cal_distance(self, image1, image2):
+        if self.DIST_METRIC == 'L0':
+            return l0Distance(image1, image2)
+        elif self.DIST_METRIC == 'L1':
+            return l1Distance(image1, image2)
+        elif self.DIST_METRIC == 'L2':
+            return l2Distance(image1, image2)
+        else:
+            print("Unrecognised distance metric. "
+                  "Try 'L0', 'L1', or 'L2'.")
