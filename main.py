@@ -3,13 +3,13 @@ from keras import backend as K
 import sys
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
 from NeuralNetwork import *
 from DateSet import *
 from DataCollection import *
 from upperbound import upperbound
 from lowerbound import lowerbound
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # the first way of defining parameters
 if len(sys.argv) == 8:
@@ -59,11 +59,11 @@ if len(sys.argv) == 8:
 
 elif len(sys.argv) == 1:
     # the second way of defining parameters
-    dataSetName = 'mnist'
+    dataSetName = 'cifar10'
     bound = 'lb'
     gameType = 'cooperative'
     image_index = 0
-    eta = ('L1', 40)
+    eta = ('L1', 1)
     tau = 1
 
 # calling algorithms

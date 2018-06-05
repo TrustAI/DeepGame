@@ -46,7 +46,7 @@ class CooperativeAStar:
         atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
         for atomic in atomic_list:
             valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
-            # print(valid)
+        print("%s distance: %s" % (self.DIST_METRIC, self.cal_distance(self.IMAGE, new_image)))
 
         new_label, new_confidence = self.MODEL.predict(new_image)
         if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
