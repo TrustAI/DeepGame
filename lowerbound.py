@@ -17,7 +17,6 @@ from DateSet import *
 
 
 def lowerbound(dataset_name, image_index, game_type, eta, tau):
-
     NN = NeuralNetwork(dataset_name)
     NN.load_network()
     print("Dataset is %s." % NN.data_set)
@@ -31,7 +30,7 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
           % (image_index, label_str, confidence))
     print("The second player is being %s." % game_type)
 
-    path = "%s_pic/%s_%s_with_confidence_%s.png" % (
+    path = "%s_pic/idx_%s_label_[%s]_with_confidence_%s.png" % (
         dataset_name, image_index, label_str, confidence)
     NN.save_input(image, path)
 
@@ -56,12 +55,12 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
             print("manipulated percentage distance %s" % percent)
             print("class is changed into '%s' with confidence %s\n" % (adv_label_str, adv_confidence))
 
-            path = "%s_pic/%s_%s_modified_into_%s_with_confidence_%s.png" % (
-                dataset_name, image_index, label_str, adv_label_str, adv_confidence)
+            path = "%s_pic/idx_%s_modified_into_[%s]_with_confidence_%s.png" % (
+                dataset_name, image_index, adv_label_str, adv_confidence)
             NN.save_input(adversary, path)
-            path = "%s_pic/%s_diff_L2_%s_L1_%s_L0_%s.png" % (
-                dataset_name, image_index, l2dist, l1dist, l0dist)
-            NN.save_input(np.subtract(image, adversary), path)
+            path = "%s_pic/idx_%s_modified_diff_L0=%s_L1=%s_L2=%s.png" % (
+                dataset_name, image_index, l0dist, l1dist, l2dist)
+            NN.save_input(np.absolute(image - adversary), path)
         else:
             print("Adversarial distance exceeds distance bound.")
 

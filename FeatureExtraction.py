@@ -168,7 +168,6 @@ class FeatureExtraction:
 
         # Use softmax logits instead of probabilities,
         # as probabilities may not reflect precise influence of one single pixel change.
-        # features_list = self.softmax_logits(manipulated_images, model.model)
         features_list = model.softmax_logits(manipulated_images)
         feature_change = features_list[:, image_class].reshape(-1, self.NUM_OF_PIXEL_MANIPULATION).transpose()
 
