@@ -80,7 +80,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                 dataSetName, image_index, origClassStr, newClassStr, newConfident)
             NN.save_input(image1, path0)
             path0 = "%s_pic/%s_diff.png" % (dataSetName, image_index)
-            NN.save_input(np.subtract(image, image1), path0)
+            NN.save_input(np.absolute(image - image1), path0)
             print("\nfound an adversary image within pre-specified bounded computational resource. "
                   "The following is its information: ")
             print("difference between images: %s" % (diffImage(image, image1)))
@@ -149,7 +149,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                     dataSetName, image_index, origClassStr, newClassStr, newConfident)
                 NN.save_input(image1, path0)
                 path0 = "%s_pic/%s_diff.png" % (dataSetName, image_index)
-                NN.save_input(np.subtract(image, image1), path0)
+                NN.save_input(np.absolute(image - image1), path0)
                 print("\nfound an adversary image within pre-specified bounded computational resource. "
                       "The following is its information: ")
                 print("difference between images: %s" % (diffImage(image, image1)))
