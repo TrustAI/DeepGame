@@ -8,6 +8,7 @@ while Player II being competitive.
 Author: Min Wu
 Email: min.wu@cs.ox.ac.uk
 """
+from numpy import inf
 
 from FeatureExtraction import *
 from basics import *
@@ -24,7 +25,15 @@ class CompetitiveAlphaBeta:
         self.LABEL, _ = self.MODEL.predict(self.IMAGE)
 
         feature_extraction = FeatureExtraction(pattern='grey-box')
-        self.PARTITIONS = feature_extraction.get_partitions(self.IMAGE, self.MODEL, num_partition=10)
+        self.PARTITIONS = feature_extraction.get_partitions(self.IMAGE, self.MODEL, num_partition=50)
+
+        self.ALPHA = {}
+        self.BETA = {}
+        self.MANI_BETA = {}
+        self.CURRENT_MANI = ()
+
+        self.ADVERSARY_FOUND = None
+        self.ADVERSARY = None
 
         print("Distance metric %s, with bound value %s." % (self.DIST_METRIC, self.DIST_VAL))
 
@@ -32,12 +41,40 @@ class CompetitiveAlphaBeta:
         self.player1(image)
 
     def player1(self, image):
+        # Alpha
         for partitionID in self.PARTITIONS.keys():
             self.player2(image, partitionID)
+            self.MANI_BETA = {}
+            self.CURRENT_MANI = ()
 
     def player2(self, image, partition_idx):
+        # Beta
         pixels = self.PARTITIONS[partition_idx]
         self.target_pixels(image, pixels)
+        self.feature_robustness(pixels, partition_idx)
+
+    def feature_robustness(self, pixels, partition_idx):
+        min_dist = min(self.MANI_BETA.values())
+        if min_dist is not inf:
+            print("Adversary found.")
+            adv_mani = min(self.MANI_BETA, key=self.MANI_BETA.get)
+            adv_dist = self.MANI_BETA[adv_mani]
+            self.BETA.update({partition_idx: [adv_mani, adv_dist]})
+        else:
+            print("Adversary not found.")
+            mani_distance = copy.deepcopy(self.MANI_BETA)
+            for atom, _ in mani_distance.items():
+                self.MANI_BETA.pop(atom)
+                self.CURRENT_MANI = atom
+
+                new_image = copy.deepcopy(self.IMAGE)
+                atomic_list = [atom[i:i + 4] for i in range(0, len(atom), 4)]
+                for atomic in atomic_list:
+                    valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
+
+                self.target_pixels(new_image, pixels)
+
+            self.feature_robustness(pixels, partition_idx)
 
     def target_pixels(self, image, pixels):
         (row, col, chl) = image.shape
@@ -51,14 +88,22 @@ class CompetitiveAlphaBeta:
                 if valid is True:
                     manipulated_images.append(atomic_image)
                     atomic_manipulations.append(atomic)
-                atomic = (x, y, z, -1 * self.TAU)
-                valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
-                if valid is True:
-                    manipulated_images.append(atomic_image)
-                    atomic_manipulations.append(atomic)
+                # atomic = (x, y, z, -1 * self.TAU)
+                # valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
+                # if valid is True:
+                #     manipulated_images.append(atomic_image)
+                #     atomic_manipulations.append(atomic)
         manipulated_images = np.asarray(manipulated_images)
 
         probabilities = self.MODEL.model.predict(manipulated_images)
+        labels = probabilities.argmax(axis=1)
+
+        for idx in range(len(manipulated_images)):
+            if labels[idx] != self.LABEL:
+                dist = self.cal_distance(manipulated_images[idx], self.IMAGE)
+                self.MANI_BETA.update({self.CURRENT_MANI + atomic_manipulations[idx]: dist})
+            else:
+                self.MANI_BETA.update({self.CURRENT_MANI + atomic_manipulations[idx]: inf})
 
     def apply_atomic_manipulation(self, image, atomic):
         atomic_image = image.copy()
@@ -89,3 +134,5 @@ class CompetitiveAlphaBeta:
         else:
             print("Unrecognised distance metric. "
                   "Try 'L0', 'L1', or 'L2'.")
+
+
