@@ -58,14 +58,23 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
             path = "%s_pic/idx_%s_modified_into_[%s]_with_confidence_%s.png" % (
                 dataset_name, image_index, adv_label_str, adv_confidence)
             NN.save_input(adversary, path)
-            path = "%s_pic/idx_%s_modified_diff_L0=%s_L1=%s_L2=%s.png" % (
-                dataset_name, image_index, l0dist, l1dist, l2dist)
+            if eta[0] == 'L0':
+                dist = l0dist
+            elif eta[0] == 'L1':
+                dist = l1dist
+            elif eta[0] == 'L2':
+                dist = l2dist
+            else:
+                print("Unrecognised distance metric.")
+            path = "%s_pic/idx_%s_modified_diff_%s=%s.png" % (
+                dataset_name, image_index, eta[0], dist)
             NN.save_input(np.absolute(image - adversary), path)
         else:
             print("Adversarial distance exceeds distance bound.")
 
     elif game_type == 'competitive':
         competitive = CompetitiveAlphaBeta(image, NN, eta, tau)
+        competitive.play_game(image)
 
     else:
         print("Unrecognised game type. Try 'cooperative' or 'competitive'.")
