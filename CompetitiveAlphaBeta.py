@@ -50,6 +50,7 @@ class CompetitiveAlphaBeta:
                 self.ROBUST_FEATURE_FOUND = True
                 self.ROBUST_FEATURE.append(partitionID)
         if self.MANI_BETA:
+            self.FRAGILE_FEATURE_FOUND = True
             self.ALPHA = max(self.BETA, key=self.BETA.get)
             self.LEAST_FRAGILE_FEATURE = self.ALPHA
             print("Among fragile features, the least fragile feature is:\n"
