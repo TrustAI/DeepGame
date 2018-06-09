@@ -35,42 +35,6 @@ class CooperativeAStar:
 
         print("Distance metric %s, with bound value %s." % (self.DIST_METRIC, self.DIST_VAL))
 
-    def play_game(self, image):
-        self.player1(image)
-
-        self.ADV_MANIPULATION = min(self.DIST_EVALUATION, key=self.DIST_EVALUATION.get)
-        self.DIST_EVALUATION.pop(self.ADV_MANIPULATION)
-        print("Current best manipulations:", self.ADV_MANIPULATION)
-
-        new_image = copy.deepcopy(self.IMAGE)
-        atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
-        for atomic in atomic_list:
-            valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
-        print("%s distance: %s" % (self.DIST_METRIC, self.cal_distance(self.IMAGE, new_image)))
-
-        new_label, new_confidence = self.MODEL.predict(new_image)
-        if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
-            # print("Adversarial distance exceeds distance bound.")
-            self.ADVERSARY_FOUND = False
-        elif new_label != self.LABEL:
-            # print("Adversarial image is found.")
-            self.ADVERSARY_FOUND = True
-            self.ADVERSARY = new_image
-        else:
-            self.play_game(new_image)
-
-    def player1(self, image):
-        # print("Player I is acting on features.")
-
-        for partitionID in self.PARTITIONS.keys():
-            self.player2(image, partitionID)
-
-    def player2(self, image, partition_idx):
-        # print("Player II is acting on pixels in each partition.")
-
-        pixels = self.PARTITIONS[partition_idx]
-        self.target_pixels(image, pixels)
-
     def target_pixels(self, image, pixels):
         # tau = self.TAU
         # model = self.MODEL
@@ -155,3 +119,84 @@ class CooperativeAStar:
         else:
             print("Unrecognised distance metric. "
                   "Try 'L0', 'L1', or 'L2'.")
+
+    def play_game(self, image):
+        new_image = copy.deepcopy(self.IMAGE)
+        new_label, new_confidence = self.MODEL.predict(new_image)
+
+        while self.cal_distance(self.IMAGE, new_image) <= self.DIST_VAL and new_label == self.LABEL:
+            for partitionID in self.PARTITIONS.keys():
+                pixels = self.PARTITIONS[partitionID]
+                self.target_pixels(new_image, pixels)
+
+            self.ADV_MANIPULATION = min(self.DIST_EVALUATION, key=self.DIST_EVALUATION.get)
+            self.DIST_EVALUATION.pop(self.ADV_MANIPULATION)
+            print("Current best manipulations:", self.ADV_MANIPULATION)
+
+            new_image = copy.deepcopy(self.IMAGE)
+            atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
+            for atomic in atomic_list:
+                valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
+            print("%s distance: %s" % (self.DIST_METRIC, self.cal_distance(self.IMAGE, new_image)))
+
+            new_label, new_confidence = self.MODEL.predict(new_image)
+            if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
+                print("Adversarial distance exceeds distance bound.")
+                self.ADVERSARY_FOUND = False
+                break
+            elif new_label != self.LABEL:
+                print("Adversarial image is found.")
+                self.ADVERSARY_FOUND = True
+                self.ADVERSARY = new_image
+                break
+
+    def player1(self, image):
+        # print("Player I is acting on features.")
+
+        for partitionID in self.PARTITIONS.keys():
+            self.player2(image, partitionID)
+
+    def player2(self, image, partition_idx):
+        # print("Player II is acting on pixels in each partition.")
+
+        pixels = self.PARTITIONS[partition_idx]
+        self.target_pixels(image, pixels)
+
+
+"""
+    def play_game(self, image):
+        self.player1(image)
+
+        self.ADV_MANIPULATION = min(self.DIST_EVALUATION, key=self.DIST_EVALUATION.get)
+        self.DIST_EVALUATION.pop(self.ADV_MANIPULATION)
+        print("Current best manipulations:", self.ADV_MANIPULATION)
+
+        new_image = copy.deepcopy(self.IMAGE)
+        atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
+        for atomic in atomic_list:
+            valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
+        print("%s distance: %s" % (self.DIST_METRIC, self.cal_distance(self.IMAGE, new_image)))
+
+        new_label, new_confidence = self.MODEL.predict(new_image)
+        if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
+            # print("Adversarial distance exceeds distance bound.")
+            self.ADVERSARY_FOUND = False
+        elif new_label != self.LABEL:
+            # print("Adversarial image is found.")
+            self.ADVERSARY_FOUND = True
+            self.ADVERSARY = new_image
+        else:
+            self.play_game(new_image)
+
+    def player1(self, image):
+        # print("Player I is acting on features.")
+
+        for partitionID in self.PARTITIONS.keys():
+            self.player2(image, partitionID)
+
+    def player2(self, image, partition_idx):
+        # print("Player II is acting on pixels in each partition.")
+
+        pixels = self.PARTITIONS[partition_idx]
+        self.target_pixels(image, pixels)
+"""
