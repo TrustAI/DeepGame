@@ -314,7 +314,7 @@ class MCTSCooperative:
             # randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])))
 			
             i = 0
-			while True: 
+            while True: 
 			
                 randomActionIndex = random.choice(self.availableActionIDs[k])
                 if k == 0:
