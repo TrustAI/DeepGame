@@ -78,13 +78,13 @@ class CooperativeAStar:
                     atomic_manipulations.append(atomic)
         manipulated_images = np.asarray(manipulated_images)
 
-        # probabilities = self.MODEL.model.predict(manipulated_images)
-        softmax_logits = self.MODEL.softmax_logits(manipulated_images)
+        probabilities = self.MODEL.model.predict(manipulated_images)
+        # softmax_logits = self.MODEL.softmax_logits(manipulated_images)
 
         for idx in range(len(manipulated_images)):
             cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
-            [p_max, p_2dn_max] = heapq.nlargest(2, softmax_logits[idx])
-            heuristic = (p_max - p_2dn_max) * 10 / self.TAU  # heuristic value determines Admissible (lb) or not (ub)
+            [p_max, p_2dn_max] = heapq.nlargest(2, probabilities[idx])
+            heuristic = (p_max - p_2dn_max) * 2 / self.TAU  # heuristic value determines Admissible (lb) or not (ub)
             estimation = cost + heuristic
 
             self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
