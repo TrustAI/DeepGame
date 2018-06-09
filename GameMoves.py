@@ -79,7 +79,7 @@ class GameMoves:
                 x = blocks[i][0]
                 y = blocks[i][1]
 				
-				(_,_,chl) = image1.shape
+                (_,_,chl) = image1.shape
 
                 # + tau 
                 if image0[x][y] == 0:
