@@ -198,7 +198,7 @@ class MCTSCooperative:
         nprint("expanding %s" % index)
         if self.keypoint[index] != 0:
             for (actionId, am) in availableActions[self.keypoint[index]].items():
-            if self.usefulAction(self.manipulation[index],am) == True: 
+                if self.usefulAction(self.manipulation[index],am) == True: 
                     self.indexToNow += 1
                     self.keypoint[self.indexToNow] = 0
                     self.indexToActionID[self.indexToNow] = actionId
