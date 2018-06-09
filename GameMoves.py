@@ -78,37 +78,20 @@ class GameMoves:
             for i in range(len(blocks)):
                 x = blocks[i][0]
                 y = blocks[i][1]
+				
+				(_,_,chl) = image1.shape
 
                 # + tau 
-                if image0[x][y] == 0 and len(image1.shape) == 2:
+                if image0[x][y] == 0:
+				
                     atomic_manipulation = dict()
-                    atomic_manipulation[(x, y)] = self.tau
+				    for j in range(chl):
+                        atomic_manipulation[(x, y, j)] = self.tau
                     all_atomic_manipulations.append(atomic_manipulation)
-                elif image0[x][y] == 0:
+					
                     atomic_manipulation = dict()
-                    atomic_manipulation[(x, y, 0)] = self.tau
-                    # all_atomic_manipulations.append(atomic_manipulation)
-                    # atomic_manipulation = dict()
-                    atomic_manipulation[(x, y, 1)] = self.tau
-                    # all_atomic_manipulations.append(atomic_manipulation)
-                    # atomic_manipulation = dict()
-                    atomic_manipulation[(x, y, 2)] = self.tau
-                    all_atomic_manipulations.append(atomic_manipulation)
-
-                # - tau   
-                if image0[x][y] == 0 and len(image1.shape) == 2:
-                    atomic_manipulation = dict()
-                    atomic_manipulation[(x, y)] = -1 * self.tau
-                    all_atomic_manipulations.append(atomic_manipulation)
-                elif image0[x][y] == 0:
-                    atomic_manipulation = dict()
-                    atomic_manipulation[(x, y, 0)] = -1 * self.tau
-                    # all_atomic_manipulations.append(atomic_manipulation)
-                    # atomic_manipulation = {}
-                    atomic_manipulation[(x, y, 1)] = -1 * self.tau
-                    # all_atomic_manipulations.append(atomic_manipulation)
-                    # atomic_manipulation = {}
-                    atomic_manipulation[(x, y, 2)] = -1 * self.tau
+				    for j in range(chl):
+                        atomic_manipulation[(x, y, j)] = -1 * self.tau
                     all_atomic_manipulations.append(atomic_manipulation)
 
                 image0[x][y] = 1
@@ -134,14 +117,6 @@ class GameMoves:
         maxVal = np.max(image1)
         minVal = np.min(image1)
         for elt in list(manipulation.keys()):
-            if len(elt) == 2:
-                (fst, snd) = elt
-                image1[fst][snd] += manipulation[elt]
-                if image1[fst][snd] < minVal:
-                    image1[fst][snd] = minVal
-                elif image1[fst][snd] > maxVal:
-                    image1[fst][snd] = maxVal
-            elif len(elt) == 3:
                 (fst, snd, thd) = elt
                 image1[fst][snd][thd] += manipulation[elt]
                 if image1[fst][snd][thd] < minVal:
