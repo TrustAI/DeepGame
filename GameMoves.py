@@ -85,12 +85,12 @@ class GameMoves:
                 if image0[x][y] == 0:
 				
                     atomic_manipulation = dict()
-				    for j in range(chl):
+                    for j in range(chl):
                         atomic_manipulation[(x, y, j)] = self.tau
                     all_atomic_manipulations.append(atomic_manipulation)
 					
                     atomic_manipulation = dict()
-				    for j in range(chl):
+                    for j in range(chl):
                         atomic_manipulation[(x, y, j)] = -1 * self.tau
                     all_atomic_manipulations.append(atomic_manipulation)
 
