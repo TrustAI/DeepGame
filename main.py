@@ -4,7 +4,7 @@ import sys
 import os
 
 from NeuralNetwork import *
-from DateSet import *
+from DataSet import *
 from DataCollection import *
 from upperbound import upperbound
 from lowerbound import lowerbound
@@ -59,11 +59,11 @@ if len(sys.argv) == 8:
 
 elif len(sys.argv) == 1:
     # the second way of defining parameters
-    dataSetName = 'cifar10'
-    bound = 'lb'
+    dataSetName = 'mnist'
+    bound = 'ub'
     gameType = 'cooperative'
-    image_index = 0
-    eta = ('L1', 1)
+    image_index = 67
+    eta = ('L2', 2)
     tau = 1
 
 # calling algorithms

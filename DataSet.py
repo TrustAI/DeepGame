@@ -20,12 +20,12 @@ class DataSet:
         if self.data_set == 'mnist':
             num_classes = 10
             (x_train, y_train), (x_test, y_test) = mnist.load_data()
-            img_rows, img_cols = 28, 28
+            img_rows, img_cols, img_chls = 28, 28, 1
             if trainOrTest == "training":
-                x = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
+                x = x_train.reshape(x_train.shape[0], img_rows, img_cols, img_chls)
                 y = keras.utils.np_utils.to_categorical(y_train, num_classes)
             else:
-                x = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
+                x = x_test.reshape(x_test.shape[0], img_rows, img_cols, img_chls)
                 y = keras.utils.np_utils.to_categorical(y_test, num_classes)
 
             x = x.astype('float32')

@@ -1,6 +1,6 @@
 from __future__ import print_function
 from NeuralNetwork import *
-from DateSet import *
+from DataSet import *
 from CompetitiveMCTS import *
 from CooperativeMCTS import *
 
