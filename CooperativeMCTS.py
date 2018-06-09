@@ -322,10 +322,10 @@ class MCTSCooperative:
                 else:
                     nextAtomicManipulation = self.actions[k][randomActionIndex]
 					
-				if self.usefulAction(self.atomicManipulationPath,nextAtomicManipulation) == True or nextAtomicManipulation == {} or i > 10: 
+                if self.usefulAction(self.atomicManipulationPath,nextAtomicManipulation) == True or nextAtomicManipulation == {} or i > 10: 
                     break
 				
-				i += 1
+                i += 1
 				
                 # self.availableActionIDs[k].remove(randomActionIndex)
                 # self.usedActionIDs[k].append(randomActionIndex)
