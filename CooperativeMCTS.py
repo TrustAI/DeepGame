@@ -313,7 +313,7 @@ class MCTSCooperative:
             # print("continue sampling node ... ")
             # randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])))
 			
-			i = 0
+            i = 0
 			while True: 
 			
                 randomActionIndex = random.choice(self.availableActionIDs[k])
