@@ -228,7 +228,7 @@ class MCTSCooperative:
 
     # start random sampling and return the Euclidean value as the value
     def sampling(self, index, availableActions):
-        nprint("start sampling node %s" % index)
+        print("start sampling node %s" % index)
         availableActions2 = copy.deepcopy(availableActions)
         sampleValues = []
         i = 0
