@@ -304,7 +304,7 @@ class MCTSCooperative:
             print("sampling a path ends with depth %s because no more actions can be taken ... " % self.depth)
             return (self.depth == 0, distVal)
 
-        elif self.depth > (self.eta[1] / self.tau):
+        elif self.depth > (self.eta[1] / self.tau) * 2:
             print(
                 "sampling a path ends with depth %s more than the prespecifided maximum sampling depth ... " % self.depth)
             return (self.depth == 0, distVal)
