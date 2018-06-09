@@ -13,7 +13,7 @@ Email: min.wu@cs.ox.ac.uk
 from CooperativeAStar import *
 from CompetitiveAlphaBeta import *
 from NeuralNetwork import *
-from DateSet import *
+from DataSet import *
 
 
 def lowerbound(dataset_name, image_index, game_type, eta, tau):
