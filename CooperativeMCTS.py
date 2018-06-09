@@ -183,7 +183,7 @@ class MCTSCooperative:
             return index, availableActions
 			
     def usefulAction(self,ampath,am):
-	    newAtomicManipulation = mergeTwoDicts(ampath, am)
+        newAtomicManipulation = mergeTwoDicts(ampath, am)
         activations0 = self.moves.applyManipulation(self.image, ampath)
         (newClass0, newConfident0) = self.model.predict(activations0)
         activations1 = self.moves.applyManipulation(self.image, newAtomicManipulation)
