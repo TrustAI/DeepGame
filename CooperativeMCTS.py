@@ -181,16 +181,29 @@ class MCTSCooperative:
             #    for i in self.usedActionsID[k]: 
             #        availableActions[k].pop(i, None)
             return index, availableActions
-
+			
+	def usefulAction(self,ampath,am):
+	    newAtomicManipulation = mergeTwoDicts(ampath, am)
+        activations0 = self.moves.applyManipulation(self.image, ampath)
+        (newClass0, newConfident0) = self.model.predict(activations0)
+        activations1 = self.moves.applyManipulation(self.image, newAtomicManipulation)
+        (newClass1, newConfident1) = self.model.predict(activations1)
+		if abs(newConfident0 - newConfident1) < 10^-6:
+            return False
+        else: 
+            return True		
+		
+		
     def initialiseExplorationNode(self, index, availableActions):
         nprint("expanding %s" % index)
         if self.keypoint[index] != 0:
             for (actionId, am) in availableActions[self.keypoint[index]].items():
-                self.indexToNow += 1
-                self.keypoint[self.indexToNow] = 0
-                self.indexToActionID[self.indexToNow] = actionId
-                self.initialiseLeafNode(self.indexToNow, index, am)
-                self.children[index].append(self.indexToNow)
+			    if self.usefulAction(self.manipulation[index],am) == True: 
+                    self.indexToNow += 1
+                    self.keypoint[self.indexToNow] = 0
+                    self.indexToActionID[self.indexToNow] = actionId
+                    self.initialiseLeafNode(self.indexToNow, index, am)
+                    self.children[index].append(self.indexToNow)
         else:
             for kp in list(set(self.keypoints.keys()) - set([0])):
                 self.indexToNow += 1
@@ -299,11 +312,21 @@ class MCTSCooperative:
         else:
             # print("continue sampling node ... ")
             # randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])))
-            randomActionIndex = random.choice(self.availableActionIDs[k])
-            if k == 0:
-                nextAtomicManipulation = {}
-            else:
-                nextAtomicManipulation = self.actions[k][randomActionIndex]
+			
+			i = 0
+			while True: 
+			
+                randomActionIndex = random.choice(self.availableActionIDs[k])
+                if k == 0:
+                    nextAtomicManipulation = {}
+                else:
+                    nextAtomicManipulation = self.actions[k][randomActionIndex]
+					
+				if self.usefulAction(self.atomicManipulationPath,nextAtomicManipulation) == True or nextAtomicManipulation == {} or i > 10: 
+                    break
+				
+				i += 1
+				
                 # self.availableActionIDs[k].remove(randomActionIndex)
                 # self.usedActionIDs[k].append(randomActionIndex)
             newManipulationPath = mergeTwoDicts(self.atomicManipulationPath, nextAtomicManipulation)
