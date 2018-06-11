@@ -35,6 +35,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         runningTime_all = 0
         start_time_level = time.time()
         runningTime_level = 0 
+        currentBest = eta[1]
         while runningTime_all <= MCTS_all_maximal_time:
         
             '''
@@ -45,7 +46,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
                 start_time_level = time.time()
             '''
              
-            currentBest = eta[1]
+
             # Here are three steps for MCTS
             (leafNode, availableActions) = mctsInstance.treeTraversal(mctsInstance.rootIndex)
             newNodes = mctsInstance.initialiseExplorationNode(leafNode, availableActions)
@@ -110,9 +111,9 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
 
         start_time_all = time.time()
         runningTime_all = 0
+        currentBest = eta[1]
         while runningTime_all <= MCTS_all_maximal_time:
 
-            currentBest = eta[1]
             (leafNode, availableActions) = mctsInstance.treeTraversal(mctsInstance.rootIndex)
             newNodes = mctsInstance.initialiseExplorationNode(leafNode, availableActions)
             for node in newNodes:
