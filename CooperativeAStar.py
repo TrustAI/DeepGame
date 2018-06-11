@@ -82,6 +82,8 @@ class CooperativeAStar:
         # softmax_logits = self.MODEL.softmax_logits(manipulated_images)
 
         for idx in range(len(manipulated_images)):
+            if not diffImage(manipulated_images[idx], self.IMAGE):
+                break
             cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
             [p_max, p_2dn_max] = heapq.nlargest(2, probabilities[idx])
             heuristic = (p_max - p_2dn_max) * 2 / self.TAU  # heuristic value determines Admissible (lb) or not (ub)
