@@ -64,7 +64,7 @@ class CompetitiveAlphaBeta:
 
         for idx in range(len(manipulated_images)):
             if not diffImage(manipulated_images[idx], self.IMAGE):
-                break
+                continue
             dist = self.cal_distance(manipulated_images[idx], self.IMAGE)
             if labels[idx] != self.LABEL:
                 self.MANI_BETA.update({self.CURRENT_MANI + atomic_manipulations[idx]: dist})
