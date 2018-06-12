@@ -267,9 +267,6 @@ class MCTSCompetitive:
                     index, self.bestCaseList[index][0], sampleValues[minIndex]))
                 self.numConverge += 1
                 self.bestCaseList[index] = (sampleValues[minIndex], samplePaths[minIndex])
-                activations1 = self.moves.applyManipulation(self.image, samplePaths[minIndex])
-                path0 = "%s_pic/%s_currentBest_%s.png" % (self.data_set, self.image_index, self.numConverge)
-                self.model.save_input(activations1, path0)
 
                 # update best case
                 self.updateBestCase(index)

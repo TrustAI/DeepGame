@@ -112,6 +112,7 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
         start_time_all = time.time()
         runningTime_all = 0
         currentBest = eta[1]
+        currentBestIndex = 0
         while runningTime_all <= MCTS_all_maximal_time:
 
             (leafNode, availableActions) = mctsInstance.treeTraversal(mctsInstance.rootIndex)
@@ -122,11 +123,12 @@ def upperbound(dataSetName, bound, tau, gameType, image_index, eta):
             if currentBest > mctsInstance.bestCase[0]:
                 print("best distance up to now is %s" % (str(mctsInstance.bestCase[0])))
                 currentBest = mctsInstance.bestCase[0]
+                currentBestIndex += 1
 
             # store the current best
             (_, bestManipulation) = mctsInstance.bestCase
             image1 = mctsInstance.applyManipulation(bestManipulation)
-            path0 = "%s_pic/%s_currentBest.png" % (dataSetName, image_index)
+            path0 = "%s_pic/%s_currentBest_%s.png" % (dataSetName, image_index, currentBestIndex)
             NN.save_input(image1, path0)
 
             runningTime_all = time.time() - start_time_all
