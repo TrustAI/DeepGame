@@ -39,7 +39,7 @@ def l1Distance(image1, image2):
 
 
 def l0Distance(image1, image2):
-    return np.count_nonzero(np.absolute(np.subtract(image1, image2))) / 3
+    return np.count_nonzero(np.absolute(np.subtract(image1, image2)))
 
 
 def mergeTwoDicts(x, y):

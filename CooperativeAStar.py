@@ -65,41 +65,24 @@ class CooperativeAStar:
         atomic_manipulations = []
         manipulated_images = []
         for (x, y) in pixels:
-            atomic = (x, y, 1)
-            img = image.copy()
-            img[x, y, :] = 1
-            if not diffImage(img, image):
-                continue
-            manipulated_images.append(img)
-            atomic_manipulations.append(atomic)
-
-        for (x, y) in pixels:
-            atomic = (x, y, 0)
-            img = image.copy()
-            img[x, y, :] = 0
-            if not diffImage(img, image):
-                continue
-            manipulated_images.append(img)
-            atomic_manipulations.append(atomic)
-
-            # for z in range(chl):
-            #     atomic = (x, y, z, 1 * self.TAU)
-            #     valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
-            #     if valid is True:
-            #         manipulated_images.append(atomic_image)
-            #         atomic_manipulations.append(atomic)
-            #     atomic = (x, y, z, -1 * self.TAU)
-            #     valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
-            #     if valid is True:
-            #         manipulated_images.append(atomic_image)
-            #         atomic_manipulations.append(atomic)
+            for z in range(chl):
+                atomic = (x, y, z, 1 * self.TAU)
+                valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
+                if valid is True:
+                    manipulated_images.append(atomic_image)
+                    atomic_manipulations.append(atomic)
+                atomic = (x, y, z, -1 * self.TAU)
+                valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
+                if valid is True:
+                    manipulated_images.append(atomic_image)
+                    atomic_manipulations.append(atomic)
         manipulated_images = np.asarray(manipulated_images)
 
         # probabilities = self.MODEL.model.predict(manipulated_images)
         softmax_logits = self.MODEL.softmax_logits(manipulated_images)
 
         for idx in range(len(manipulated_images)):
-            if not diffImage(manipulated_images[idx], self.IMAGE):
+            if not diffImage(manipulated_images[idx], self.IMAGE) or not diffImage(manipulated_images[idx], image):
                 continue
             cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
             [p_max, p_2dn_max] = heapq.nlargest(2, softmax_logits[idx])
@@ -153,10 +136,9 @@ class CooperativeAStar:
             print("Current best manipulations:", self.ADV_MANIPULATION)
 
             new_image = copy.deepcopy(self.IMAGE)
-            atomic_list = [self.ADV_MANIPULATION[i:i + 3] for i in range(0, len(self.ADV_MANIPULATION), 3)]
+            atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
             for atomic in atomic_list:
-                new_image[atomic[0], atomic[1], :] = atomic[2]
-                # valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
+                valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
             print("%s distance: %s" % (self.DIST_METRIC, self.cal_distance(self.IMAGE, new_image)))
 
             new_label, new_confidence = self.MODEL.predict(new_image)

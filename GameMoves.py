@@ -33,9 +33,9 @@ class GameMoves:
         self.image = image
         self.tau = tau
 
-        feature_extraction = FeatureExtraction(pattern='black-box')
-        kps = feature_extraction.get_key_points(self.image)
-        partitions = feature_extraction.get_partitions(self.image, self.model)
+        feature_extraction = FeatureExtraction(pattern='grey-box')
+        kps = feature_extraction.get_key_points(self.image, num_partition=10)
+        partitions = feature_extraction.get_partitions(self.image, self.model, num_partition=10)
 
         img_enlarge_ratio = 1
         image1 = copy.deepcopy(self.image)
@@ -78,17 +78,17 @@ class GameMoves:
             for i in range(len(blocks)):
                 x = blocks[i][0]
                 y = blocks[i][1]
-				
-                (_,_,chl) = image1.shape
+
+                (_, _, chl) = image1.shape
 
                 # + tau 
                 if image0[x][y] == 0:
-				
+
                     atomic_manipulation = dict()
                     for j in range(chl):
                         atomic_manipulation[(x, y, j)] = self.tau
                     all_atomic_manipulations.append(atomic_manipulation)
-					
+
                     atomic_manipulation = dict()
                     for j in range(chl):
                         atomic_manipulation[(x, y, j)] = -1 * self.tau
@@ -117,12 +117,12 @@ class GameMoves:
         maxVal = np.max(image1)
         minVal = np.min(image1)
         for elt in list(manipulation.keys()):
-                (fst, snd, thd) = elt
-                image1[fst][snd][thd] += manipulation[elt]
-                if image1[fst][snd][thd] < minVal:
-                    image1[fst][snd][thd] = minVal
-                elif image1[fst][snd][thd] > maxVal:
-                    image1[fst][snd][thd] = maxVal
+            (fst, snd, thd) = elt
+            image1[fst][snd][thd] += manipulation[elt]
+            if image1[fst][snd][thd] < minVal:
+                image1[fst][snd][thd] = minVal
+            elif image1[fst][snd][thd] > maxVal:
+                image1[fst][snd][thd] = maxVal
         return image1
 
 

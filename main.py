@@ -60,10 +60,10 @@ if len(sys.argv) == 8:
 elif len(sys.argv) == 1:
     # the second way of defining parameters
     dataSetName = 'mnist'
-    bound = 'ub'
+    bound = 'lb'
     gameType = 'cooperative'
-    image_index = 67
-    eta = ('L2', 2)
+    image_index = 14
+    eta = ('L1', 10)
     tau = 1
 
 # calling algorithms
