@@ -230,7 +230,7 @@ class NeuralNetwork:
             self.model = model
 
         else:
-            print("Unsupported dataset %s. Try 'mnist' or 'cifar10'." % self.data_set)
+            print("Unsupported dataset %s. Try 'mnist' or 'cifar10' or 'gtsrb'." % self.data_set)
 
     # To save the neural network to disk.
     def save_network(self):
@@ -260,8 +260,11 @@ class NeuralNetwork:
             print("Neural network loaded from disk.")
 
         elif self.data_set == 'gtsrb':
-            self.model = load_model('models/gtsrb.h5')
-            print("Neural network loaded from disk.")
+            try:
+                self.model = load_model('models/gtsrb.h5')
+                print("Neural network loaded from disk.")
+            except (IOError, OSError):
+                self.train_network()
 
         else:
             print("load_network: Unsupported dataset.")

@@ -14,10 +14,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # the first way of defining parameters
 if len(sys.argv) == 8:
 
-    if sys.argv[1] == 'mnist' or sys.argv[1] == 'cifar10':
+    if sys.argv[1] == 'mnist' or sys.argv[1] == 'cifar10' or sys.argv[1] == 'gtsrb':
         dataSetName = sys.argv[1]
     else:
-        print("please specify as the 1st argument the dataset: mnist or cifar10")
+        print("please specify as the 1st argument the dataset: mnist or cifar10 or gtsrb")
         exit
 
     if sys.argv[2] == 'ub' or sys.argv[2] == 'lb':
@@ -59,11 +59,11 @@ if len(sys.argv) == 8:
 
 elif len(sys.argv) == 1:
     # the second way of defining parameters
-    dataSetName = 'mnist'
+    dataSetName = 'gtsrb'
     bound = 'lb'
     gameType = 'cooperative'
-    image_index = 14
-    eta = ('L1', 10)
+    image_index = 0
+    eta = ('L0', 40)
     tau = 1
 
 # calling algorithms
