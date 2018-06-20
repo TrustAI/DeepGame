@@ -35,7 +35,7 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
     NN.save_input(image, path)
 
     if game_type == 'cooperative':
-        cooperative = CooperativeAStar(image, NN, eta, tau)
+        cooperative = CooperativeAStar(image_index, image, NN, eta, tau)
         cooperative.play_game(image)
         if cooperative.ADVERSARY_FOUND is True:
             adversary = cooperative.ADVERSARY

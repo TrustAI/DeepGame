@@ -307,7 +307,7 @@ class NeuralNetwork:
 
     # Get softmax logits, i.e., the inputs to the softmax function of the classification layer,
     # as softmax probabilities may be too close to each other after just one pixel manipulation.
-    def softmax_logits(self, manipulated_images, batch_size=1024):
+    def softmax_logits(self, manipulated_images, batch_size=512):
         model = self.model
 
         func = K.function([model.layers[0].input] + [K.learning_phase()],

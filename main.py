@@ -62,7 +62,7 @@ elif len(sys.argv) == 1:
     dataSetName = 'gtsrb'
     bound = 'lb'
     gameType = 'cooperative'
-    image_index = 0
+    image_index = 213
     eta = ('L0', 40)
     tau = 1
 

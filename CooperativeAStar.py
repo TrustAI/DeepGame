@@ -16,7 +16,8 @@ from basics import *
 
 
 class CooperativeAStar:
-    def __init__(self, image, model, eta, tau, bounds=(0, 1)):
+    def __init__(self, idx, image, model, eta, tau, bounds=(0, 1)):
+        self.IDX = idx
         self.IMAGE = image
         self.IMAGE_BOUNDS = bounds
         self.MODEL = model
@@ -32,6 +33,8 @@ class CooperativeAStar:
         self.ADV_MANIPULATION = ()
         self.ADVERSARY_FOUND = None
         self.ADVERSARY = None
+
+        self.current_d = [0]
 
         print("Distance metric %s, with bound value %s." % (self.DIST_METRIC, self.DIST_VAL))
 
@@ -78,15 +81,15 @@ class CooperativeAStar:
                     atomic_manipulations.append(atomic)
         manipulated_images = np.asarray(manipulated_images)
 
-        # probabilities = self.MODEL.model.predict(manipulated_images)
-        softmax_logits = self.MODEL.softmax_logits(manipulated_images)
+        probabilities = self.MODEL.model.predict(manipulated_images)
+        # softmax_logits = self.MODEL.softmax_logits(manipulated_images)
 
         for idx in range(len(manipulated_images)):
             if not diffImage(manipulated_images[idx], self.IMAGE) or not diffImage(manipulated_images[idx], image):
                 continue
             cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
-            [p_max, p_2dn_max] = heapq.nlargest(2, softmax_logits[idx])
-            heuristic = (p_max - p_2dn_max) * 10000 / self.TAU  # heuristic value determines Admissible (lb) or not (ub)
+            [p_max, p_2dn_max] = heapq.nlargest(2, probabilities[idx])
+            heuristic = (p_max - p_2dn_max) * 2 / self.TAU  # heuristic value determines Admissible (lb) or not (ub)
             estimation = cost + heuristic
 
             self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
@@ -139,7 +142,12 @@ class CooperativeAStar:
             atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
             for atomic in atomic_list:
                 valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
-            print("%s distance: %s" % (self.DIST_METRIC, self.cal_distance(self.IMAGE, new_image)))
+            dist = self.cal_distance(self.IMAGE, new_image)
+            print("%s distance: %s" % (self.DIST_METRIC, dist))
+
+            if self.current_d[-1] != dist:
+                self.current_d.append(dist)
+                self.MODEL.save_input(new_image, "gtsrb_pic/idx_%s_currentBest_%s.png" % (self.IDX, len(self.current_d)-1))
 
             new_label, new_confidence = self.MODEL.predict(new_image)
             if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
