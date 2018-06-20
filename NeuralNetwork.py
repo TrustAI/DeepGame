@@ -231,6 +231,7 @@ class NeuralNetwork:
 
         else:
             print("Unsupported dataset %s. Try 'mnist' or 'cifar10' or 'gtsrb'." % self.data_set)
+        self.save_network()
 
     # To save the neural network to disk.
     def save_network(self):
