@@ -307,7 +307,7 @@ class NeuralNetwork:
 
     # Get softmax logits, i.e., the inputs to the softmax function of the classification layer,
     # as softmax probabilities may be too close to each other after just one pixel manipulation.
-    def softmax_logits(self, manipulated_images):
+    def softmax_logits(self, manipulated_images, batch_size=1024):
         model = self.model
 
         func = K.function([model.layers[0].input] + [K.learning_phase()],
@@ -316,5 +316,20 @@ class NeuralNetwork:
         # func = K.function([model.layers[0].input] + [K.learning_phase()],
         #                   [model.layers[model.layers.__len__() - 1].output])
 
-        softmax_logits = func([manipulated_images, 0])[0]
+        if len(manipulated_images) >= batch_size:
+            softmax_logits = []
+            batch, remainder = divmod(len(manipulated_images), batch_size)
+            for b in range(batch):
+                logits = func([manipulated_images[b * batch_size:(b + 1) * batch_size], 0])[0]
+                softmax_logits.append(logits)
+            softmax_logits = np.asarray(softmax_logits)
+            softmax_logits = softmax_logits.reshape(batch * batch_size, model.output_shape[1])
+            # note that here if logits is empty, it is fine, as it won't be concatenated.
+            logits = func([manipulated_images[batch * batch_size:len(manipulated_images)], 0])[0]
+            softmax_logits = np.concatenate((softmax_logits, logits), axis=0)
+        else:
+            softmax_logits = func([manipulated_images, 0])[0]
+
+        # softmax_logits = func([manipulated_images, 0])[0]
+        print(softmax_logits.shape)
         return softmax_logits
