@@ -68,17 +68,34 @@ class CooperativeAStar:
         atomic_manipulations = []
         manipulated_images = []
         for (x, y) in pixels:
-            for z in range(chl):
-                atomic = (x, y, z, 1 * self.TAU)
-                valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
-                if valid is True:
-                    manipulated_images.append(atomic_image)
-                    atomic_manipulations.append(atomic)
-                atomic = (x, y, z, -1 * self.TAU)
-                valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
-                if valid is True:
-                    manipulated_images.append(atomic_image)
-                    atomic_manipulations.append(atomic)
+            atomic = (x, y, 1)
+            img = image.copy()
+            img[x, y, :] = 1
+            if not diffImage(img, image):
+                continue
+            manipulated_images.append(img)
+            atomic_manipulations.append(atomic)
+
+        for (x, y) in pixels:
+            atomic = (x, y, 0)
+            img = image.copy()
+            img[x, y, :] = 0
+            if not diffImage(img, image):
+                continue
+            manipulated_images.append(img)
+            atomic_manipulations.append(atomic)
+
+            # for z in range(chl):
+            #     atomic = (x, y, z, 1 * self.TAU)
+            #     valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
+            #     if valid is True:
+            #         manipulated_images.append(atomic_image)
+            #         atomic_manipulations.append(atomic)
+            #     atomic = (x, y, z, -1 * self.TAU)
+            #     valid, atomic_image = self.apply_atomic_manipulation(image, atomic)
+            #     if valid is True:
+            #         manipulated_images.append(atomic_image)
+            #         atomic_manipulations.append(atomic)
         manipulated_images = np.asarray(manipulated_images)
 
         # probabilities = self.MODEL.model.predict(manipulated_images)
@@ -139,10 +156,11 @@ class CooperativeAStar:
             # print("Current best manipulations:", self.ADV_MANIPULATION)
 
             new_image = copy.deepcopy(self.IMAGE)
-            atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
+            atomic_list = [self.ADV_MANIPULATION[i:i + 3] for i in range(0, len(self.ADV_MANIPULATION), 3)]
             for atomic in atomic_list:
-                valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
-            dist = self.cal_distance(self.IMAGE, new_image)
+                new_image[atomic[0], atomic[1], :] = atomic[2]
+                # valid, new_image = self.apply_atomic_manipulation(new_image, atomic)
+            # dist = self.cal_distance(self.IMAGE, new_image)
             # print("%s distance: %s" % (self.DIST_METRIC, dist))
 
             # if self.current_d[-1] != dist:
