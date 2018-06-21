@@ -1,4 +1,4 @@
-5#!/usr/bin/env python
+5  # !/usr/bin/env python
 
 """
 A data structure for organising search
@@ -181,24 +181,23 @@ class MCTSCooperative:
             #    for i in self.usedActionsID[k]: 
             #        availableActions[k].pop(i, None)
             return index, availableActions
-			
-    def usefulAction(self,ampath,am):
+
+    def usefulAction(self, ampath, am):
         newAtomicManipulation = mergeTwoDicts(ampath, am)
         activations0 = self.moves.applyManipulation(self.image, ampath)
         (newClass0, newConfident0) = self.model.predict(activations0)
         activations1 = self.moves.applyManipulation(self.image, newAtomicManipulation)
         (newClass1, newConfident1) = self.model.predict(activations1)
-        if abs(newConfident0 - newConfident1) < 10^-6:
+        if abs(newConfident0 - newConfident1) < 10 ^ -6:
             return False
-        else: 
-            return True		
-		
-		
+        else:
+            return True
+
     def initialiseExplorationNode(self, index, availableActions):
         nprint("expanding %s" % index)
         if self.keypoint[index] != 0:
             for (actionId, am) in availableActions[self.keypoint[index]].items():
-                if self.usefulAction(self.manipulation[index],am) == True: 
+                if self.usefulAction(self.manipulation[index], am) == True:
                     self.indexToNow += 1
                     self.keypoint[self.indexToNow] = 0
                     self.indexToActionID[self.indexToNow] = actionId
@@ -278,7 +277,7 @@ class MCTSCooperative:
         else: 
             return (False, newConfident)
         '''
-        
+
         (distMethod, distVal) = self.eta
         dist = self.computeDistance(activations1)
 
@@ -304,7 +303,7 @@ class MCTSCooperative:
             nprint("sampling a path ends with depth %s because no more actions can be taken ... " % self.depth)
             return (self.depth == 0, distVal)
 
-        #elif self.depth > (self.eta[1] / self.tau) * 2:
+        # elif self.depth > (self.eta[1] / self.tau) * 2:
         #    print(
         #        "sampling a path ends with depth %s more than the prespecifided maximum sampling depth ...  the largest distance is %s " % (self.depth,dist) )
         #    return (self.depth == 0, distVal)
@@ -312,21 +311,22 @@ class MCTSCooperative:
         else:
             # print("continue sampling node ... ")
             # randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])))
-			
+
             i = 0
-            while True: 
-			
+            while True:
+
                 randomActionIndex = random.choice(self.availableActionIDs[k])
                 if k == 0:
                     nextAtomicManipulation = {}
                 else:
                     nextAtomicManipulation = self.actions[k][randomActionIndex]
-					
-                if self.usefulAction(self.atomicManipulationPath,nextAtomicManipulation) == True or nextAtomicManipulation == {} or i > 10: 
+
+                if self.usefulAction(self.atomicManipulationPath,
+                                     nextAtomicManipulation) == True or nextAtomicManipulation == {} or i > 10:
                     break
-				
+
                 i += 1
-				
+
                 # self.availableActionIDs[k].remove(randomActionIndex)
                 # self.usedActionIDs[k].append(randomActionIndex)
             newManipulationPath = mergeTwoDicts(self.atomicManipulationPath, nextAtomicManipulation)
@@ -339,7 +339,7 @@ class MCTSCooperative:
                 return self.sampleNext(randomActionIndex)
             else:
                 return self.sampleNext(0)
-                
+
     def scrutinizePath(self, manipulations):
         flag = False
         tempManipulations = copy.deepcopy(manipulations)

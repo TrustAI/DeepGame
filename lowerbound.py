@@ -35,9 +35,11 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
     NN.save_input(image, path)
 
     if game_type == 'cooperative':
+        tic = time.time()
         cooperative = CooperativeAStar(image_index, image, NN, eta, tau)
         cooperative.play_game(image)
         if cooperative.ADVERSARY_FOUND is True:
+            elapsed = time.time() - tic
             adversary = cooperative.ADVERSARY
             adv_label, adv_confidence = NN.predict(adversary)
             adv_label_str = NN.get_label(int(adv_label))
@@ -66,8 +68,8 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
                 dist = l2dist
             else:
                 print("Unrecognised distance metric.")
-            path = "%s_pic/idx_%s_modified_diff_%s=%s.png" % (
-                dataset_name, image_index, eta[0], dist)
+            path = "%s_pic/idx_%s_modified_diff_%s=%s_time=%s.png" % (
+                dataset_name, image_index, eta[0], dist, elapsed)
             NN.save_input(np.absolute(image - adversary), path)
         else:
             print("Adversarial distance exceeds distance bound.")
