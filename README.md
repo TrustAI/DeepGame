@@ -51,18 +51,12 @@ or
 
 # Citation
 ```
-@ARTICLE{2018arXiv180703571W,
-   author = {{Wu}, Min and {Wicker}, Matthew and {Ruan}, Wenjie and {Huang}, Xiaowei and 
-	{Kwiatkowska}, Marta},
-    title = "{A Game-Based Approximate Verification of Deep Neural Networks with Provable Guarantees}",
-  journal = {ArXiv e-prints},
-archivePrefix = "arXiv",
-   eprint = {1807.03571},
-     year = 2018,
-    month = jul,
-      url = {https://arxiv.org/abs/1807.03571}
+@article{wu2018game,
+  author={Wu, Min and Wicker, Matthew and Ruan, Wenjie and Huang, Xiaowei and Kwiatkowska, Marta},
+  title={A Game-Based Approximate Verification of Deep Neural Networks with Provable Guarantees},
+  journal={arXiv preprint arXiv:1807.03571},
+  year={2018}
 }
-
 ```
 
 # Remark
