@@ -54,7 +54,7 @@ or
 @article{wu2018game,
   author={Wu, Min and Wicker, Matthew and Ruan, Wenjie and Huang, Xiaowei and Kwiatkowska, Marta},
   title={A Game-Based Approximate Verification of Deep Neural Networks with Provable Guarantees},
-  journal={arXiv preprint arXiv:1807.03571},
+  journal={arXiv Preprint arXiv:1807.03571},
   year={2018}
 }
 ```
