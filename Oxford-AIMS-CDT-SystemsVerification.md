@@ -61,12 +61,34 @@ The _maximum safe radius of a neural network with respect to an input_ is a dist
 
 > 4. Explain the underly algorithms behind the computation of the bounds. For instance, the _Monte Carlo tree search_ algorithm to compute the upper bounds, and the _Admissible A*_ algorithm to compute the lower bounds.
 
+Below suggests a possible solution to the above Questions 1 and 2.
 
 ![alt text](figures/Cooperative_MNIST.png)
 
 -------------------
 
 ### 2. Adversarial Examples
+
+Whereas DeepGame is primarily a _robustness verification_ tool, with slight modification in the code, it can be adapted to perform _adversarial attacks_ on the image datasets. For instance, every upper bound produced from the Monte Carlo tree search algorithm contributes to an adversarial example.
+
+Below, we perform efficient adversarial attacks through changing the Admissible A* algorithm to the _Inadmissible A*_ variant, by increasing the `heuristic` value added to the actual `cost` in the `CooperativeAStar.py` file.
+
+```javascript
+cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
+[p_max, p_2dn_max] = heapq.nlargest(2, probabilities[idx])
+heuristic = (p_max - p_2dn_max) * 2 / self.TAU  # heuristic value
+estimation = cost + heuristic
+```
+
+#### Questions: 
+> 5. Produce some adversarial exmaples on the MNIST, the CIFAR10, and the GTSRB datasets.
+> _Requirements: (1) try images from the three datasets with index from 0 to 99; (2) based on the Hamming distance or the L<sup>1</sup> norm._
+
+> 6. Explain why increasing the heuristic value would make the A* algorithm not longer admissible.
+
+Below suggests a possible solution to the above Question 5.
+
+![alt text](figures/Adversary.png)
 
 -------------------
 
