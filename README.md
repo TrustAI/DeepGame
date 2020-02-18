@@ -2,10 +2,7 @@
 
 Min Wu, Matthew Wicker, Wenjie Ruan, Xiaowei Huang, Marta Kwiatkowska.
 
-arXiv: 1807.03571
-https://arxiv.org/abs/1807.03571
-
-It is accepted by Theoretical Computer Science, to appear, 2019
+The paper [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426) is accepted by Theoretical Computer Science.
 
 
 # Abstract
