@@ -9,7 +9,7 @@ To better understand the tool, feel free to look into the accompanying published
 
 ### 0. Installation of DeepGame
 
-Download the __DeepGame__ tool from https://github.com/minwu-cs/DeepGame. In order to run the tool, _Python_ and some other packages such as _keras_ and _numpy_ are needed. 
+Download the __DeepGame__ tool from https://github.com/minwu-cs/DeepGame. In order to run the tool, _Python_ and some other packages such as _keras_ and _numpy_ need to be installed. 
 
 Below is a list of the developer's platform for reference in case there is package inconsistency.
 
@@ -46,11 +46,27 @@ Alternatively, you may run DeepGame via the following command line, which allows
 ```
 -------------------
 
-### 1. Adversarial Examples
 
-### 2. Robustness of Deep Neural Networks
+### 1. Robustness of Deep Neural Networks
+
+The _maximum safe radius of a neural network with respect to an input_ is a distance such that, with imposed perturbations below the distance, all the input points are safe, whereas if above the distance, there definitely exists an adversarial example. To approximate the maximum safe radius, we compute the _lower and the upper bounds_ of it, and show the convergence trend.
+
+#### Questions: 
+> 1. Plot a figure to illustrate the convergence of the lower and upper bounds of the maximum safe radius. 
+> _Requirements: (1) an image from the MNIST dataset with index from 0 to 99; (2) based on the Euclidean distance._
+
+> 2. Exhibit some safe perturbations imposed on the original image corresponding to the lower bounds, and also some adversarial examples generated as a by-product when computing the upper bounds.
+
+> 3. Change the value of _atomic manipulation_ in the range of (0,1], and observe its influence on the convergence of the lower annd upper bounds.
+
+> 4. Explain the underly algorithms behind the computation of the bounds. For instance, the _Monte Carlo tree search_ algorithm to compute the upper bounds, and the _Admissible A*_ algorithm to compute the lower bounds.
+
 
 ![alt text](figures/Cooperative_MNIST.png)
+
+-------------------
+
+### 2. Adversarial Examples
 
 -------------------
 
