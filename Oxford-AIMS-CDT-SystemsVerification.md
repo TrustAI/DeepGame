@@ -4,7 +4,7 @@
 
 This is the webpage for the lab session of the __AIMS CDT Systems Verification__ course. 
 
-To better understand the tool, feel free to look into the accompanying published paper: 
+To better understand the tool, please feel free to look into the accompanying published paper: 
 [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426).
 
 ### 0. Installation of DeepGame
