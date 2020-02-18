@@ -1,6 +1,6 @@
 # DeepGame (A Game-Based Approximate Verification of Deep Neural Networks with Provable Guarantees)
 
-Min Wu, Matthew Wicker, Wenjie Ruan, Xiaowei Huang, Marta Kwiatkowska.
+**Min Wu, Matthew Wicker, Wenjie Ruan, Xiaowei Huang, Marta Kwiatkowska.**
 
 The accompanying paper [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426) is accepted by Theoretical Computer Science and available online since 2019.
 
