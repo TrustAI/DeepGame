@@ -82,7 +82,7 @@ estimation = cost + heuristic
 
 #### Questions: 
 > 5. Produce some adversarial exmaples on the MNIST, the CIFAR10, and the GTSRB datasets.
-> _Requirements: (1) try images from the three datasets with index from 0 to 99; (2) based on the Hamming distance or the L<sup>1</sup> norm._
+> _Requirements: (1) try images from the three datasets with index from 0 to 99; (2) based on the Hamming distance, the L<sup>1</sup> norm, or the L<sup>2</sup> norm._
 
 > 6. Explain why increasing the heuristic value would make the A* algorithm not longer admissible.
 
