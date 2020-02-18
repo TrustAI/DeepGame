@@ -94,8 +94,21 @@ Below suggests a possible solution to the above Question 5.
 
 ### 3. Generation of Saliency Maps
 
+To facilitate the explainability and the interpretability of the deep neural networks, DeepGame can generate the _saliency map_ of an input point, to better understand how a network model actually 'sees' an image.
+
+Make sure the `FeatureExtraction` pattern is `grey-box` in the `CooperativeAStar.py` file.
+```javascript
+feature_extraction = FeatureExtraction(pattern='grey-box')
+```
+
+#### Questions: 
+
+> 7. Generate a saliency map of an image with the grey-box feature extraction method.
+> _Requirements: (1) try images from the three datasets with index from 0 to 99._
+
+Below suggests a possible solution to the above Question 7.
+
 ![alt text](figures/Feature.png)
 
 
 
-### Citation
