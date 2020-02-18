@@ -9,16 +9,16 @@ The accompanying paper [A game-based approximate verification of deep neural net
 
 ```
 @article{wu2020game,
-title = "A Game-Based Approximate Verification of Deep Neural Networks with Provable Guarantees",
-author = "Wu, Min and Wicker, Matthew and Ruan, Wenjie and Huang, Xiaowei and Kwiatkowska, Marta",
-journal = "Theoretical Computer Science",
-volume = "807",
-pages = "298 - 329",
-year = "2020",
-note = "In memory of Maurice Nivat, a founding father of Theoretical Computer Science - Part II",
-issn = "0304-3975",
-doi = "https://doi.org/10.1016/j.tcs.2019.05.046",
-url = "http://www.sciencedirect.com/science/article/pii/S0304397519304426"
+  title   = "A Game-Based Approximate Verification of Deep Neural Networks with Provable Guarantees",
+  author  = "Wu, Min and Wicker, Matthew and Ruan, Wenjie and Huang, Xiaowei and Kwiatkowska, Marta",
+  journal = "Theoretical Computer Science",
+  volume  = "807",
+  pages   = "298 - 329",
+  year    = "2020",
+  note    = "In memory of Maurice Nivat, a founding father of Theoretical Computer Science - Part II",
+  issn    = "0304-3975",
+  doi     = "https://doi.org/10.1016/j.tcs.2019.05.046",
+  url     = "http://www.sciencedirect.com/science/article/pii/S0304397519304426"
 }
 ```
 
