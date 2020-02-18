@@ -78,7 +78,7 @@ Below suggests a possible solution to the above Questions 1 and 2.
 
 -------------------
 
-### 2. Adversarial Examples
+### 2. Production of Adversarial Examples
 
 Whereas DeepGame is primarily a _robustness verification_ tool, with slight modification in the code, it can be adapted to perform _adversarial attacks_ on the image datasets. For instance, every upper bound produced from the Monte Carlo tree search algorithm contributes to an adversarial example.
 
