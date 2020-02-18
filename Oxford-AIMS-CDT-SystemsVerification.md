@@ -2,7 +2,7 @@
 
 ## Lab Session: DeepGame
 
-This is the webpage for the lab session of the AIMS CDT __Systems Verification__ course. 
+This is the webpage for the lab session of the __AIMS CDT Systems Verification__ course. 
 
 To better understand the tool, feel free to look into the accompanying published paper: 
 [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426).
@@ -44,6 +44,17 @@ Alternatively, you may run DeepGame via the following command line, which allows
 ```
 ./commands.sh
 ```
+Within the `commands.sh` file, you may set the parameter values as needed.
+```javascript
+for i in {0..1}
+do
+    python main.py mnist lb cooperative $i L0 40 1
+    python main.py mnist lb cooperative $i L1 40 1
+    python main.py mnist lb cooperative $i L2 40 1
+done
+exit 0
+```
+
 -------------------
 
 
@@ -81,10 +92,10 @@ estimation = cost + heuristic
 ```
 
 #### Questions: 
-> 5. Produce some adversarial exmaples on the MNIST, the CIFAR10, and the GTSRB datasets.
+> 5. Produce some adversarial exmaples on the MNIST, the CIFAR10, and the GTSRB datasets, via utilising the _Inadmissible A*_ algorithm.
 > _Requirements: (1) try images from the three datasets with index from 0 to 99; (2) based on the Hamming distance, the L<sup>1</sup> norm, or the L<sup>2</sup> norm._
 
-> 6. Explain why increasing the heuristic value would make the A* algorithm not longer admissible.
+> 6. Explain why increasing the heuristic value would make the A* algorithm no longer admissible.
 
 Below suggests a possible solution to the above Question 5.
 
@@ -94,9 +105,10 @@ Below suggests a possible solution to the above Question 5.
 
 ### 3. Generation of Saliency Maps
 
-To facilitate the explainability and the interpretability of the deep neural networks, DeepGame can generate the _saliency map_ of an input point, to better understand how a network model actually 'sees' an image.
+To facilitate the explainability and the interpretability of the deep neural networks, DeepGame can generate the _saliency map_ of an input point, to better demonstrate how a network model actually 'sees' or 'understands' an image.
 
 Make sure the `FeatureExtraction` pattern is `grey-box` in the `CooperativeAStar.py` file.
+
 ```javascript
 feature_extraction = FeatureExtraction(pattern='grey-box')
 ```
@@ -111,4 +123,31 @@ Below suggests a possible solution to the above Question 7.
 ![alt text](figures/Feature.png)
 
 
+### Citation of DeepGame:
 
+Below is the citation of the accompanying paper:
+
+[A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426).
+
+```
+@article{wu2020game,
+title = "A Game-Based Approximate Verification of Deep Neural Networks with Provable Guarantees",
+author = "Wu, Min and Wicker, Matthew and Ruan, Wenjie and Huang, Xiaowei and Kwiatkowska, Marta",
+journal = "Theoretical Computer Science",
+volume = "807",
+pages = "298 - 329",
+year = "2020",
+note = "In memory of Maurice Nivat, a founding father of Theoretical Computer Science - Part II",
+issn = "0304-3975",
+doi = "https://doi.org/10.1016/j.tcs.2019.05.046",
+url = "http://www.sciencedirect.com/science/article/pii/S0304397519304426"
+}
+```
+
+### Remark
+
+This webpage is for the lab session of the AIMS CDT Systems Verification course. Should you have any questions, please feel free to contant the teaching assistant __Min Wu__ via min.wu@cs.ox.ac.uk.
+
+Best wishes,
+
+Min
