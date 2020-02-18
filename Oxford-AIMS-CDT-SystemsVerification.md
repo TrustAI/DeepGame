@@ -146,7 +146,7 @@ url = "http://www.sciencedirect.com/science/article/pii/S0304397519304426"
 
 ### Remark
 
-This webpage is for the lab session of the AIMS CDT Systems Verification course. Should you have any questions, please feel free to contant the teaching assistant __Min Wu__ via min.wu@cs.ox.ac.uk.
+This webpage is for the lab session of the AIMS CDT Systems Verification course. Should you have any questions, please feel free to contact the teaching assistant __Min Wu__ via min.wu@cs.ox.ac.uk.
 
 Best wishes,
 
