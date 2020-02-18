@@ -58,7 +58,7 @@ exit 0
 -------------------
 
 
-### 1. Robustness of Deep Neural Networks
+### 1. Robustness Guarantees of Deep Neural Networks
 
 The _maximum safe radius of a neural network with respect to an input_ is a distance such that, with imposed perturbations below the distance, all the input points are safe, whereas if above the distance, there definitely exists an adversarial example. To approximate the maximum safe radius, we compute the _lower and the upper bounds_ of it, and show the convergence trend.
 
