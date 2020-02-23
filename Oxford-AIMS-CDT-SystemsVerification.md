@@ -122,6 +122,7 @@ Below suggests a possible solution to the above Question 7.
 
 ![alt text](figures/Feature.png)
 
+-------------------
 
 ### Citation of DeepGame:
 
