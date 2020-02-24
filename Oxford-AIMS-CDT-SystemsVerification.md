@@ -92,7 +92,7 @@ estimation = cost + heuristic
 ```
 
 #### Questions: 
-> 5. Produce some adversarial exmaples on the MNIST, the CIFAR10, and the GTSRB datasets, via utilising the _Inadmissible A*_ algorithm.
+> 5. Produce some adversarial examples on the MNIST, the CIFAR10, and the GTSRB datasets, via utilising the _Inadmissible A*_ algorithm.
 > _Requirements: (1) try images from the three datasets with index from 0 to 99; (2) based on the Hamming distance, the L<sup>1</sup> norm, or the L<sup>2</sup> norm._
 
 > 6. Explain why increasing the heuristic value would make the A* algorithm no longer admissible.
