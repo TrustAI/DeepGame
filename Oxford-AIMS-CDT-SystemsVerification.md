@@ -130,7 +130,9 @@ estimation = cost + heuristic
 
 To facilitate the explainability and the interpretability of the deep neural networks, DeepGame can generate the _saliency map_ of an input point, to better demonstrate how a network model actually 'sees' or 'understands' an image.
 
-Make sure the `FeatureExtraction` pattern is `grey-box` in the `CooperativeAStar.py` file.
+To generate the saliency map, DeepGame utilises two _feature extraction_ methods to partition the input into a disjoint set of dimensions with varying saliency levels. One method is called the _grey-box_ feature extraction, which exploits the output logits/probabilities of a classifier to discover the more sensitive input dimensions, whereas the other approach is _black-box_ as it does not reply on networks but instead directly applies the scale-invariant feature transform (SIFT) on the input locally.
+
+In DeepGame, these feature extraction methods are defined in the `FeatureExtraction.py` file. You may set a specific `grey-box` or `black-box` pattern via the following code line in the `GameMoves.py` file.
 
 ```javascript
 feature_extraction = FeatureExtraction(pattern='grey-box')
@@ -138,10 +140,13 @@ feature_extraction = FeatureExtraction(pattern='grey-box')
 
 #### Questions: 
 
-> 7. Generate a saliency map of an image with the grey-box feature extraction method.
-> _Requirements: (1) try images from the three datasets with index from 0 to 99._
+> 2. Generate a saliency map of an image with the _grey-box_ feature extraction method.
+> _Requirements: (1) try the same MNIST image with index 67; (2) compare the saliency map with the original image._
 
-Below suggests a possible solution to the above Question 7.
+> 3. Change the feature extraction method from grey-box to _black-box_, and generate another saliency map of the image.
+> _Requirements: (1) use the same MNIST image with index 67 and keep the other parameters unchanged; (2) compare these two saliency maps with the original image._
+
+Below exhibits two saliency maps of a CIFAR-10 image and a GTSRB image from the grey-box extraction method.
 
 ![alt text](figures/Feature.png)
 
