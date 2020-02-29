@@ -7,7 +7,7 @@ This is the webpage for the lab session of the __[AIMS CDT](https://eng.ox.ac.uk
 To better understand the tool __DeepGame__, please feel free to look into the accompanying published paper: 
 [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426).
 
-In general, DeepGame _verifies_ deep neural networks via a two-player turn-based _game_. It solves two problems &mdash; the _maximum safe raidus_ problem in a _cooperative_ game and the _feature robustness_ problem in a _competitive_ game.
+In general, DeepGame _verifies_ the robustness of deep neural networks via a two-player turn-based _game_. It solves two problems &mdash; the _maximum safe raidus_ problem in a _cooperative_ game and the _feature robustness_ problem in a _competitive_ game.
 
 In this lab session, we primarily focus on the _maximum safe radius_ problem in a _cooperative_ game. Specifically, we look into three aspects: (1) search for adversarial examples, (2) generation of saliency maps, and (3) robustness guarantees of deep neural networks.
 
@@ -158,19 +158,26 @@ Below exhibits two saliency maps of a CIFAR-10 image and a GTSRB image from the 
 
 ### 3. Robustness Guarantees of Deep Neural Networks
 
-The _maximum safe radius of a neural network with respect to an input_ is a distance such that, with imposed perturbations below the distance, all the input points are safe, whereas if above the distance, there definitely exists an adversarial example. To approximate the maximum safe radius, we compute the _lower and the upper bounds_ of it, and show the convergence trend.
+Apart from searching for adversarial examples and generating saliency maps, our tool DeepGame is more importantly a verification tool that can _verify deep neural networks with provable guarantees_. 
+
+Regarding this, we compute the _maximum safe radius of a neural network with respect to an input_, which is a distance such that, with imposed perturbations below the distance, all the input points are safe, whereas if above the distance, there definitely exists an adversarial example. 
+
+As computing the maximum safe radius directly is NP-hard, we compute the _lower and upper bounds_ of it and show the convergence trend. In other words, every _lower bound_ guarantees that all the possible perturbations below it are safe, while every _upper bound_ indicates the existance of an adversarial example. That said, every adversarial example generated from the _Monte Carlo tree search_ in Question 1 contributes to an upper bound. As for the lower bound, DeepGame utilises the _Admissible A*_ algorithm in a cooperative game and the _Alpha-Beta Pruning_ algorithm in a competitive game.
+
 
 #### Questions: 
-> 1. Plot a figure to illustrate the convergence of the lower and upper bounds of the maximum safe radius. 
-> _Requirements: (1) an image from the MNIST dataset with index from 0 to 99; (2) based on the Euclidean distance._
+> 4. Plot a figure to illustrate the convergence of the lower and upper bounds of the maximum safe radius. 
+> _Requirements: (1) try the same MNIST image with index 67; (2) based on the Euclidean distance and set the distance budget as 10; (3) set the atomic manipulation as 1._
 
-> 2. Exhibit some safe perturbations imposed on the original image corresponding to the lower bounds, and also some adversarial examples generated as a by-product when computing the upper bounds.
+> 5. Exhibit some safe perturbations imposed on the original image corresponding to the lower bounds, and also some adversarial examples generated as a by-product when computing the upper bounds.
 
-> 3. Change the value of _atomic manipulation_ in the range of (0,1], and observe its influence on the convergence of the lower annd upper bounds.
+> 6. Change the value of _atomic manipulation_ in the range of `(0,1]`, and observe its influence on the convergence of the lower annd upper bounds.
 
-> 4. Explain the underly algorithms behind the computation of the bounds. For instance, the _Monte Carlo tree search_ algorithm to compute the upper bounds, and the _Admissible A*_ algorithm to compute the lower bounds.
+> 7. Evaluate the robustness of a neural network trained on another dataset. Plot the convergence of the bounds and display the safe and unsafe adversarial perturbations.
+> _Requirements: (1) try an image from the CIFAR-10 dataset with index from 0 to 99._
 
-Below suggests a possible solution to the above Questions 1 and 2.
+
+Below suggests a possible solution to the above Questions 4 and 5.
 
 ![alt text](figures/Cooperative_MNIST.png)
 
