@@ -7,7 +7,7 @@ This is the webpage for the lab session of the __AIMS CDT Systems Verification__
 To better understand the tool __DeepGame__, please feel free to look into the accompanying published paper: 
 [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426).
 
-In general, DeepGame _verifies_ deep neural networks via a two-player turn-based _game_. It solves two problems -- the _maximum safe raidus_ problem in a _cooperative_ game and the _feature robustness_ problem in a _competitive_ game.
+In general, DeepGame _verifies_ deep neural networks via a two-player turn-based _game_. It solves two problems &mdash; the _maximum safe raidus_ problem in a _cooperative_ game and the _feature robustness_ problem in a _competitive_ game.
 
 In this lab session, we primarily focus on the _maximum safe radius_ problem in a _cooperative_ game. Specifically, we look into three aspects: (1) search for adversarial examples, (2) generation of saliency maps, and (3) robustness guarantees of deep neural networks.
 
