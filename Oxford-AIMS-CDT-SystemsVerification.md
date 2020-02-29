@@ -2,7 +2,7 @@
 
 ## Lab Session: DeepGame
 
-This is the webpage for the lab session of the __AIMS CDT Systems Verification__ course. 
+This is the webpage for the lab session of the __[AIMS CDT](https://eng.ox.ac.uk/aims-cdt/) Systems Verification__ course. 
 
 To better understand the tool __DeepGame__, please feel free to look into the accompanying published paper: 
 [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426).
@@ -95,7 +95,7 @@ When the execution of DeepGame preceeds, improved adversarial examples in the se
 > _Requirements: (1) try image index 67 of the MNIST dataset; (2) based on the Hamming distance and set the distance budget as 10; (3) let the atomic manipuation value be 1._
 
 
-Below illustrates some adversarial examples of the MNIST, CIFAR-10, and GTSRB datasets when the distance metric is the L<sup>2</sup> norm.
+Below are some adversarial examples of the MNIST, CIFAR-10, and GTSRB datasets when the metric is the L<sup>2</sup> norm.
 
 ![alt text](figures/Adversary.png)
 
