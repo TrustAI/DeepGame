@@ -29,16 +29,23 @@ Use the following command line to run DeepGame.
 ```
 python main.py mnist ub cooperative 67 L2 10 1
 ```
+Here, `main.py` is the main Python file, in which you may find each parameter correspondingly.
 
+```javascript
+dataSetName = 'mnist'
+bound = 'ub'
+gameType = 'cooperative'
+image_index = 67
+eta = ('L2', 10)
+tau = 1
+```
 Detailed explaination of each parameter is as follows.
-- `main.py` is the main Python file. 
-- `mnist` refers to the name of the MNIST dataset. It can be other datasets, such as `cifar10` and `gtsrb`.
-- `ub` denotes upper bound. Use `lb` for lower bound.
-- `cooperative` indicates the computation of the _maximum safe radius_ in a cooperative game. To compute the _feature robustness_, use `competitive` instead.
-- `67` is the index of the image in the dataset.
-- `L2` is short for the _L<sup>2</sup> norm_, i.e., the Euclidean distance. Use `L1` for the _L<sup>1</sup> norm_ (Manhattan distance), or `L0` for the Hamming distance.
-- `10` gives the distance budget.
-- `1` denotes the value of _atomic manipulation_ imposed on each pixel/channel of an image.
+- `dataSetName` refers to the name of the dataset. Currently DeepGame supports three image datasets `mnist`, `cifar10`, and `gtsrb`.
+- `bound` denotes whether it is an upper bound `ub` or a lower bound `lb`.
+- `gameType` indicates the type of the game. Specifically, a `cooperative` game is to compute the _maximum safe radius_, whereas a `competitive` game is to compute the _feature robustness_.
+- `image_index` is the index of the image in the dataset.
+- `eta` determines the distance metric and the distance budget. For the metric, `L2` is short for the _L<sup>2</sup> norm_, i.e., the Euclidean distance. Use `L1` for the _L<sup>1</sup> norm_ (Manhattan distance), or `L0` for the Hamming distance. In this case, `10` is a possible distance budget.
+- `tau` denotes the value of _atomic manipulation_ imposed on each dimension of the input, i.e., each pixel/channel of an image.
 
 Alternatively, you may run DeepGame via the following command line, which allows a sequential execution of the above command line.
 ```
@@ -48,9 +55,9 @@ Within the `commands.sh` file, you may set the parameter values as needed.
 ```javascript
 for i in {0..1}
 do
-    python main.py mnist lb cooperative $i L0 40 1
-    python main.py mnist lb cooperative $i L1 40 1
-    python main.py mnist lb cooperative $i L2 40 1
+    python main.py mnist ub cooperative $i L0 10 1
+    python main.py mnist ub cooperative $i L1 10 1
+    python main.py mnist ub cooperative $i L2 10 1
 done
 exit 0
 ```
@@ -58,27 +65,9 @@ exit 0
 -------------------
 
 
-### 1. Robustness Guarantees of Deep Neural Networks
 
-The _maximum safe radius of a neural network with respect to an input_ is a distance such that, with imposed perturbations below the distance, all the input points are safe, whereas if above the distance, there definitely exists an adversarial example. To approximate the maximum safe radius, we compute the _lower and the upper bounds_ of it, and show the convergence trend.
 
-#### Questions: 
-> 1. Plot a figure to illustrate the convergence of the lower and upper bounds of the maximum safe radius. 
-> _Requirements: (1) an image from the MNIST dataset with index from 0 to 99; (2) based on the Euclidean distance._
-
-> 2. Exhibit some safe perturbations imposed on the original image corresponding to the lower bounds, and also some adversarial examples generated as a by-product when computing the upper bounds.
-
-> 3. Change the value of _atomic manipulation_ in the range of (0,1], and observe its influence on the convergence of the lower annd upper bounds.
-
-> 4. Explain the underly algorithms behind the computation of the bounds. For instance, the _Monte Carlo tree search_ algorithm to compute the upper bounds, and the _Admissible A*_ algorithm to compute the lower bounds.
-
-Below suggests a possible solution to the above Questions 1 and 2.
-
-![alt text](figures/Cooperative_MNIST.png)
-
--------------------
-
-### 2. Production of Adversarial Examples
+### 1. Search for Adversarial Examples
 
 Whereas DeepGame is primarily a _robustness verification_ tool, with slight modification in the code, it can be adapted to perform _adversarial attacks_ on the image datasets. For instance, every upper bound produced from the Monte Carlo tree search algorithm contributes to an adversarial example.
 
@@ -103,7 +92,7 @@ Below suggests a possible solution to the above Question 5.
 
 -------------------
 
-### 3. Generation of Saliency Maps
+### 2. Generation of Saliency Maps
 
 To facilitate the explainability and the interpretability of the deep neural networks, DeepGame can generate the _saliency map_ of an input point, to better demonstrate how a network model actually 'sees' or 'understands' an image.
 
@@ -121,6 +110,26 @@ feature_extraction = FeatureExtraction(pattern='grey-box')
 Below suggests a possible solution to the above Question 7.
 
 ![alt text](figures/Feature.png)
+
+-------------------
+
+### 3. Robustness Guarantees of Deep Neural Networks
+
+The _maximum safe radius of a neural network with respect to an input_ is a distance such that, with imposed perturbations below the distance, all the input points are safe, whereas if above the distance, there definitely exists an adversarial example. To approximate the maximum safe radius, we compute the _lower and the upper bounds_ of it, and show the convergence trend.
+
+#### Questions: 
+> 1. Plot a figure to illustrate the convergence of the lower and upper bounds of the maximum safe radius. 
+> _Requirements: (1) an image from the MNIST dataset with index from 0 to 99; (2) based on the Euclidean distance._
+
+> 2. Exhibit some safe perturbations imposed on the original image corresponding to the lower bounds, and also some adversarial examples generated as a by-product when computing the upper bounds.
+
+> 3. Change the value of _atomic manipulation_ in the range of (0,1], and observe its influence on the convergence of the lower annd upper bounds.
+
+> 4. Explain the underly algorithms behind the computation of the bounds. For instance, the _Monte Carlo tree search_ algorithm to compute the upper bounds, and the _Admissible A*_ algorithm to compute the lower bounds.
+
+Below suggests a possible solution to the above Questions 1 and 2.
+
+![alt text](figures/Cooperative_MNIST.png)
 
 -------------------
 
