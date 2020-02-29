@@ -164,7 +164,7 @@ Regarding this, we compute the _maximum safe radius of a neural network with res
 
 While the number of possible input points is infinite, the maximum safe radius can be approximated by descretising the input space under the assumption of _Lipschitz continuity_. Intuitively, it is sufficient to consider a finite number of uniformly sampled inputs on the grid when the distance between the grid points is small. Here, the distance between grid points is reflected in the parameter `tau`, which sets the atomic manipulation.
 
-As computing the maximum safe radius directly is NP-hard, we compute the _lower and upper bounds_ of it and show the convergence trend. In other words, every _lower bound_ guarantees that all the possible perturbations below it are safe, while every _upper bound_ indicates the existance of an adversarial example. That said, every adversarial example generated from the _Monte Carlo tree search_ in Question 1 contributes to an upper bound. As for the lower bound, DeepGame utilises the _Admissible A*_ algorithm in a cooperative game and the _Alpha-Beta Pruning_ algorithm in a competitive game.
+As computing the maximum safe radius directly is NP-hard, we compute the _lower and upper bounds_ of it and show the convergence trend. In other words, every _lower bound_ guarantees that all the possible perturbations below it are safe, while every _upper bound_ indicates the existence of an adversarial example. That said, every adversarial example generated from the _Monte Carlo tree search_ in Question 1 contributes to an upper bound. As for the lower bound, DeepGame utilises the _Admissible A*_ algorithm in a cooperative game and the _Alpha-Beta Pruning_ algorithm in a competitive game.
 
 
 #### Questions: 
