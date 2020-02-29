@@ -7,7 +7,7 @@ This is the webpage for the lab session of the __AIMS CDT Systems Verification__
 To better understand the tool __DeepGame__, please feel free to look into the accompanying published paper: 
 [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426).
 
-In general, DeepGame _verifies_ deep neural networks via _a two-player turn-based game_. To solve the _maximum safe radius_ problem, we let the two players work in a cooperative way, whereas to compute the _feature robustness_, these two players work competitively. 
+In general, DeepGame _verifies_ deep neural networks via a two-player turn-based _game_. It solves two problems -- the _maximum safe raidus_ problem in a _cooperative_ game and the _feature robustness_ problem in a _competitive_ game.
 
 In this lab session, we primarily focus on the _maximum safe radius_ problem in a _cooperative_ game. Specifically, we look into three aspects: (1) search for adversarial examples, (2) generation of saliency maps, and (3) robustness guarantees of deep neural networks.
 
@@ -83,14 +83,16 @@ An _adversarial example_ is an input which, though initially classified correctl
 
 In DeepGame, this minor perturbation is set by the parameter `tau`, which imposes an _atomic manipuation_ on each pixel/channel of an input image. After pre-processing of the image datasets, all pixel values are normalised from [0,255] to [0,1], therefore we set the `tau` value from `(0,1]`.
 
-To search for adversarial examples, we let the two players work in a _cooperative_ game and utilise the _Monte Carlo tree search_ algorithm. From the original image as the root, the game tree expands when the two players proceed in a turn-based way, where Player I chooses a feature of an input to perturb and then Player II determines the atomic manipulations within this chosen feature. The termination condition for the game tree is that either an adversarial example is found or a distance budget `eta` is reached.
+To search for adversarial examples, we let the two players work in a _cooperative_ game and utilise the _Monte Carlo tree search_ algorithm. From the original image as the root, the game tree expands when the two players proceed in a turn-based way, where Player I chooses a feature of an input to perturb and then Player II determines the atomic manipulations within this chosen feature. 
 
+The _termination condition_ for the game tree is that either an adversarial example is found or a distance budget based on a certain metric `eta` is reached. Note that the _distance budget_ should be a reasonable value because if perturbations imposed on the input are too much to the extent that even humans are not able to distinguish, then it is no longer sensible to require a neural network to classify correctly.  
+
+When the execution of DeepGame preceeds, improved adversarial examples in the sense of with fewer and fewer modifications are generated.
 
 #### Questions: 
 
-> 1. Produce some adversarial examples on the MNIST dataset, via utilising the _Monte Carlo tree search_ algorithm.
+> 1. Produce some adversarial examples on the MNIST dataset via utilising the _Monte Carlo tree search_ algorithm.
 > _Requirements: (1) try image index 67 of the MNIST dataset; (2) based on the Hamming distance and set the distance budget as 10; (3) let the atomic manipuation value be 1._
-
 
 
 Below illustrates some adversarial examples of the MNIST, CIFAR-10, and GTSRB datasets when the distance metric is the L<sup>2</sup> norm.
