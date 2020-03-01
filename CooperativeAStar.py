@@ -34,7 +34,7 @@ class CooperativeAStar:
         self.ADVERSARY_FOUND = None
         self.ADVERSARY = None
 
-        self.current_d = [0]
+        # self.current_d = [0]
 
         print("Distance metric %s, with bound value %s." % (self.DIST_METRIC, self.DIST_VAL))
 
@@ -84,15 +84,26 @@ class CooperativeAStar:
         probabilities = self.MODEL.model.predict(manipulated_images)
         # softmax_logits = self.MODEL.softmax_logits(manipulated_images)
 
+        if self.ADV_MANIPULATION:
+            atomic_list = [self.ADV_MANIPULATION[i:i + 4] for i in range(0, len(self.ADV_MANIPULATION), 4)]
+
         for idx in range(len(manipulated_images)):
             if not diffImage(manipulated_images[idx], self.IMAGE) or not diffImage(manipulated_images[idx], image):
                 continue
             cost = self.cal_distance(manipulated_images[idx], self.IMAGE)
             [p_max, p_2dn_max] = heapq.nlargest(2, probabilities[idx])
-            heuristic = (p_max - p_2dn_max) * 2 / self.TAU  # heuristic value determines Admissible (lb) or not (ub)
+            heuristic = (p_max - p_2dn_max) * 2 * self.TAU  # heuristic value determines Admissible (lb) or not (ub)
             estimation = cost + heuristic
 
-            self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
+            valid = True
+            if self.ADV_MANIPULATION:
+                for atomic in atomic_list:  # atomic: [x, y, z, +/-tau]
+                    if atomic_manipulations[idx][0:3] == atomic[0:3] and atomic_manipulations[idx][3] == -atomic[3]:
+                        valid = False
+            if valid is True:
+                self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
+
+            # self.DIST_EVALUATION.update({self.ADV_MANIPULATION + atomic_manipulations[idx]: estimation})
         # print("Atomic manipulations of target pixels done.")
 
     def apply_atomic_manipulation(self, image, atomic):
@@ -130,13 +141,14 @@ class CooperativeAStar:
         new_label, new_confidence = self.MODEL.predict(new_image)
 
         while self.cal_distance(self.IMAGE, new_image) <= self.DIST_VAL and new_label == self.LABEL:
+            # for partitionID in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
             for partitionID in self.PARTITIONS.keys():
                 pixels = self.PARTITIONS[partitionID]
                 self.target_pixels(new_image, pixels)
 
             self.ADV_MANIPULATION = min(self.DIST_EVALUATION, key=self.DIST_EVALUATION.get)
             print("Current best manipulations:", self.ADV_MANIPULATION)
-            print("%s distance (estimated): %s" % (self.DIST_METRIC, self.DIST_EVALUATION[self.ADV_MANIPULATION]))
+            # print("%s distance (estimated): %s" % (self.DIST_METRIC, self.DIST_EVALUATION[self.ADV_MANIPULATION]))
             self.DIST_EVALUATION.pop(self.ADV_MANIPULATION)
 
             new_image = copy.deepcopy(self.IMAGE)
@@ -146,9 +158,10 @@ class CooperativeAStar:
             dist = self.cal_distance(self.IMAGE, new_image)
             print("%s distance (actual): %s" % (self.DIST_METRIC, dist))
 
-            if self.current_d[-1] != dist:
-                self.current_d.append(dist)
-                self.MODEL.save_input(new_image, "gtsrb_pic/idx_%s_currentBest_%s.png" % (self.IDX, len(self.current_d)-1))
+#            if self.current_d[-1] != dist:
+#                self.current_d.append(dist)
+#                self.MODEL.save_input(new_image,
+#                                      "gtsrb_pic/idx_%s_currentBest_%s.png" % (self.IDX, len(self.current_d) - 1))
 
             new_label, new_confidence = self.MODEL.predict(new_image)
             if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
