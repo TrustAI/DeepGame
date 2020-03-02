@@ -35,7 +35,7 @@ class MCTSCooperative:
 
         (self.originalClass, self.originalConfident) = self.model.predict(self.image)
 
-        self.moves = GameMoves(self.data_set, self.model, self.image, self.tau)
+        self.moves = GameMoves(self.data_set, self.model, self.image, self.tau, self.image_index)
 
         self.cost = {}
         self.numberOfVisited = {}
@@ -295,11 +295,11 @@ class MCTSCooperative:
                 self.model.save_input(activations1, path0)
             return (self.depth == 0, dist)
 
-        elif dist > distVal:
+        elif dist > distVal:   ##########################
             nprint("sampling a path ends by eta with depth %s ... " % self.depth)
             return (self.depth == 0, distVal)
 
-        elif not list(set(self.availableActionIDs[k]) - set(self.usedActionIDs[k])):
+        elif not list(set(self.availableActionIDs[k]) - set(self.usedActionIDs[k])): ####################
             nprint("sampling a path ends with depth %s because no more actions can be taken ... " % self.depth)
             return (self.depth == 0, distVal)
 

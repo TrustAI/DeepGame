@@ -59,11 +59,11 @@ if len(sys.argv) == 8:
 
 elif len(sys.argv) == 1:
     # the second way of defining parameters
-    dataSetName = 'gtsrb'
-    bound = 'lb'
+    dataSetName = 'mnist'
+    bound = 'ub'
     gameType = 'cooperative'
-    image_index = 213
-    eta = ('L0', 40)
+    image_index = 67
+    eta = ('L1', 10)
     tau = 1
 
 # calling algorithms

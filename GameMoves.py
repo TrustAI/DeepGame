@@ -2,6 +2,7 @@
 
 """
 author: Xiaowei Huang
+revised by: Min Wu (min.wu@cs.ox.ac.uk)
 
 """
 
@@ -27,15 +28,20 @@ import collections
 
 class GameMoves:
 
-    def __init__(self, data_set, model, image, tau):
+    def __init__(self, data_set, model, image, tau, image_index):
         self.data_set = data_set
         self.model = model
         self.image = image
         self.tau = tau
+        self.image_index = image_index
 
         feature_extraction = FeatureExtraction(pattern='grey-box')
         kps = feature_extraction.get_key_points(self.image, num_partition=10)
         partitions = feature_extraction.get_partitions(self.image, self.model, num_partition=10)
+
+        # path = "%s_pic/%s_Saliency_(%s).png" % (self.data_set, self.image_index, feature_extraction.PATTERN)
+        # feature_extraction.plot_saliency_map(self.image, partitions=partitions, path=path)
+
 
         img_enlarge_ratio = 1
         image1 = copy.deepcopy(self.image)
