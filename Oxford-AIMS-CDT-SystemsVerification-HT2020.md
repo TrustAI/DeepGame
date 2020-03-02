@@ -7,7 +7,7 @@ This is the webpage for the lab session of the __[AIMS CDT](https://eng.ox.ac.uk
 To better understand the tool __DeepGame__, please feel free to look into the accompanying published paper: 
 [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426).
 
-In general, DeepGame _verifies_ the robustness of deep neural networks via a two-player turn-based _game_. It solves two problems &mdash; the _maximum safe raidus_ problem in a _cooperative_ game and the _feature robustness_ problem in a _competitive_ game.
+In general, DeepGame _verifies_ the robustness of deep neural networks via a two-player turn-based _game_. It solves two problems &mdash; the _maximum safe radius_ problem in a _cooperative_ game and the _feature robustness_ problem in a _competitive_ game.
 
 In this lab session, we primarily focus on the _maximum safe radius_ problem in a _cooperative_ game. Specifically, we look into three aspects: (1) search for adversarial examples, (2) generation of saliency maps, and (3) robustness guarantees of deep neural networks.
 
@@ -48,7 +48,7 @@ eta = ('L2', 10)
 tau = 1
 ```
 
-Detailed explaination of each parameter is as follows.
+Detailed explanation of each parameter is as follows.
 - `dataSetName` refers to the name of the dataset. Currently DeepGame supports three image datasets `mnist`, `cifar10`, and `gtsrb`.
 - `bound` denotes whether it is an upper bound `ub` or a lower bound `lb`.
 - `gameType` indicates the type of the game. Specifically, a `cooperative` game is to compute the _maximum safe radius_ whereas a `competitive` game is to compute the _feature robustness_.
@@ -80,7 +80,7 @@ exit 0
 
 An _adversarial example_ is an input which, though initially classified correctly by a neural network, is misclassified after a minor, perhaps imperceptible, perturbation. 
 
-In DeepGame, this minor perturbation is set by the parameter `tau`, which imposes an _atomic manipuation_ on each pixel/channel of an input image. After pre-processing of the image datasets, all pixel values are normalised from [0,255] to [0,1], therefore we set the `tau` value from `(0,1]`.
+In DeepGame, this minor perturbation is set by the parameter `tau`, which imposes an _atomic manipulation_ on each pixel/channel of an input image. After pre-processing of the image datasets, all pixel values are normalised from [0,255] to [0,1], therefore we set the `tau` value from `(0,1]`.
 
 To search for adversarial examples, we let the two players work in a _cooperative_ game and utilise the _Monte Carlo tree search_ algorithm. From the original image as the root, the game tree expands when the two players proceed in a turn-based way, where Player I chooses a feature of an input to perturb and then Player II determines the atomic manipulations within this chosen feature. 
 
@@ -179,7 +179,7 @@ As computing the maximum safe radius directly is NP-hard, we compute the _lower 
 
 > 5. Exhibit some safe perturbations imposed on the original image corresponding to the lower bounds, and also some adversarial examples generated as a by-product when computing the upper bounds.
 
-> 6. Change the value of _atomic manipulation_ in the range of `(0,1]`, for example, `0.5`, `0.1`, `0.05`, or `0.01`, and observe its influence on the convergence of the lower annd upper bounds.
+> 6. Change the value of _atomic manipulation_ in the range of `(0,1]`, for example, `0.5`, `0.1`, `0.05`, or `0.01`, and observe its influence on the convergence of the lower and upper bounds.
 
 > 7. Evaluate the robustness of a neural network trained on another dataset. Plot the convergence of the bounds and display the safe and unsafe adversarial perturbations.
 > _Requirements: (1) try an image from the CIFAR-10 dataset with index from 0 to 99._
