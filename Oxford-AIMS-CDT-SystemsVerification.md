@@ -24,11 +24,13 @@ Below is a list of the developer's platform for reference in case there is packa
 ###### Developer's Platform
 ```
 python 3.5.5
-keras 2.1.3
-tensorflow-gpu 1.4.0
-numpy 1.14.3
+keras 2.1.5
+tensorflow 1.1.0
+numpy 1.14.2
 matplotlib 2.2.2
-scipy 1.1.0
+scipy 1.0.1
+opencv-contrib-python 3.4.1.15
+scikit-image 0.14.0
 ```
 
 Use the following command line to run DeepGame. 
@@ -175,11 +177,11 @@ As computing the maximum safe radius directly is NP-hard, we compute the _lower 
 
 #### Questions: 
 > 4. Plot a figure to illustrate the convergence of the lower and upper bounds of the maximum safe radius. 
-> _Requirements: (1) try the same MNIST image with index 67; (2) based on the Euclidean distance and set the distance budget as 10; (3) set the atomic manipulation as 1._
+> _Requirements: (1) try the same MNIST image with index 67; (2) based on the Euclidean distance; (3) for the upper bound, set the distance budget as 10; (4) for the lower bound, set the distance budget as 0.01; (5) set the atomic manipulation as 1; (6) use grey-box feature extraction method._
 
 > 5. Exhibit some safe perturbations imposed on the original image corresponding to the lower bounds, and also some adversarial examples generated as a by-product when computing the upper bounds.
 
-> 6. Change the value of _atomic manipulation_ in the range of `(0,1]`, for example, `0.5`, `0.1`, `0.05`, or `0.01`, and observe its influence on the convergence of the lower and upper bounds.
+> 6. Change the value of _atomic manipulation_ in the range of `(0,1]`, for example, `0.5`, `0.05`, or `0.005`, and observe its influence on the lower bound.
 
 > 7. Evaluate the robustness of a neural network trained on another dataset. Plot the convergence of the bounds and display the safe and unsafe adversarial perturbations.
 > _Requirements: (1) try an image from the CIFAR-10 dataset with index from 0 to 99._
