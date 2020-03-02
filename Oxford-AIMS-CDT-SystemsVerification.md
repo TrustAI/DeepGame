@@ -24,11 +24,13 @@ Below is a list of the developer's platform for reference in case there is packa
 ###### Developer's Platform
 ```
 python 3.5.5
-keras 2.1.3
-tensorflow-gpu 1.4.0
-numpy 1.14.3
+keras 2.1.5
+tensorflow 1.1.0
+numpy 1.14.2
 matplotlib 2.2.2
-scipy 1.1.0
+scipy 1.0.1
+opencv-contrib-python 3.4.1.15
+scikit-image 0.14.0
 ```
 
 Use the following command line to run DeepGame. 
