@@ -2,7 +2,7 @@
 
 ## Lab Session: DeepGame
 
-This is the webpage for the lab session of the __[AIMS CDT](https://eng.ox.ac.uk/aims-cdt/) Systems Verification__ course. 
+This is the webpage for the lab session of the __[AIMS CDT](https://eng.ox.ac.uk/aims-cdt/) Systems Verification__ course. The lecture slides of this course can be found [here](https://github.com/TrustAI/DeepGame/blob/master/Oxford-AIMS-CDT-SystemsVerification-HT2020.pdf).
 
 To better understand the tool __DeepGame__, please feel free to look into the accompanying published paper: 
 [A game-based approximate verification of deep neural networks with provable guarantees](https://www.sciencedirect.com/science/article/pii/S0304397519304426).
@@ -86,12 +86,12 @@ To search for adversarial examples, we let the two players work in a _cooperativ
 
 The _termination condition_ for the game tree is that either an adversarial example is found or a distance budget based on a certain metric `eta` is reached. Note that the _distance budget_ should be a reasonable value because if perturbations imposed on the input are too much to the extent that even humans are not able to distinguish, then it is no longer sensible to require a neural network to classify correctly.  
 
-When the execution of DeepGame preceeds, improved adversarial examples in the sense of with fewer and fewer modifications are generated.
+When the execution of DeepGame proceeds, improved adversarial examples in the sense of with fewer and fewer modifications are generated.
 
 #### Questions: 
 
 > 1. Produce some adversarial examples on the MNIST dataset via utilising the _Monte Carlo tree search_ algorithm.
-> _Requirements: (1) try image index 67 of the MNIST dataset; (2) based on the L<sup>1</sup> norm and set the distance budget as 10; (3) let the atomic manipuation value be 1._
+> _Requirements: (1) try image index 67 of the MNIST dataset; (2) based on the L<sup>1</sup> norm and set the distance budget as 10; (3) let the atomic manipulation value be 1._
 
 
 Below are some adversarial examples of the MNIST, CIFAR-10, and GTSRB datasets when the metric is the L<sup>2</sup> norm.
