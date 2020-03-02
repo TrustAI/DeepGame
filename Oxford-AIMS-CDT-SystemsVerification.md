@@ -63,11 +63,10 @@ Alternatively, you may run DeepGame via the following command line, which allows
 ```
 Within the `commands.sh` file, you may set the parameter values as needed.
 ```javascript
-for i in {0..1}
+for i in {0..10}
 do
-    python main.py mnist ub cooperative $i L0 10 1
-    python main.py mnist ub cooperative $i L1 10 1
     python main.py mnist ub cooperative $i L2 10 1
+    python main.py mnist lb cooperative $i L2 0.01 1
 done
 exit 0
 ```
@@ -92,7 +91,7 @@ When the execution of DeepGame preceeds, improved adversarial examples in the se
 #### Questions: 
 
 > 1. Produce some adversarial examples on the MNIST dataset via utilising the _Monte Carlo tree search_ algorithm.
-> _Requirements: (1) try image index 67 of the MNIST dataset; (2) based on the Hamming distance and set the distance budget as 10; (3) let the atomic manipuation value be 1._
+> _Requirements: (1) try image index 67 of the MNIST dataset; (2) based on the L<sup>1</sup> norm and set the distance budget as 10; (3) let the atomic manipuation value be 1._
 
 
 Below are some adversarial examples of the MNIST, CIFAR-10, and GTSRB datasets when the metric is the L<sup>2</sup> norm.
@@ -137,6 +136,13 @@ In DeepGame, these feature extraction methods are defined in the `FeatureExtract
 ```javascript
 feature_extraction = FeatureExtraction(pattern='grey-box')
 ```
+In order to output the heatmap of the saliency map, you need to uncomment these two lines in `GameMoves.py`.
+
+```javascript
+# path = "%s_pic/%s_Saliency_(%s).png" % (self.data_set, self.image_index, feature_extraction.PATTERN)
+# feature_extraction.plot_saliency_map(self.image, partitions=partitions, path=path)
+```        
+
 
 #### Questions: 
 
@@ -173,7 +179,7 @@ As computing the maximum safe radius directly is NP-hard, we compute the _lower 
 
 > 5. Exhibit some safe perturbations imposed on the original image corresponding to the lower bounds, and also some adversarial examples generated as a by-product when computing the upper bounds.
 
-> 6. Change the value of _atomic manipulation_ in the range of `(0,1]`, and observe its influence on the convergence of the lower annd upper bounds.
+> 6. Change the value of _atomic manipulation_ in the range of `(0,1]`, for example, `0.5`, `0.1`, `0.05`, or `0.01`, and observe its influence on the convergence of the lower annd upper bounds.
 
 > 7. Evaluate the robustness of a neural network trained on another dataset. Plot the convergence of the bounds and display the safe and unsafe adversarial perturbations.
 > _Requirements: (1) try an image from the CIFAR-10 dataset with index from 0 to 99._
