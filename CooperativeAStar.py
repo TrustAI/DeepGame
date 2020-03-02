@@ -16,7 +16,8 @@ from basics import *
 
 
 class CooperativeAStar:
-    def __init__(self, idx, image, model, eta, tau, bounds=(0, 1)):
+    def __init__(self, dataset, idx, image, model, eta, tau, bounds=(0, 1)):
+        self.DATASET = dataset
         self.IDX = idx
         self.IMAGE = image
         self.IMAGE_BOUNDS = bounds
@@ -34,7 +35,7 @@ class CooperativeAStar:
         self.ADVERSARY_FOUND = None
         self.ADVERSARY = None
 
-        # self.current_d = [0]
+        self.CURRENT_SAFE = [0]
 
         print("Distance metric %s, with bound value %s." % (self.DIST_METRIC, self.DIST_VAL))
 
@@ -158,14 +159,9 @@ class CooperativeAStar:
             dist = self.cal_distance(self.IMAGE, new_image)
             print("%s distance (actual): %s" % (self.DIST_METRIC, dist))
 
-#            if self.current_d[-1] != dist:
-#                self.current_d.append(dist)
-#                self.MODEL.save_input(new_image,
-#                                      "gtsrb_pic/idx_%s_currentBest_%s.png" % (self.IDX, len(self.current_d) - 1))
-
             new_label, new_confidence = self.MODEL.predict(new_image)
             if self.cal_distance(self.IMAGE, new_image) > self.DIST_VAL:
-                # print("Adversarial distance exceeds distance bound.")
+                # print("Adversarial distance exceeds distance budget.")
                 self.ADVERSARY_FOUND = False
                 break
             elif new_label != self.LABEL:
@@ -173,6 +169,12 @@ class CooperativeAStar:
                 self.ADVERSARY_FOUND = True
                 self.ADVERSARY = new_image
                 break
+
+            if self.CURRENT_SAFE[-1] != dist:
+                self.CURRENT_SAFE.append(dist)
+                path = "%s_pic/idx_%s_Safe_currentBest_%s.png" % (self.DATASET, self.IDX, len(self.CURRENT_SAFE) - 1)
+                self.MODEL.save_input(new_image, path)
+
 
 
 """

@@ -291,7 +291,7 @@ class MCTSCooperative:
                 print("update best case from %s to %s" % (self.bestCase[0], dist))
                 self.numConverge += 1
                 self.bestCase = (dist, self.atomicManipulationPath)
-                path0 = "%s_pic/%s_currentBest_%s.png" % (self.data_set, self.image_index, self.numConverge)
+                path0 = "%s_pic/%s_Unsafe_currentBest_%s.png" % (self.data_set, self.image_index, self.numConverge)
                 self.model.save_input(activations1, path0)
             return (self.depth == 0, dist)
 

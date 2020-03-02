@@ -36,7 +36,7 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
 
     if game_type == 'cooperative':
         tic = time.time()
-        cooperative = CooperativeAStar(image_index, image, NN, eta, tau)
+        cooperative = CooperativeAStar(dataset_name, image_index, image, NN, eta, tau)
         cooperative.play_game(image)
         if cooperative.ADVERSARY_FOUND is True:
             elapsed = time.time() - tic
@@ -72,7 +72,7 @@ def lowerbound(dataset_name, image_index, game_type, eta, tau):
                 dataset_name, image_index, eta[0], dist, elapsed)
             NN.save_input(np.absolute(image - adversary), path)
         else:
-            print("Adversarial distance exceeds distance bound.")
+            print("Adversarial distance exceeds distance budget.")
 
     elif game_type == 'competitive':
         competitive = CompetitiveAlphaBeta(image, NN, eta, tau)

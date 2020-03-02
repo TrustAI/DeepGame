@@ -59,38 +59,39 @@ if len(sys.argv) == 8:
 
 elif len(sys.argv) == 1:
     # the second way of defining parameters
-    dataSetName = 'mnist'
-    bound = 'ub'
+    dataSetName = 'cifar10'
+    bound = 'lb'
     gameType = 'cooperative'
-    image_index = 67
-    eta = ('L1', 10)
+    image_index = 213
+    eta = ('L2', 10)
     tau = 1
 
 # calling algorithms
-dc = DataCollection("%s_%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType, image_index, eta[0], eta[1]))
-dc.initialiseIndex(image_index)
+# dc = DataCollection("%s_%s_%s_%s_%s_%s_%s" % (dataSetName, bound, tau, gameType, image_index, eta[0], eta[1]))
+# dc.initialiseIndex(image_index)
 
 if bound == 'ub':
     (elapsedTime, newConfident, percent, l2dist, l1dist, l0dist, maxFeatures) = upperbound(dataSetName, bound, tau,
                                                                                            gameType, image_index, eta)
 
-    dc.addRunningTime(elapsedTime)
-    dc.addConfidence(newConfident)
-    dc.addManipulationPercentage(percent)
-    dc.addl2Distance(l2dist)
-    dc.addl1Distance(l1dist)
-    dc.addl0Distance(l0dist)
-    dc.addMaxFeatures(maxFeatures)
+    # dc.addRunningTime(elapsedTime)
+    # dc.addConfidence(newConfident)
+    # dc.addManipulationPercentage(percent)
+    # dc.addl2Distance(l2dist)
+    # dc.addl1Distance(l1dist)
+    # dc.addl0Distance(l0dist)
+    # dc.addMaxFeatures(maxFeatures)
 
 elif bound == 'lb':
     lowerbound(dataSetName, image_index, gameType, eta, tau)
 
 else:
-    print("lower bound algorithm is developing...")
+    print("Unrecognised bound setting.\n"
+          "Try 'ub' for upper bound or 'lb' for lower bound.\n")
     exit
 
-dc.provideDetails()
-dc.summarise()
-dc.close()
+# dc.provideDetails()
+# dc.summarise()
+# dc.close()
 
 K.clear_session()
