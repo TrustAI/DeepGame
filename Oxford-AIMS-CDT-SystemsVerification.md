@@ -177,7 +177,7 @@ As computing the maximum safe radius directly is NP-hard, we compute the _lower 
 
 #### Questions: 
 > 4. Plot a figure to illustrate the convergence of the lower and upper bounds of the maximum safe radius. 
-> _Requirements: (1) try the same MNIST image with index 67; (2) based on the Euclidean distance; (3) for the upper bound, set the distance budget as 10; (4) for the lower bound, set the distance budget as 0.01; (5) set the atomic manipulation as 1._
+> _Requirements: (1) try the same MNIST image with index 67; (2) based on the Euclidean distance; (3) for the upper bound, set the distance budget as 10; (4) for the lower bound, set the distance budget as 0.01; (5) set the atomic manipulation as 1; (6) use grey-box feature extraction method._
 
 > 5. Exhibit some safe perturbations imposed on the original image corresponding to the lower bounds, and also some adversarial examples generated as a by-product when computing the upper bounds.
 
