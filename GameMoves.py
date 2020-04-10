@@ -34,6 +34,8 @@ class GameMoves:
         self.image = image
         self.tau = tau
         self.image_index = image_index
+        self.maxVal = np.max(image)
+        self.minVal = np.min(image)
 
         feature_extraction = FeatureExtraction(pattern='grey-box')
         kps = feature_extraction.get_key_points(self.image, num_partition=10)
@@ -119,17 +121,26 @@ class GameMoves:
 
     def applyManipulation(self, image, manipulation):
         # apply a specific manipulation to have a manipulated input
+        #image1 = copy.deepcopy(image)
+        #maxVal = np.max(image1)
+        #minVal = np.min(image1)
+        #for elt in list(manipulation.keys()):
+        #    (fst, snd, thd) = elt
+        #    image1[fst][snd][thd] += manipulation[elt]
+        #    if image1[fst][snd][thd] < minVal:
+        #        image1[fst][snd][thd] = minVal
+        #    elif image1[fst][snd][thd] > maxVal:
+        #        image1[fst][snd][thd] = maxVal
+        #return image1
         image1 = copy.deepcopy(image)
-        maxVal = np.max(image1)
-        minVal = np.min(image1)
-        for elt in list(manipulation.keys()):
-            (fst, snd, thd) = elt
-            image1[fst][snd][thd] += manipulation[elt]
-            if image1[fst][snd][thd] < minVal:
-                image1[fst][snd][thd] = minVal
-            elif image1[fst][snd][thd] > maxVal:
-                image1[fst][snd][thd] = maxVal
-        return image1
+        if len(manipulation.keys())>0:
+           a = np.array(list(manipulation.keys()))
+           image1[a[:,0],a[:,1],a[:,2]]=np.clip(image1[a[:,0],a[:,1],a[:,2]]
+                                                  +np.array(list(manipulation.values()))
+                                                ,self.maxVal,self.minVal)
+           return image1
+        else:
+           return image1
 
 
 """
