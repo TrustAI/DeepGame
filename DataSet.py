@@ -29,10 +29,10 @@ class DataSet:
             img_rows, img_cols, img_chls = 28, 28, 1
             if trainOrTest == "training":
                 x = x_train.reshape(x_train.shape[0], img_rows, img_cols, img_chls)
-                y = keras.utils.np_utils.to_categorical(y_train, num_classes)
+                y = keras.utils.to_categorical(y_train, num_classes)
             else:
                 x = x_test.reshape(x_test.shape[0], img_rows, img_cols, img_chls)
-                y = keras.utils.np_utils.to_categorical(y_test, num_classes)
+                y = keras.utils.to_categorical(y_test, num_classes)
 
             x = x.astype('float32')
             x /= 255
@@ -44,10 +44,10 @@ class DataSet:
             img_rows, img_cols, img_chls = 32, 32, 3
             if trainOrTest == "training":
                 x = x_train.reshape(x_train.shape[0], img_rows, img_cols, img_chls)
-                y = keras.utils.np_utils.to_categorical(y_train, num_classes)
+                y = keras.utils.to_categorical(y_train, num_classes)
             else:
                 x = x_test.reshape(x_test.shape[0], img_rows, img_cols, img_chls)
-                y = keras.utils.np_utils.to_categorical(y_test, num_classes)
+                y = keras.utils.to_categorical(y_test, num_classes)
 
             x = x.astype('float32')
             x /= 255
@@ -62,7 +62,7 @@ class DataSet:
                     with h5py.File(directory + 'gtsrb_training.h5') as hf:
                         x_train, y_train = hf['imgs'][:], hf['labels'][:]
                     x = x_train.reshape(x_train.shape[0], img_rows, img_cols, img_chls)
-                    y = keras.utils.np_utils.to_categorical(y_train, num_classes)
+                    y = keras.utils.to_categorical(y_train, num_classes)
 
                 except (IOError, OSError, KeyError):
                     imgs = []
@@ -88,7 +88,7 @@ class DataSet:
                         hf.create_dataset('imgs', data=x_train)
                         hf.create_dataset('labels', data=y_train)
                     x = x_train.reshape(x_train.shape[0], img_rows, img_cols, img_chls)
-                    y = keras.utils.np_utils.to_categorical(y_train, num_classes)
+                    y = keras.utils.to_categorical(y_train, num_classes)
 
             else:
                 directory = 'models/GTSRB/Final_Test/'
@@ -96,7 +96,7 @@ class DataSet:
                     with h5py.File(directory + 'gtsrb_test.h5') as hf:
                         x_test, y_test = hf['imgs'][:], hf['labels'][:]
                     x = x_test.reshape(x_test.shape[0], img_rows, img_cols, img_chls)
-                    y = keras.utils.np_utils.to_categorical(y_test, num_classes)
+                    y = keras.utils.to_categorical(y_test, num_classes)
 
                 except (IOError, OSError, KeyError):
                     test = pd.read_csv(directory + 'GT-final_test.csv', sep=';')
@@ -114,7 +114,7 @@ class DataSet:
                         hf.create_dataset('imgs', data=x_test)
                         hf.create_dataset('labels', data=y_test)
                     x = x_test.reshape(x_test.shape[0], img_rows, img_cols, img_chls)
-                    y = keras.utils.np_utils.to_categorical(y_test, num_classes)
+                    y = keras.utils.to_categorical(y_test, num_classes)
 
         else:
             print("Unsupported dataset %s. Try 'mnist' or 'cifar10'." % data_set)

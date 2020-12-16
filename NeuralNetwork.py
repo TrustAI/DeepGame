@@ -16,6 +16,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing import image as Image
 from keras import backend as K
 from matplotlib import pyplot as plt
+from tensorflow.python.keras.backend import eager_learning_phase_scope
 
 from basics import assure_path_exists
 from DataSet import *
@@ -317,7 +318,7 @@ class NeuralNetwork:
     def softmax_logits(self, manipulated_images, batch_size=512):
         model = self.model
 
-        func = K.function([model.layers[0].input] + [K.learning_phase()],
+        func = K.function([model.layers[0].input],
                           [model.layers[model.layers.__len__() - 1].output.op.inputs[0]])
 
         # func = K.function([model.layers[0].input] + [K.learning_phase()],
