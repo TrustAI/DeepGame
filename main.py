@@ -2,7 +2,7 @@ from __future__ import print_function
 from keras import backend as K
 import sys
 import os
-
+sys.setrecursionlimit(10000)
 from NeuralNetwork import *
 from DataSet import *
 from DataCollection import *
