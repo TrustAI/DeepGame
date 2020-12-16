@@ -193,6 +193,16 @@ class MCTSCooperative:
         else:
             return True
 
+    def usefulActionNew(self, ampath, am, oldConfident):
+        newAtomicManipulation = mergeTwoDicts(ampath, am)
+        activations1 = self.moves.applyManipulation(self.image, newAtomicManipulation)
+        dist = self.computeDistance(activations1)
+        (newClass1, newConfident1) = self.model.predict(activations1)
+        if abs(oldConfident - newConfident1) < 10 ^ -6:
+            return (False, (newClass1, newConfident1), dist)
+        else:
+            return (True, (newClass1, newConfident1), dist)
+
     def initialiseExplorationNode(self, index, availableActions):
         nprint("expanding %s" % index)
         if self.keypoint[index] != 0:
@@ -240,7 +250,10 @@ class MCTSCooperative:
             self.usedActionIDs = {}
             for k in self.keypoints.keys():
                 self.usedActionIDs[k] = []
-            (childTerminated, val) = self.sampleNext(self.keypoint[index])
+            activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)
+            result = self.model.predict(activations1)
+            dist = self.computeDistance(activations1)
+            (childTerminated, val) = self.sampleNext(self.keypoint[index],result,dist)
             self.numOfSampling += 1
             sampleValues.append(val)
             i += 1
@@ -258,9 +271,8 @@ class MCTSCooperative:
             dist = diffPercent(newImage, self.image) * self.image.size
         return dist
 
-    def sampleNext(self, k):
-        activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)
-        (newClass, newConfident) = self.model.predict(activations1)
+    def sampleNext(self, k, newResult, dist):
+        (newClass, newConfident) = newResult
         '''
         if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
             nprint("sampling a path ends in a terminal node with depth %s... " % self.depth)
@@ -279,7 +291,6 @@ class MCTSCooperative:
         '''
 
         (distMethod, distVal) = self.eta
-        dist = self.computeDistance(activations1)
 
         # need not only class change, but also high confidence adversary examples
         if newClass != self.originalClass and newConfident > effectiveConfidenceWhenChanging:
@@ -292,6 +303,8 @@ class MCTSCooperative:
                 self.numConverge += 1
                 self.bestCase = (dist, self.atomicManipulationPath)
                 path0 = "%s_pic/%s_Unsafe_currentBest_%s.png" % (self.data_set, self.image_index, self.numConverge)
+                
+                activations1 = self.moves.applyManipulation(self.image, self.atomicManipulationPath)
                 self.model.save_input(activations1, path0)
             return (self.depth == 0, dist)
 
@@ -299,8 +312,8 @@ class MCTSCooperative:
             nprint("sampling a path ends by eta with depth %s ... " % self.depth)
             return (self.depth == 0, distVal)
 
-        elif not list(set(self.availableActionIDs[k]) - set(self.usedActionIDs[k])): ####################
-            nprint("sampling a path ends with depth %s because no more actions can be taken ... " % self.depth)
+        elif (not list(set(self.availableActionIDs[k]) - set(self.usedActionIDs[k]))) or len(self.availableActionIDs[k])==0: ####################
+            print("sampling a path ends with depth %s because no more actions can be taken ... " % self.depth)
             return (self.depth == 0, distVal)
 
         # elif self.depth > (self.eta[1] / self.tau) * 2:
@@ -309,36 +322,38 @@ class MCTSCooperative:
         #    return (self.depth == 0, distVal)
 
         else:
-            # print("continue sampling node ... ")
+            #print("continue sampling node ... ")
             # randomActionIndex = random.choice(list(set(self.availableActionIDs[k])-set(self.usedActionIDs[k])))
 
             i = 0
             while True:
 
                 randomActionIndex = random.choice(self.availableActionIDs[k])
+                
                 if k == 0:
                     nextAtomicManipulation = {}
                 else:
                     nextAtomicManipulation = self.actions[k][randomActionIndex]
-
-                if self.usefulAction(self.atomicManipulationPath,
-                                     nextAtomicManipulation) == True or nextAtomicManipulation == {} or i > 10:
+                newResult = self.usefulActionNew(self.atomicManipulationPath,nextAtomicManipulation,newConfident)
+                if nextAtomicManipulation == {} or i > 10 or newResult[0] or len(self.availableActionIDs[k])==0:
+                    #if(k!=0):
+                       #self.availableActionIDs[k].remove(randomActionIndex)
+                       #self.usedActionIDs[k].append(randomActionIndex)
                     break
 
                 i += 1
 
-                # self.availableActionIDs[k].remove(randomActionIndex)
-                # self.usedActionIDs[k].append(randomActionIndex)
+                
             newManipulationPath = mergeTwoDicts(self.atomicManipulationPath, nextAtomicManipulation)
-            activations2 = self.moves.applyManipulation(self.image, newManipulationPath)
-            (newClass2, newConfident2) = self.model.predict(activations2)
+            #activations2 = self.moves.applyManipulation(self.image, newManipulationPath)
+            #(newClass2, newConfident2) = self.model.predict(activations2)
 
             self.atomicManipulationPath = newManipulationPath
             self.depth = self.depth + 1
             if k == 0:
-                return self.sampleNext(randomActionIndex)
+                return self.sampleNext(randomActionIndex,newResult[1],newResult[2])
             else:
-                return self.sampleNext(0)
+                return self.sampleNext(0,newResult[1],newResult[2])
 
     def scrutinizePath(self, manipulations):
         flag = False

@@ -19,7 +19,7 @@ from matplotlib import pyplot as plt
 
 from basics import assure_path_exists
 from DataSet import *
-
+import numpy as np
 
 # Define a Neural Network class.
 class NeuralNetwork:
@@ -30,12 +30,19 @@ class NeuralNetwork:
         assure_path_exists("%s_pic/" % self.data_set)
 
     def predict(self, image):
-        import numpy as np
         image = np.expand_dims(image, axis=0)
         predict_value = self.model.predict(image)
         new_class = np.argmax(np.ravel(predict_value))
         confident = np.amax(np.ravel(predict_value))
         return new_class, confident
+
+    def predict_with_margin(self, image):
+        image = np.expand_dims(image, axis=0)
+        predict_value = self.model.predict(image)
+        new_class = np.argmax(np.ravel(predict_value))
+        confident = np.amax(np.ravel(predict_value))
+        margin = confident - np.sort(np.ravel(predict_value))[-2]
+        return new_class, confident, margin
 
     # To train a neural network.
     def train_network(self):
